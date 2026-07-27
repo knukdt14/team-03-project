@@ -1,0 +1,6 @@
+Type,Question,Direct LLM F1,Strict RAG F1,Adaptive Fallback F1
+General QA,CATIA V5에서 Pad 기능의 주요 역할과 스케치 조건은 무엇인가요?,0.670200,0.661334,0.656908
+Specific QA,Dress-Up Feature 중 Stiffener 기능의 사용 목적과 권장 구배 각도는 몇 도인가요?,0.707042,0.653305,0.691116
+Specific QA,Draft Angle 기능이란 무엇이며 어떨 때 사용하나요?,0.660826,0.721066,0.703521
+Trick/Unanswerable QA,CATIA V5에서 3D 퀀텀 머시닝(Quantum Machining) AI 가속 모드는 어떻게 실행하나요?,0.614038,1.000000,0.618432
+Trick/Unanswerable QA,CATIA V5에서 자율주행 차체 3D 홀로그램 자동 설계 알고리즘 메뉴 위치는?,0.596526,1.000000,0.611382

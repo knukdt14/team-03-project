@@ -4,7 +4,7 @@ import glob
 from typing import List, Optional
 from langchain_core.documents import Document
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter, MarkdownHeaderTextSplitter
 from src.config import DATA_DIR, CHUNK_SIZE, CHUNK_OVERLAP
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
@@ -15,6 +15,13 @@ try:
     HAS_PYMUPDF = True
 except ImportError:
     HAS_PYMUPDF = False
+
+# Try loading pymupdf4llm (PDF -> 구조 보존 Markdown 변환) with safe fallback
+try:
+    import pymupdf4llm
+    HAS_PYMUPDF4LLM = True
+except ImportError:
+    HAS_PYMUPDF4LLM = False
 
 
 def detect_lang(text: str) -> str:
@@ -141,6 +148,101 @@ def load_and_split_multimodal_pdf(
         
     chunks = split_documents(raw_docs, chunk_size=chunk_size, overlap_size=chunk_overlap)
     return chunks
+
+
+### [ 5. Markdown 변환 로더 (실험: PDF 구조(제목/표/리스트) 보존 후 청킹) ] ###
+## => PyPDFLoader/PyMuPDF의 순수 텍스트 추출은 헤더·표 구조가 사라져서,
+##    RecursiveCharacterTextSplitter가 서로 다른 주제를 한 청크에 섞어버리는 문제가 있었음
+##    (EXPERIMENTS.md 참고: chunk_size를 줄여도 특정 사실이 top-k 밖으로 밀리는 현상 확인).
+##    pymupdf4llm으로 헤더(#, ##, ###)를 보존한 Markdown으로 뽑고,
+##    MarkdownHeaderTextSplitter로 헤더 경계부터 먼저 나눈 뒤 chunk_size로 재분할하면
+##    한 청크 안에 여러 주제가 섞이는 걸 줄일 수 있음.
+def extract_markdown_text_from_pdf(pdf_path: str) -> List[Document]:
+    """PDF를 페이지 단위 Markdown(제목/표/리스트 구조 보존)으로 추출. pymupdf4llm 미설치 시 일반 텍스트로 폴백."""
+    filename = os.path.basename(pdf_path)
+
+    if not HAS_PYMUPDF4LLM:
+        return load_pdf(pdf_path)
+
+    try:
+        md_pages = pymupdf4llm.to_markdown(pdf_path, page_chunks=True)
+    except Exception as e:
+        print(f"[MarkdownLoader Warning] Could not process {filename} via pymupdf4llm, falling back: {e}")
+        return load_pdf(pdf_path)
+
+    docs = []
+    for p in md_pages:
+        text = (p.get("text") or "").strip()
+        if not text:
+            continue
+        page_number_1indexed = p.get("metadata", {}).get("page_number", 1)
+        docs.append(Document(
+            page_content=text,
+            metadata={
+                "source_file": filename,
+                "page": page_number_1indexed - 1,  ## => PyPDFLoader와 동일하게 0-indexed로 통일
+                "lang": detect_lang(text),
+            }
+        ))
+    return docs
+
+
+def load_all_markdown_pdfs(data_dir: str = DATA_DIR) -> List[Document]:
+    """data/ 폴더 내 모든 PDF를 Markdown 구조 보존 방식으로 로드."""
+    if not os.path.exists(data_dir):
+        raise FileNotFoundError(f"{data_dir} 안에 PDF가 없습니다")
+
+    pdf_files = sorted(glob.glob(os.path.join(data_dir, "*.pdf")))
+    print(f"[MarkdownLoader] {len(pdf_files)}개 PDF를 Markdown으로 변환 중...")
+    all_docs = []
+    for pdf_file in pdf_files:
+        all_docs.extend(extract_markdown_text_from_pdf(pdf_file))
+    print(f"[MarkdownLoader] 총 {len(all_docs)}페이지 추출 완료")
+    return all_docs
+
+
+def split_markdown_documents(pages: List[Document], chunk_size: int = CHUNK_SIZE, overlap_size: int = CHUNK_OVERLAP) -> List[Document]:
+    """Markdown 헤더 경계를 우선 존중해서 분할한 뒤, chunk_size 기준으로 재분할."""
+    headers_to_split_on = [("#", "h1"), ("##", "h2"), ("###", "h3"), ("####", "h4")]
+    header_splitter = MarkdownHeaderTextSplitter(headers_to_split_on=headers_to_split_on, strip_headers=False)
+    char_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=overlap_size,
+        separators=["\n\n", "\n", ". ", " ", ""],
+    )
+
+    all_chunks = []
+    for page in pages:
+        try:
+            sections = header_splitter.split_text(page.page_content)
+        except Exception:
+            sections = [Document(page_content=page.page_content, metadata={})]
+
+        for section in sections:
+            section.metadata = {**page.metadata, **section.metadata}  ## => source_file/page/lang + 헤더 정보(h1~h4) 함께 보존
+            all_chunks.extend(char_splitter.split_documents([section]))
+
+    for i, chunk in enumerate(all_chunks):
+        chunk.metadata["chunk_id"] = i
+    return all_chunks
+
+
+def load_and_split_markdown_pdf(
+    target_path_or_dir: Optional[str] = None,
+    chunk_size: int = CHUNK_SIZE,
+    chunk_overlap: int = CHUNK_OVERLAP,
+) -> List[Document]:
+    """data/ PDF를 Markdown 구조 보존 방식으로 로드하고 청킹."""
+    target = target_path_or_dir if target_path_or_dir else DATA_DIR
+
+    if os.path.isdir(target):
+        raw_docs = load_all_markdown_pdfs(target)
+    elif os.path.isfile(target):
+        raw_docs = extract_markdown_text_from_pdf(target)
+    else:
+        raise FileNotFoundError(f"Target path not found: {target}")
+
+    return split_markdown_documents(raw_docs, chunk_size=chunk_size, overlap_size=chunk_overlap)
 
 
 if __name__ == "__main__":

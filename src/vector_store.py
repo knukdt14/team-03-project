@@ -16,6 +16,7 @@ from langchain_core.documents import Document
 from langchain_community.vectorstores import Chroma
 from src.config import CHROMA_DB_DIR, LOCAL_EMBEDDING_MODEL, DEFAULT_TOP_K
 from src.multimodal_loader import load_and_split_multimodal_pdf
+from src.load_pdf import load_and_split_markdown_pdf
 
 # Import Local Hugging Face Embeddings
 try:
@@ -39,13 +40,14 @@ def get_embedding_function(model_name: str = LOCAL_EMBEDDING_MODEL):
 def build_or_load_vectorstore(
     persist_directory: str = CHROMA_DB_DIR,
     pdf_path: Optional[str] = None,
-    force_rebuild: bool = False
+    force_rebuild: bool = False,
+    loader: str = "multimodal",  ## => "multimodal"(기존, 이미지 개수 태그) | "markdown"(pymupdf4llm, 헤더/표 구조 보존)
 ) -> Chroma:
     """
     Builds or loads Chroma vector store for CATIA multimodal manual.
     """
     embeddings = get_embedding_function()
-    
+
     # Check if vectorstore exists
     if not force_rebuild and os.path.exists(persist_directory) and os.listdir(persist_directory):
         print(f"[VectorStore] Loading existing Chroma database from: {persist_directory}")
@@ -55,15 +57,18 @@ def build_or_load_vectorstore(
         )
         return vectorstore
 
-    print(f"[VectorStore] Building new Multimodal Chroma database at: {persist_directory}")
-    chunks = load_and_split_multimodal_pdf(pdf_path) if pdf_path else load_and_split_multimodal_pdf()
-    
+    print(f"[VectorStore] Building new Chroma database (loader={loader}) at: {persist_directory}")
+    if loader == "markdown":
+        chunks = load_and_split_markdown_pdf(pdf_path) if pdf_path else load_and_split_markdown_pdf()
+    else:
+        chunks = load_and_split_multimodal_pdf(pdf_path) if pdf_path else load_and_split_multimodal_pdf()
+
     vectorstore = Chroma.from_documents(
         documents=chunks,
         embedding=embeddings,
         persist_directory=persist_directory
     )
-    print(f"[VectorStore] Multimodal vector store successfully created and persisted.")
+    print(f"[VectorStore] Vector store successfully created and persisted ({len(chunks)} chunks).")
     return vectorstore
 
 

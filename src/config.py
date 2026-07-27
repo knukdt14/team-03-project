@@ -17,6 +17,7 @@ load_dotenv(PROJECT_ROOT / ".env")
 DATA_DIR = os.getenv("DATA_DIR", str(PROJECT_ROOT / "data"))  # Source PDF files folder
 VECT_DIR = os.getenv("VECT_DIR", str(PROJECT_ROOT / "vect"))  # Vector DB root folder
 CHROMA_DB_DIR = os.getenv("CHROMA_DB_DIR", str(PROJECT_ROOT / "vect" / "chroma_db_multimodal")) # Vector DB path
+CHROMA_DB_DIR_MARKDOWN = os.getenv("CHROMA_DB_DIR_MARKDOWN", str(PROJECT_ROOT / "vect" / "chroma_db_markdown"))  # PDF->Markdown 로더용 별도 Vector DB (기존과 나란히 비교하기 위해 분리)
 
 # Legacy alias compatibility
 DOCS_DIR = DATA_DIR
