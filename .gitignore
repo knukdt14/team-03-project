@@ -218,3 +218,11 @@ __marimo__/
 .streamlit/secrets.toml
 
 Claude.md
+
+# Vector store (생성물 - data/ PDF에서 재생성 가능, 44MB+ 바이너리라 커밋마다 diff 발생)
+vect/
+vecstore_cache/
+
+# 평가 실행 결과물 (재실행 시마다 바뀜 - 원본 질문셋인 eval/questions_template.csv는 유지)
+data/evaluation_results.csv
+eval/results*.csv
