@@ -1,0 +1,11 @@
+question,reference_answer,reference_sentence
+"솔리드 파트는 어떤 확장자로 저장되나요?","확장자는 .CATPart 입니다.","Parts are stored in files with the extension .CATPart."
+"어셈블리 정보는 어떤 확장자로 저장되나요?","확장자는 .CATProduct 입니다.","Assembly information is stored in a file with the extension .CATProduct."
+"도면은 어떤 확장자로 저장되나요?","확장자는 .CATDrawing 입니다.","Drawings are stored in files with the extension .CATDrawing"
+"스케치가 보라색으로 변하면 무엇을 의미하나요?","구속조건이 과다(overconstrained)하다는 의미입니다.","If the sketch goes purple while you are constraining it is overconstrained."
+"Boolean 연산을 사용하려면 무엇을 먼저 만들어야 하나요?","Insert -> New Body로 추가 Body를 생성해야 합니다.","Create additional Bodies by selecting the function Insert -> New Body"
+"CATIA가 지원하는 외부 형상 가져오기 포맷은 무엇인가요?","IGES, STEP AP203, DXF/DWG 등입니다.","CATIA provides import translators for many standard geometry formats including IGES, STEP AP203, DXF/ DWG"
+"어셈블리를 만드는 단계는 무엇인가요?","새 CATProduct 생성 -> Product Structure 도구로 구조 배치 -> 부품 삽입 -> Constraints로 관계 정의 순서입니다.","Steps for Creating an Assembly: Create a new CATProduct... Use the Product Structure tools... Insert Existing Component or Insert New Part... Use Constraints to capture the design relationships"
+"Generative Part Structural Analysis의 한계는 무엇인가요?","메시 제어가 매우 제한적이며 솔리드 형상에만 적용 가능합니다.","Generative Part Structural Analysis provides very limited mesh control, and can only be applied to solid geometry"
+"Knowledge Advisor는 무엇을 하는 데 쓰이나요?","파라미터를 생성하고 기존 파라미터 간의 관계(Formula)를 정의하는 데 사용됩니다.","Using Knowledge advisor you can create parameters and relationships relating to parts"
+"Assembly Design에서 사용되는 Constraints 종류는 무엇인가요?","Coincidence, Contact, Offset, Angular, Anchor, Fix Together 입니다.","Constraints Toolbar: Coincidence, Contact, Offset, Angular, Anchor, Fix Together"
