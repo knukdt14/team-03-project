@@ -5,11 +5,11 @@
 import os
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 
-## => data/는 프로젝트 루트에 있는데 실행은 src/ 기준이라, cwd와 무관하게 항상 <repo_root>/data를 가리키도록 절대경로로 계산
-_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+## => data/, eval/은 프로젝트 루트에 있는데 실행은 src/ 기준이라, cwd와 무관하게 항상 <repo_root>/...를 가리키도록 절대경로로 계산
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DEFAULT_CONFIG = {
-    "pdf_path": os.path.join(_PROJECT_ROOT, "data"),  ## => data/ 폴더에 CATIA 교육자료 PDF 여러 개를 넣어두면 전부 로드됨
+    "pdf_path": os.path.join(PROJECT_ROOT, "data"),  ## => data/ 폴더에 CATIA 교육자료 PDF 여러 개를 넣어두면 전부 로드됨
     "chunk_size": 500,                 ## => 글자 수 기준 (lab_07과 동일)
     "overlap_size": 100,               ## => lab_07 chunk_overlap=100과 동일
     "top_k": 4,

@@ -12,7 +12,7 @@ if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
 import argparse
 from dotenv import load_dotenv
 
-from config import DEFAULT_CONFIG, EXPERIMENT_PRESETS
+from config import DEFAULT_CONFIG, EXPERIMENT_PRESETS, PROJECT_ROOT
 from load_pdf import load_pdfs_from_folder, split_documents
 from build_vectorstore import get_embeddings, build_vectorstore, load_vectorstore
 from rag_chain import get_llm, build_rag_chain, build_direct_llm_chain
@@ -55,11 +55,11 @@ def run_pipeline(cfg: dict):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--preset", default="baseline", help="config.py EXPERIMENT_PRESETS 키")
-    parser.add_argument("--questions_csv", default="eval/questions_template.csv")
-    parser.add_argument("--output_csv", default="eval/results.csv")
+    parser.add_argument("--questions_csv", default=os.path.join(PROJECT_ROOT, "eval", "questions_template.csv"))
+    parser.add_argument("--output_csv", default=os.path.join(PROJECT_ROOT, "eval", "results.csv"))
     parser.add_argument("--mode", choices=["eval", "chat", "compare"], default="eval")
     parser.add_argument("--no_ragas", action="store_true", help="RAGAS 평가 건너뛰기 (LLM 호출 여러 번 추가되니 빠른 테스트땐 생략 가능)")
-    parser.add_argument("--compare_output_csv", default="eval/results_compare.csv")
+    parser.add_argument("--compare_output_csv", default=os.path.join(PROJECT_ROOT, "eval", "results_compare.csv"))
     args = parser.parse_args()
 
     cfg = EXPERIMENT_PRESETS.get(args.preset, DEFAULT_CONFIG)

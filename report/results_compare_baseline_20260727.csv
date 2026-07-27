@@ -1,0 +1,347 @@
+﻿question,reference_answer,reference_sentence,question_type,rag_answer,direct_llm_answer,retrieved_context,rag_response_time_sec,direct_response_time_sec,rag_bertscore_f1,direct_bertscore_f1,bertscore_f1_gap,rag_hallucination_flag,direct_hallucination_flag,reviewer_note
+솔리드 파트는 어떤 확장자로 저장되나요?,확장자는 .CATPart 입니다.,Parts are stored in files with the extension .CATPart.,general,문서에서 답을 찾을 수 없습니다.,"솔리드웍스(SolidWorks)에서 **솔리드 파트(Solid Part)** 파일은 일반적으로 **`.sldprt`** 확장자로 저장됩니다.  
+
+- **`.sldprt`**: 솔리드 파트 파일 (3D 모델링 데이터)  
+- **`.sldasm`**: 어셈블리 파일  
+- **`.slddrw`**: 도면 파일  
+
+다른 CAD 소프트웨어(예: CATIA, NX, Creo 등)는 각각 고유한 확장자를 사용하므로, 솔리드웍스 전용 포맷임을 유의하세요.  
+
+정확한 답변이 되었는지 확인 부탁드립니다! 😊","20
+<완성된 모습>
+3. Reference Elements (Extended) 기능 익히기
+■ Plane 활용하기 | 자동차기계공학과
+8
+Existing components 클릭
+Spec. Tree의 Product1 선택해야 함 | 자동차기계공학과
+5
+조립도
+ & 
+분해도 | 자동차기계공학과
+9
+조립도
+ & 
+분해도",1.309114694595337,1.5257160663604736,0.6793492436408997,0.6396872997283936,0.039661943912506104,,,
+어셈블리 정보는 어떤 확장자로 저장되나요?,확장자는 .CATProduct 입니다.,Assembly information is stored in a file with the extension .CATProduct.,general,문서에서 답을 찾을 수 없습니다.,"어셈블리 정보는 일반적으로 `.asm` 확장자로 저장됩니다. 그러나 특정 도구나 환경에 따라 `.s`(GNU 어셈블러), `.sasm`(일부 IDE), 또는 `.inc`(헤더/포함 파일) 등 다른 확장자가 사용될 수도 있습니다. 정확한 확장자는 사용하는 어셈블러 또는 플랫폼에 따라 달라질 수 있으므로, 특정 컨텍스트가 있다면 추가 정보가 필요합니다.  
+
+예를 들어:  
+- **MASM**(Microsoft Macro Assembler): `.asm`  
+- **GAS**(GNU Assembler): `.s`  
+- **FASM**(Flat Assembler): `.asm`  
+
+만약 특정 도구나 아키텍처를 언급한다면 더 정확한 답변을 드릴 수 있습니다.","Linked Documents further in this task.
+Defining DLNames also impacts the command | In our example, it provides the name of the entities to be updated, i.e:
+ ●      | the resources by discipline and application, associating resources to specific a | ❍     Sample data directory: This is the location where the reports you run will",1.1020569801330566,1.4393720626831055,0.6674383282661438,0.6267171502113342,0.04072117805480957,,,
+도면은 어떤 확장자로 저장되나요?,확장자는 .CATDrawing 입니다.,Drawings are stored in files with the extension .CATDrawing,general,문서에서 답을 찾을 수 없습니다.,"도면은 사용하는 소프트웨어나 분야에 따라 다양한 확장자로 저장될 수 있습니다. 대표적인 예시는 다음과 같습니다:  
+
+- **CAD 도면**: `.dwg` (AutoCAD), `.dxf` (도면 교환 형식)  
+- **3D 모델링**: `.stp` 또는 `.step` (STEP 파일), `.igs` (IGES), `.stl` (3D 프린팅)  
+- **건축/구조 도면**: `.rvt` (Revit), `.ifc` (Industry Foundation Classes)  
+- **기타**: `.pdf` (출판용 도면), `.svg` (벡터 그래픽)  
+
+정확한 확장자는 **사용하는 프로그램과 표준**에 따라 다르므로, 특정 도면의 형식을 알려주시면 더 자세히 안내해 드릴 수 있습니다.","If you select the Pad or the PartBody in the specification tree, the whole objec | 자동차기계공학과
+8
+Existing components 클릭
+Spec. Tree의 Product1 선택해야 함 | C. The Save All option saves all the open 
+documents that have been modified sin | the first ""DragObjectOntoObject"" 
+item with the automatic expand 
+activated:
+ Wh",0.4890766143798828,1.331493616104126,0.6717953681945801,0.6005759835243225,0.07121938467025757,,,
+스케치가 보라색으로 변하면 무엇을 의미하나요?,구속조건이 과다(overconstrained)하다는 의미입니다.,If the sketch goes purple while you are constraining it is overconstrained.,general,"문서에서 답을 찾을 수 없습니다.  
+
+주어진 문맥에서는 스케치 요소에 적용되는 두 가지 유형의 색상(그래픽 속성 및 제약 조건 진단)에 대해 설명하고 있지만, ""보라색""이 특정하게 의미하는 바는 언급되지 않았습니다. 또한, Draft Analysis에서 사용된 색상(녹색, 빨간색, 파란색)에 대한 설명만 제공되며, 보라색은 분석 결과에 포함되지 않습니다. 따라서 이 질문에 대한 답은 문맥에서 찾을 수 없습니다.","스케치가 보라색으로 변하는 것은 특정 소프트웨어나 컨텍스트에 따라 의미가 다를 수 있습니다. 일반적으로 알려진 몇 가지 가능성은 다음과 같습니다:  
+
+1. **피그마(Figma) 또는 디자인 툴**  
+   - 일부 디자인 툴에서 보라색 레이어/요소는 **잠금(locked) 상태**를 나타내거나, **심볼/컴포넌트의 마스터 요소**임을 표시할 수 있습니다.  
+   - 피그마에서는 보라색 테두리가 **인스턴스화된 컴포넌트**를 의미하기도 합니다.  
+
+2. **개발/디버깅 환경**  
+   - 코드 에디터나 디버깅 툴에서 보라색은 **특정 변수/오류의 상태**를 시각적으로 강조할 수 있습니다.  
+
+3. **사용자 정의 설정**  
+   - 팀이나 개인이 색상 규칙을 커스터마이징한 경우, 보라색이 **특정 작업 상태(예: 검토 필요, 보류)**를 의미할 수도 있습니다.  
+
+정확한 의미는 사용 중인 **툴의 공식 문서**나 **팀 내 규칙**을 확인하는 것이 가장 확실합니다.  
+(만약 특정 소프트웨어를 언급한다면 더 정확한 답변이 가능합니다.)",Two types of colors may be applied to sketched elements. These two types of colo | Two types of colors may be applied to sketched elements. These two types of colo | graphic symbol is modified. | 1. Yandaki gibi bir modeli analiz edelim. Draft Analysis komutuna tıklayalım ve ,0.8940517902374268,1.8483569622039795,0.6088728904724121,0.581169843673706,0.027703046798706055,,,
+Boolean 연산을 사용하려면 무엇을 먼저 만들어야 하나요?,Insert -> New Body로 추가 Body를 생성해야 합니다.,Create additional Bodies by selecting the function Insert -> New Body,general,"문서에서 답을 찾을 수 없습니다.  
+
+주어진 문맥에서는 Boolean 연산을 사용하기 위해 ""먼저 만들어야 하는 것""에 대한 구체적인 설명이 없습니다. 다만, Example 7-1 또는 Example 7-2와 같은 예제를 통해 Boolean Operations를 연습하거나 비교하는 방법이 언급되어 있을 뿐입니다. 따라서 명확한 답변을 제시할 수 없습니다.","Boolean 연산을 사용하려면 먼저 **Boolean 변수(논리 변수)** 또는 **Boolean 표현식(논리 표현식)**을 만들어야 합니다.  
+
+- **Boolean 변수**: `true` 또는 `false` 값을 저장하는 변수로, 프로그래밍 언어에서 `bool`(C/C++/C#), `boolean`(Java/JavaScript), `bool`(Python) 등의 타입으로 선언합니다.  
+  (예: `boolean isReady = true;`)  
+
+- **Boolean 표현식**: 비교 연산(`>`, `<`, `==` 등)이나 논리 연산(`&&`, `||`, `!` 등)을 통해 `true`/`false`를 반환하는 식입니다.  
+  (예: `if (x > 5 && y < 10)`에서 `x > 5 && y < 10`는 Boolean 표현식입니다.)  
+
+따라서 Boolean 연산을 수행하려면 **Boolean 값을 생성하거나 평가할 수 있는 조건**이 먼저 필요합니다.  
+
+만약 특정 프로그래밍 언어나 컨텍스트를 가정한다면 답변이 달라질 수 있습니다. 예를 들어, 디지털 논리 회로에서는 **논리 게이트(AND, OR, NOT 등)**를 구성해야 합니다.","30
+■ Boolean Operations (Assemble) 활용하기
+Example 7-2을 통해 Boolean Operations의 Asse | 21
+<완성된 모습>
+■ Add 활용하기
+4. Boolean Operation 이해 및 실습하기 | 34
+■ Boolean Operations 활용하기
+Example 7-1을 다시 불러와서 Example 7-2 Assemble과 어떻게 다른지  | 19
+■ Boolean Operations 활용하기
+Example 7-1을 통해 Boolean Operations 활용을 연습한다.
+( Exam",0.7932696342468262,1.9672322273254395,0.6493269801139832,0.5966119170188904,0.05271506309509277,,,
+CATIA가 지원하는 외부 형상 가져오기 포맷은 무엇인가요?,"IGES, STEP AP203, DXF/DWG 등입니다.","CATIA provides import translators for many standard geometry formats including IGES, STEP AP203, DXF/ DWG",general,"문서에서 답을 찾을 수 없습니다.  
+
+주어진 문맥에는 CATIA가 지원하는 외부 형상 가져오기 포맷에 대한 정보가 명시되어 있지 않습니다. 문맥은 주로 CATIA V5의 작업 환경 구성, 기본 기능, 특징 및 활용 분야에 대해 설명하고 있으나, 특정 파일 형식이나 호환성에 대한 내용은 포함되어 있지 않습니다.","CATIA는 다양한 외부 형상 가져오기 포맷을 지원합니다. 주요 포맷은 다음과 같습니다:  
+
+- **STEP (STEP-AP203, STEP-AP214, STEP-AP242)**  
+- **IGES (IGES v5.0, v5.2, v5.3)**  
+- **Parasolid (X_T, X_B)**  
+- **ACIS (SAT)**  
+- **Pro/ENGINEER (Granite, PRT)**  
+- **SolidWorks (SLDPRT, SLDASM)**  
+- **Autodesk Inventor (IPT, IAM)**  
+- **DXF/DWG (2D/3D 도면)**  
+- **STL (3D 프린팅용 메시 데이터)**  
+- **VRML (3D 시각화)**  
+- **JT (Siemens PLM Software의 경량 3D 포맷)**  
+
+버전 및 모듈에 따라 지원 범위가 다를 수 있으므로, 정확한 호환성은 공식 문서나 해당 CATIA 버전을 확인하는 것이 좋습니다.  
+
+만약 특정 버전이나 추가 포맷에 대한 정보가 필요하다면 알려주세요!","CATIA V5 Fundamentals | 5
+1. CATIA의 정의 및 프로그램 활용 | 3. CATIA 작업 환경 및 마우스 사용법
+13
+■ CATIA V5 작업창의 구성
+2. CATIA 작업 환경 및 마
+우스 사용법
+ 3
+2
+1
+ | ■ CATIA의 특징
+CATIA를 통합 CAD/CAM/CAE 솔루션이라 하는 것은 제품의 개념설계 부터 구조설계, 가공 및 생산관리까지,  
+전",1.3922417163848877,2.053870916366577,0.6376380920410156,0.651866614818573,-0.014228522777557373,,,
+어셈블리를 만드는 단계는 무엇인가요?,새 CATProduct 생성 -> Product Structure 도구로 구조 배치 -> 부품 삽입 -> Constraints로 관계 정의 순서입니다.,Steps for Creating an Assembly: Create a new CATProduct... Use the Product Structure tools... Insert Existing Component or Insert New Part... Use Constraints to capture the design relationships,general,"[답변]  
+어셈을 만드는 단계는 다음과 같습니다:  
+1. **File -> New -> Product**를 사용하여 새 CATProduct 생성  
+2. **Product Structure 도구**를 사용하여 주요 어셈블리 구조 배치  
+3. **Insert Existing Component** 또는 **Insert New Part**를 사용하여 어셈블리 내 형상 생성  
+4. **Constraints**를 사용하여 어셈블리 내 부품 간 설계 관계 정의  
+
+(문맥: *Steps for Creating an Assembly* 항목 참조)","어셈블리(Assembly)를 만드는 단계는 일반적으로 다음과 같은 과정을 포함합니다. 다만, 문맥에 따라 ""어셈블리""가 소프트웨어 빌드 과정(예: .NET 어셈블리) 또는 하드웨어 조립을 의미할 수 있으므로, 여기서는 **소프트웨어 개발에서의 어셈블리 생성**을 기준으로 설명합니다.
+
+### 1. **소스 코드 작성**  
+   - 프로그래밍 언어(예: C#, C++, Rust)로 코드를 작성합니다.  
+   - 예: `Main.cs` 또는 `kernel.asm`(저수준 언어) 파일 생성.
+
+### 2. **컴파일(Compile)**  
+   - 소스 코드를 **중간 표현(Intermediate Language, IL)** 또는 **기계어**로 변환합니다.  
+     - .NET: C# → CIL(Common Intermediate Language)로 컴파일.  
+     - 네이티브 코드: C++ → 어셈블리어 또는 직접 기계어로 변환.  
+   - 컴파일러(예: `csc`, `gcc`, `clang`)가 이 단계를 수행합니다.
+
+### 3. **어셈블링(Assembling, 저수준 언어인 경우)**  
+   - 어셈블리 언어(.asm 파일)를 기계어로 변환합니다.  
+   - 어셈블러(예: `nasm`, `masm`)를 사용합니다.  
+   - *참고: 고수준 언어에서는 이 단계가 생략될 수 있습니다.*
+
+### 4. **링킹(Linking)**  
+   - 객체 파일(.obj) 또는 라이브러리(.dll, .lib, .so)를 결합해 **실행 가능한 어셈블리**를 생성합니다.  
+   - 링커(예: `ld`, `link.exe`)가 심볼 참조를 해결하고 최종 바이너리를 만듭니다.  
+   - .NET에서는 **메타데이터**와 **매니페스트**가 포함된 PE(Portable Executable) 파일이 생성됩니다.
+
+### 5. **최적화 및 패키징(선택적)**  
+   - 코드 최적화(예: 인라인 확장, 불필요한 코드 제거).  
+   - 배포용 패키징(예: DLL, EXE, NuGet 패키지).
+
+### 6. **검증 및 테스트**  
+   - 생성된 어셈블리의 무결성 확인(예: `PEVerify` for .NET).  
+   - 런타임 테스트로 기능 검증.
+
+### 📌 주의 사항  
+- **하드웨어 어셈블리**와 혼동하지 마세요.  
+- .NET에서는 ""어셈블리""가 **모듈, 타입 정보, 매니페스트**를 포함한 논리적 단위입니다.  
+- 정확한 단계는 사용하는 도구체인(Toolchain)과 플랫폼에 따라 다를 수 있습니다.  
+
+모르는 부분이 있다면 구체적으로 질문해 주세요!","chamfers, holes, drafts, etc. to better fit the design and manufacturing intents | required:
+●     Product Structure
+●     Part Design | 자동차기계공학과
+4
+1
+. 
+Assembly Design Workbench 
+소개
+ 및
+ 이해하기
+■ Assembly Workbench 시작하기 | Lecture 2
+Steps for Creating an Assembly
+1. Create a new CATProduct using File -",1.106537103652954,3.804953098297119,0.709642231464386,0.5856317281723022,0.12401050329208374,,,
+Generative Part Structural Analysis의 한계는 무엇인가요?,메시 제어가 매우 제한적이며 솔리드 형상에만 적용 가능합니다.,"Generative Part Structural Analysis provides very limited mesh control, and can only be applied to solid geometry",specific,"Generative Part Structural Analysis의 한계는 다음과 같습니다:  
+1. **매우 제한된 메시 제어 기능**을 제공합니다.  
+2. **솔리드 형상에만 적용 가능**하며, 다른 유형의 기하학에는 사용할 수 없습니다.  
+3. 일반적으로 **구조 해석의 ""빠른 확인(quick check)""** 용도로만 사용되며, 복잡한 분석에는 적합하지 않을 수 있습니다.  
+
+(문서에서 명시된 내용을 기반으로 답변하였습니다.)","Generative Part Structural Analysis(GPSA)의 주요 한계는 다음과 같습니다:  
+
+1. **데이터 의존성**: 생성 모델의 성능은 학습 데이터의 품질과 다양성에 크게 의존합니다. 불완전하거나 편향된 데이터는 분석 결과의 신뢰성을 떨어뜨릴 수 있습니다.  
+
+2. **계산 비용**: 복잡한 3D 구조 생성 및 분석에는 높은 계산 자원이 필요하며, 실시간 적용이 어려울 수 있습니다.  
+
+3. **물리적 제약 반영의 어려움**: 생성된 구조가 실제 물리적 조건(강도, 재료 특성 등)을 완벽히 반영하지 못할 수 있어, 엔지니어링 적용 시 추가 검증이 필요합니다.  
+
+4. **해석 가능성 부족**: 생성 모델의 ""블랙박스"" 특성으로 인해, 특정 설계가 선택된 이유를 명확히 설명하기 어려울 수 있습니다.  
+
+5. **제한된 일반화 능력**: 훈련 데이터 범위를 벗어나는 새로운 설계 요구사항에 대해 최적의 구조를 생성하지 못할 수 있습니다.  
+
+6. **검증 프로세스 필요**: 생성된 구조는 반드시 실험적 또는 시뮬레이션 기반 검증을 거쳐야 하며, 이 과정에서 추가 시간과 비용이 발생합니다.  
+
+이 분야는 아직 발전 중이므로, 향후 연구를 통해 일부 한계가 개선될 수 있을 것으로 기대됩니다. 특정 적용 사례에 따라 추가적인 제약이 발생할 수도 있습니다.","Lecture 3
+Generative Part Structural Analysis
+• Generative Part Structural Analy | ! Geometry is stored in parts inside the 
+Component definitions
+! The Constraint | Lecture 3
+Generative Part Structural Analysis
+• Compute Toolbar
+! Specify Extern | Lecture 3
+Generative Part Structural Analysis
+• Mesh Specification Toolbar
+! Loc",0.9766085147857666,2.3014543056488037,0.7400293350219727,0.6442380547523499,0.0957912802696228,,,
+Knowledge Advisor는 무엇을 하는 데 쓰이나요?,파라미터를 생성하고 기존 파라미터 간의 관계(Formula)를 정의하는 데 사용됩니다.,Using Knowledge advisor you can create parameters and relationships relating to parts,specific,"Knowledge Advisor는 **Relations (formulas) 생성**에 사용되며, 이는 CATIA에서 지식 기반 설계 기능을 구현하는 데 활용됩니다. 구체적으로 다음과 같은 작업을 지원합니다:  
+- **관계식(formulas) 및 규칙 생성** (예: 설계 파라미터 간 제약 조건 정의)  
+- **측정값(measures) 사용 방법** (Knowledge Advisor 사용자 가이드 참조)  
+- **사용자 함수 생성 및 활용** (CATIA Application Architecture 문서 참조)  
+
+또한, **확장 언어 라이브러리 로드**를 통해 추가 패키지를 선택적으로 사용할 수 있습니다. 자세한 내용은 *CATIA Knowledge Advisor Users Guide Version 5* 또는 *Using Knowledgeware Capabilities* 문서를 참조해야 합니다.  
+
+(문서 내 명시된 내용을 기반으로 답변 구성)","Knowledge Advisor는 일반적으로 특정 분야의 전문 지식이나 정보를 제공하는 데 사용되는 시스템 또는 도구를 의미합니다. 주로 다음과 같은 목적으로 활용될 수 있습니다:  
+
+1. **지식 기반 지원**: 특정 주제(예: 기술, 의료, 법률 등)에 대한 정확한 정보를 제공하거나 문제 해결을 지원합니다.  
+2. **의사 결정 보조**: 데이터나 규칙을 기반으로 사용자에게 권장 사항이나 분석을 제시합니다.  
+3. **교육/훈련**: 학습자나 신입 직원에게 체계적인 지식을 전달하는 데 도움을 줍니다.  
+4. **고객 지원**: 챗봇이나 FAQ 시스템과 연동해 고객 문의에 효율적으로 대응합니다.  
+
+정확한 용도는 해당 시스템의 설계 목적과 적용 분야에 따라 달라질 수 있습니다. 특정 제품/서비스의 ""Knowledge Advisor""를 언급하신다면 추가 정보가 필요할 수 있습니다.  
+
+(참고: 일반적인 정의이며, 특정 상용 제품의 경우 공식 문서를 참조하는 것이 가장 정확합니다.)","Knowledgeware Toolbar
+  
+See Using Knowledgeware Capabilities
+See Using Knowledg | By default, this option is unchecked.
+ 
+Relations
+Relations (formulas) created u | functions to be used in formulas and rules.
+The Knowledge Advisor User's Guide p | Knowledge
+This task explains how to specify the options when working with Knowle",1.3610601425170898,1.4414513111114502,0.6411392092704773,0.5982701778411865,0.04286903142929077,,,
+Assembly Design에서 사용되는 Constraints 종류는 무엇인가요?,"Coincidence, Contact, Offset, Angular, Anchor, Fix Together 입니다.","Constraints Toolbar: Coincidence, Contact, Offset, Angular, Anchor, Fix Together",specific,"문맥에서 언급된 Assembly Constraints의 종류는 다음과 같습니다:  
+- **Rules** (규칙)  
+- **Symbols** (기호)  
+- **Tip** (팁)  
+- **Geometry** (기하학)  
+- **Customizing Constraints** (제약 조건 커스터마이징)  
+- **Selection** (선택)  
+- **V4 Interoperability** (V4 상호 운용성)  
+
+또한, 제약 조건 설정 시 사용되는 주요 작업 단계는 다음과 같이 설명됩니다:  
+1. 공간에서 한 구성요소를 고정합니다.  
+2. 컴패스로 구성요소를 드래그하여 대략적인 위치로 이동/회전합니다.  
+3. 적절한 제약 조건을 선택하여 구성요소를 정밀하게 위치시킵니다.  
+4. 어셈블리를 업데이트하여 결과를 제어합니다.  
+
+구체적인 제약 조건 유형(예: 고정, 접촉, 정렬 등)은 문맥에 명시되지 않았으나, 위 항목들이 제약 조건 관련 주요 분류로 제시되었습니다.  
+
+**답변**:  
+Assembly Design에서 사용되는 Constraints의 종류는 **Rules, Symbols, Tip, Geometry, Customizing Constraints, Selection, V4 Interoperability**입니다.","Assembly Design에서 사용되는 Constraints(구속 조건)의 주요 종류는 다음과 같습니다.  
+
+1. **고정 구속 (Fixed Constraint)**  
+   - 부품을 완전히 고정하여 모든 자유도를 제한합니다.  
+
+2. **접촉 구속 (Contact Constraint)**  
+   - 두 면이 서로 접촉하도록 제한합니다.  
+
+3. **일치 구속 (Coincident Constraint)**  
+   - 두 점, 선, 또는 면을 완전히 일치시킵니다.  
+
+4. **평행 구속 (Parallel Constraint)**  
+   - 두 면 또는 선을 평행하게 유지합니다.  
+
+5. **수직 구속 (Perpendicular Constraint)**  
+   - 두 선 또는 면을 수직으로 배치합니다.  
+
+6. **접선 구속 (Tangent Constraint)**  
+   - 두 곡면이 접하도록 제한합니다 (예: 구멍과 핀).  
+
+7. **거리/간격 구속 (Distance/Spacing Constraint)**  
+   - 두 요소 사이의 특정 거리를 유지합니다.  
+
+8. **각도 구속 (Angle Constraint)**  
+   - 두 요소 사이의 각도를 고정합니다.  
+
+9. **대칭 구속 (Symmetry Constraint)**  
+   - 한 요소를 다른 요소에 대해 대칭적으로 배치합니다.  
+
+10. **축 정렬 구속 (Align Constraint)**  
+    - 두 선 또는 축을 동일한 직선상에 배치합니다.  
+
+11. **제한 회전 구속 (Limit Angle Constraint)**  
+    - 회전 각도를 특정 범위로 제한합니다.  
+
+12. **제한 거리 구속 (Limit Distance Constraint)**  
+    - 이동 거리를 특정 범위로 제한합니다.  
+
+이 외에도 소프트웨어(예: SolidWorks, Autodesk Inventor, CATIA 등)에 따라 추가적인 구속 조건이 있을 수 있습니다. 정확한 종류는 사용하는 CAD 도구에 따라 다를 수 있으므로, 특정 소프트웨어를 언급하면 더 자세한 설명이 가능합니다.  
+
+만약 특정 CAD 프로그램을 기준으로 한 답변이 필요하다면 알려주세요!","About Assembly Constraints 
+This reference describes what you should know to cre | assembly constraints:
+1. Fix one component in space in the assembly. 
+2. With th | Managing Constraints
+ This section describes the notions and operating modes you | Analyzing Assembly Constraints
+ 
+This task shows you how to analyze the status o",1.9331676959991455,2.753328800201416,0.5815216302871704,0.5431576371192932,0.0383639931678772,,,
+CATIA 2026에 새로 추가된 'AI Auto-Surface Predict' 기능은 어떻게 사용하나요?,문서에서 답을 찾을 수 없습니다. (매뉴얼에 존재하지 않는 가상의 기능),"N/A - 가상의 트릭 질문, 매뉴얼에 근거 없음",trick,"문서에서 답을 찾을 수 없습니다.  
+
+제공된 문맥은 ""CATIA V5를 활용한 3D Modeling 기초""에 대한 반복적인 제목만 포함되어 있으며, 특정 버전(예: CATIA 2026)이나 'AI Auto-Surface Predict' 기능과 같은 최신 업데이트 정보는 언급되지 않았습니다. 따라서 해당 질문에 대한 답변은 문맥에서 찾을 수 없습니다.","현재(2024년 7월 기준) **CATIA 2026**은 출시되지 않았으며, 공식 발표 자료나 문서에서 'AI Auto-Surface Predict' 기능에 대한 정보도 확인되지 않습니다. 따라서 해당 기능의 존재 여부나 사용 방법을 알 수 없습니다.  
+
+CATIA의 AI 기반 신기능은 일반적으로 공식 릴리스 노트나 다쏘시스템(Dassault Systèmes)의 기술 문서에서 발표되므로, 향후 출시될 버전에 대한 정보는 공식 채널을 참고하시는 것이 정확합니다.  
+
+만약 다른 CATIA 기능이나 이전 버전의 AI 통합 도구(예: **Generative Design**, **3DMA**)에 대해 궁금한 점이 있다면 도움을 드릴 수 있습니다.","전산기계제도
+CATIA V5를 활용한
+3D Modeling 기초 | 전산기계제도
+CATIA V5를 활용한
+3D Modeling 기초 | 전산기계제도
+CATIA V5를 활용한
+3D Modeling 기초 | 전산기계제도
+CATIA V5를 활용한
+3D Modeling 기초",0.7936234474182129,1.2221603393554688,0.7263150811195374,0.6762067079544067,0.050108373165130615,,,
+AutoForm에서 '양자 시뮬레이션 모드(Quantum Simulation Mode)'를 켜는 단축키는 무엇인가요?,문서에서 답을 찾을 수 없습니다. (매뉴얼에 존재하지 않는 가상의 기능),"N/A - 가상의 트릭 질문, 매뉴얼에 근거 없음",trick,"문서에서 답을 찾을 수 없습니다.  
+
+주어진 문맥은 **CATIA V5**와 **AutoCAD**의 기능 및 활용 분야에 관한 내용이며, **AutoForm**이나 '양자 시뮬레이션 모드(Quantum Simulation Mode)'와 관련된 정보는 포함되어 있지 않습니다. 따라서 해당 질문에 대한 답변은 문맥에서 찾을 수 없습니다.","현재 공개된 AutoForm 소프트웨어 문서나 공식 자료에서 '양자 시뮬레이션 모드(Quantum Simulation Mode)'라는 기능이나 해당 단축키는 확인되지 않습니다. AutoForm은 주로 금속 성형 공정 시뮬레이션 및 설계 최적화 도구로 알려져 있으며, 양자 시뮬레이션과 관련된 기능은 일반적으로 제공되지 않습니다.  
+
+따라서 정확한 답변을 드리기 어렵습니다. 공식 AutoForm 매뉴얼이나 지원 팀에 문의하시는 것이 가장 확실한 방법입니다.  
+
+(참고: 혹시 다른 소프트웨어나 특정 버전의 기능을 혼동하셨을 가능성도 있습니다.)","CATIA V5를 활용한
+3D Modeling 기초
+전산기계제도 | allows you to move components within the assembly (animate). 
+Allows you to cont | 7
+2D (AutoCAD)
+2차원 XY 좌표계에서 모든 도형이 정의됨.
+도면을 그리기 위한 툴.
+빠른 2D작업이 가능하지만, 평면 가공만 가능함 | 3D모델링
+CATIA V5를 활용한
+3D Modeling 실습예제",0.7964503765106201,1.0859227180480957,0.7061768174171448,0.7043754458427429,0.0018013715744018555,,,
+CATIA의 'Neural Mesh Auto-Repair' 도구를 실행하는 메뉴 경로를 알려주세요.,문서에서 답을 찾을 수 없습니다. (매뉴얼에 존재하지 않는 가상의 기능),"N/A - 가상의 트릭 질문, 매뉴얼에 근거 없음",trick,"문서에서 답을 찾을 수 없습니다.  
+
+주어진 문맥에는 CATIA V5의 메뉴 및 도구바에 대한 일반적인 설명이 포함되어 있지만, 'Neural Mesh Auto-Repair' 도구와 관련된 구체적인 정보는 언급되지 않았습니다. 해당 도구의 실행 경로를 확인하려면 CATIA V5의 공식 도움말 또는 추가 자료를 참조해야 합니다.","CATIA V5에서 'Neural Mesh Auto-Repair' 도구의 정확한 메뉴 경로는 공식 문서나 최신 버전에서 명시적으로 확인되지 않습니다. 해당 기능은 특정 워크벤치(예: **3D Experience 플랫폼의 Generative Design 또는 Mesh Modeling**)에 통합되었을 수 있으나, CATIA V5의 전통적인 메뉴 구조에서는 일반적으로 제공되지 않습니다.  
+
+정확한 경로를 확인하려면 다음 방법을 권장합니다:  
+1. **CATIA 3D Experience 플랫폼**에서 **Mesh Modeling** 워크벤치를 연 후, **Tools** 또는 **Healing** 관련 메뉴를 탐색.  
+2. 공식 Dassault Systèmes 문서 또는 기술 지원팀에 문의.  
+
+현재 CATIA V5에서는 이 기능이 지원되지 않을 수 있으므로, 버전 및 워크벤치 확인이 필요합니다. 확실하지 않은 경우 **""모르겠습니다""**가 정확한 답변일 수 있습니다.","and/or access the tool.   
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+The following list of menus is not  | shown in Figure 2.16.  All you have to do is select the check 
+box and CATIA V5  | you can use this tool to turn it back on.  This is 
+covered in more detail later | 9번 : Command Tools Tool Bar(명령어 아이콘 툴바)
+- 현재 작업공간에 해당하는 명령어 아이콘 모음 툴바이다.
+10번 : A",0.8365480899810791,1.5448904037475586,0.736404299736023,0.6537044048309326,0.08269989490509033,,,
