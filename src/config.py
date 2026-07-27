@@ -5,8 +5,11 @@
 import os
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 
+## => data/는 프로젝트 루트에 있는데 실행은 src/ 기준이라, cwd와 무관하게 항상 <repo_root>/data를 가리키도록 절대경로로 계산
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 DEFAULT_CONFIG = {
-    "pdf_path": "data",                ## => data/ 폴더에 CATIA 교육자료 PDF 여러 개를 넣어두면 전부 로드됨
+    "pdf_path": os.path.join(_PROJECT_ROOT, "data"),  ## => data/ 폴더에 CATIA 교육자료 PDF 여러 개를 넣어두면 전부 로드됨
     "chunk_size": 500,                 ## => 글자 수 기준 (lab_07과 동일)
     "overlap_size": 100,               ## => lab_07 chunk_overlap=100과 동일
     "top_k": 4,
@@ -28,6 +31,7 @@ EXPERIMENT_PRESETS = {
     "mmr_search":     {**DEFAULT_CONFIG, "search_type": "mmr"},
     "cot_prompt":     {**DEFAULT_CONFIG, "prompt_style": "cot"},
     "kr_sbert_embed": {**DEFAULT_CONFIG, "embed_model": "snunlp/KR-SBERT-V40K-klueNLI-augSTS"},  ## => lab_04의 한국어 특화 임베딩과 비교
+    "bge_m3_embed":   {**DEFAULT_CONFIG, "embed_model": "BAAI/bge-m3"},  ## => README 실험 항목의 bge-m3 다국어 임베딩 (한국어 질문 -> 영어 매뉴얼 교차언어 검색에 강함)
     "openai_embed":   {**DEFAULT_CONFIG, "embed_provider": "openai", "embed_model": "text-embedding-3-small"},  ## => lab_06과 동일, OPENAI_API_KEY 필요
     "chroma_store":   {**DEFAULT_CONFIG, "vectorstore": "chroma"},
     "pinecone_store": {**DEFAULT_CONFIG, "vectorstore": "pinecone"},  ## => lab_07의 Pinecone 실습과 동일, PINECONE_API_KEY 필요

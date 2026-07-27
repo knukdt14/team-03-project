@@ -53,7 +53,8 @@ def split_documents(pages, chunk_size: int = 500, overlap_size: int = 100):
 
 
 if __name__ == "__main__":
-    pages = load_pdfs_from_folder("data")
+    from config import DEFAULT_CONFIG
+    pages = load_pdfs_from_folder(DEFAULT_CONFIG["pdf_path"])
     chunks = split_documents(pages)
     print(f"페이지 수: {len(pages)} / 청크 수: {len(chunks)}")
     ko_cnt = sum(1 for p in pages if p.metadata["lang"] == "ko")

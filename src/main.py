@@ -2,6 +2,13 @@
 import os
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 
+import sys
+## => Windows 콘솔 기본 인코딩(cp949)에서는 PDF/LLM 출력에 섞인 유니코드 특수문자(예: 프랑스어 매뉴얼의 ç)를
+##    print()할 때 UnicodeEncodeError로 죽는다. stdout/stderr를 UTF-8로 강제해 방지.
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 import argparse
 from dotenv import load_dotenv
 

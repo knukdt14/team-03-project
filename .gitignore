@@ -216,3 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# 프로젝트 산출물 (재생성 가능, 제출/커밋 대상 아님)
+vecstore_cache/
+eval/results*.csv
