@@ -17,7 +17,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 def main():
     print("==================================================")
     print("   CATIA Manual RAG & Procedure Verification      ")
-    print("       3-Way Model A/B Testing & Evaluation       ")
+    print("       BERTScore & RAGAS Evaluation Benchmark     ")
     print("==================================================")
     
     pipeline = RAGPipeline()
@@ -39,10 +39,19 @@ def main():
     strict_col = "Strict RAG F1" if "Strict RAG F1" in cols else ("RAG On BERTScore F1" if "RAG On BERTScore F1" in cols else cols[6])
     adaptive_col = "Adaptive Fallback F1" if "Adaptive Fallback F1" in cols else ("Adaptive Status F1" if "Adaptive Status F1" in cols else strict_col)
     
-    print(f" 1. Direct LLM (RAG Off) Average F1:         {df_results[direct_col].mean():.4f}")
-    print(f" 2. Strict RAG (Strict Manual Only) Average F1: {df_results[strict_col].mean():.4f}")
+    print(f" 1. Direct LLM (RAG Off) BERTScore F1:         {df_results[direct_col].mean():.4f}")
+    print(f" 2. Strict RAG (Strict Manual Only) BERTScore F1: {df_results[strict_col].mean():.4f}")
     if adaptive_col in cols:
-        print(f" 3. Adaptive Fallback RAG Average F1:         {df_results[adaptive_col].mean():.4f}")
+        print(f" 3. Adaptive Fallback RAG BERTScore F1:         {df_results[adaptive_col].mean():.4f}")
+        
+    if "ragas_faithfulness" in cols:
+        print("\n--------------------------------------------------")
+        print("            RAGAS METRICS SUMMARY                ")
+        print("--------------------------------------------------")
+        print(f" - Ragas Faithfulness:       {df_results['ragas_faithfulness'].mean():.4f}")
+        print(f" - Ragas Answer Relevancy:   {df_results['ragas_answer_relevancy'].mean():.4f}")
+        print(f" - Ragas Context Precision:  {df_results['ragas_context_precision'].mean():.4f}")
+        print(f" - Ragas Context Recall:     {df_results['ragas_context_recall'].mean():.4f}")
     print("--------------------------------------------------\n")
 
 
