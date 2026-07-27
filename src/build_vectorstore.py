@@ -11,7 +11,10 @@ from langchain_chroma import Chroma   ## => lab_06/07과 동일하게 standalone
 ### [ 2. 임베딩 모델 (실험 변수: embed_provider, embed_model) ] ###
 def get_embeddings(provider: str = "huggingface", model_name: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"):
     if provider == "huggingface":
-        return HuggingFaceEmbeddings(model_name=model_name)
+        ## => normalize_embeddings=True 필수: 정규화 안 하면 벡터 크기(norm)가 청크마다 제각각이라
+        ##    FAISS 기본 L2 거리 검색이 "의미"가 아니라 "벡터 길이" 위주로 순위를 매겨버려
+        ##    실제로 관련 있는 청크도 검색 결과에서 밀려남 (실행 검증 중 발견, EXPERIMENTS.md 참고)
+        return HuggingFaceEmbeddings(model_name=model_name, encode_kwargs={"normalize_embeddings": True})
     elif provider == "openai":
         return OpenAIEmbeddings(model=model_name)
     raise ValueError(f"알 수 없는 embed_provider: {provider}")
