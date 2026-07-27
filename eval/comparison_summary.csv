@@ -1,0 +1,2 @@
+﻿preset,bertscore_f1,response_time_sec,manual_reviewed_count,manual_hallucination_rate
+bge_m3_chroma_mmr_500_strict,0.7596890851855278,0.8685783207416534,0,
