@@ -75,6 +75,46 @@ def load_rag_pipeline(model_name: str, mode: str):
     return RAGPipeline(model_name=model_name, mode=mode)
 
 
+def render_chunk_images(doc):
+    """Renders the CAD 도면/스크린샷 images bound to this chunk's own paragraph (bbox 근접 매칭), if any."""
+    raw_paths = doc.metadata.get("image_paths", "")
+    if not raw_paths:
+        return
+    image_paths = [p for p in raw_paths.split(";") if p and os.path.exists(p)]
+    for path in image_paths:
+        ## => 리사이즈 불가능한 이미지 하나 때문에 전체 페이지가 죽지 않도록 개별 처리
+        try:
+            st.image(path, width=300)
+        except Exception:
+            continue
+
+
+def render_context_chunks(docs):
+    """Renders retrieved chunks grouped by (source_file, page) -- 문단 단위 청킹이라 같은 페이지에서
+    여러 청크가 뽑히는 경우가 흔해져서, 페이지 헤더를 중복 표시하지 않고 하나로 묶어서 보여줌."""
+    groups = []
+    group_index = {}
+    for doc in docs:
+        fname = doc.metadata.get('source_file', 'CATIA Manual')
+        page_num = doc.metadata.get('page', 0) + 1
+        key = (fname, page_num)
+        if key not in group_index:
+            group_index[key] = len(groups)
+            groups.append((fname, page_num, []))
+        groups[group_index[key]][2].append(doc)
+
+    for i, (fname, page_num, group_docs) in enumerate(groups):
+        label = f"📄 참고 문서 {i+1} : [{fname} - Page {page_num}]"
+        if len(group_docs) > 1:
+            label += f" ({len(group_docs)}개 문단 병합)"
+        with st.expander(label):
+            for j, doc in enumerate(group_docs):
+                if j > 0:
+                    st.divider()
+                st.text(doc.page_content)
+                render_chunk_images(doc)
+
+
 def main():
     st.markdown('<div class="main-header">🛠️ CATIA 멀티모달 RAG & 작업 절차 정합성 검증 시스템</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">오픈소스 소형 LLM(Qwen2.5) + 멀티모달 도면 파싱 기반 CATIA 전용 도움말 챗봇</div>', unsafe_allow_html=True)
@@ -186,11 +226,7 @@ def main():
                     st.markdown("### 📚 참고 문서 내용 (Context Chunks)")
                     st.markdown(f"**📌 참조 출처 문헌 및 페이지**: `{', '.join(res['source_pages'])}`")
                     
-                    for i, doc in enumerate(res["retrieved_docs"]):
-                        fname = doc.metadata.get('source_file', 'CATIA Manual')
-                        page_num = doc.metadata.get('page', 0) + 1
-                        with st.expander(f"📄 참고 문서 Chunk {i+1} : [{fname} - Page {page_num}]"):
-                            st.text(doc.page_content)
+                    render_context_chunks(res["retrieved_docs"])
 
                 elif "Strict RAG" in mode:
                     with st.spinner("멀티모달 매뉴얼 엄격 검색 및 답변 생성 중..."):
@@ -205,11 +241,7 @@ def main():
                     st.markdown("### 📚 참고 문서 내용 (Context Chunks)")
                     st.markdown(f"**📌 참조 출처 문헌 및 페이지**: `{', '.join(res['source_pages'])}`")
                     
-                    for i, doc in enumerate(res["retrieved_docs"]):
-                        fname = doc.metadata.get('source_file', 'CATIA Manual')
-                        page_num = doc.metadata.get('page', 0) + 1
-                        with st.expander(f"📄 참고 문서 Chunk {i+1} : [{fname} - Page {page_num}]"):
-                            st.text(doc.page_content)
+                    render_context_chunks(res["retrieved_docs"])
 
                 else:
                     with st.spinner("Direct LLM 답변 생성 중..."):
@@ -262,11 +294,7 @@ def main():
                 
                 st.markdown("### 📚 참고 문서 내용 (Context Chunks)")
                 st.markdown(f"**📌 참조 출처 문헌 및 페이지**: `{', '.join(proc_res['source_pages'])}`")
-                for i, doc in enumerate(proc_res["retrieved_docs"]):
-                    fname = doc.metadata.get('source_file', 'CATIA Manual')
-                    page_num = doc.metadata.get('page', 0) + 1
-                    with st.expander(f"📄 참고 문서 Chunk {i+1} : [{fname} - Page {page_num}]"):
-                        st.text(doc.page_content)
+                render_context_chunks(proc_res["retrieved_docs"])
 
     # TAB 3: A/B Testing Benchmark
     with tab3:
