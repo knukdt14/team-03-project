@@ -77,3 +77,15 @@ def build_rag_chain(vecStore, llmModel, top_k: int = 4, search_type: str = "simi
         | StrOutputParser()
     )
     return chain, retriever
+
+
+### [ 5. Direct LLM 체인 (RAG 미적용 비교군) ] ###
+## => 검색 없이 LLM 사전학습 지식만으로 답변. CATIA 매뉴얼이 이미 사전학습에 포함됐을 가능성이 높다는
+##    지적에 대응해, RAG 적용 전/후 답변 차이를 직접 대조하기 위한 비교군 체인
+DIRECT_LLM_PROMPT = "다음 질문에 답하세요. 확실히 모르면 모른다고 답하세요.\n[질문] {question}\n[답변]"
+
+
+def build_direct_llm_chain(llmModel):
+    prompt = ChatPromptTemplate.from_template(DIRECT_LLM_PROMPT)
+    chain = prompt | llmModel | StrOutputParser()
+    return chain

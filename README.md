@@ -114,6 +114,11 @@ team-03-project/
 - 다른 조합: `python main.py --preset large_chunk` / `kr_sbert_embed` / `chroma_store` / `openai_llm` 등
 - RAGAS 없이 빠르게: `python main.py --preset baseline --no_ragas`
 - 답변 직접 테스트: `python main.py --mode chat`
+- **RAG 적용 vs 미적용(Direct LLM) 비교**: `python main.py --mode compare --preset baseline`
+  - CATIA 매뉴얼이 LLM 사전학습에 이미 포함됐을 가능성이 높다는 지적에 대응하기 위한 비교 실험입니다.
+  - 같은 질문셋을 RAG 체인과 검색 없는 Direct LLM 체인에 동시에 흘려서 `eval/results_compare.csv`에 나란히 저장합니다.
+  - `eval/questions_template.csv`의 `question_type`이 `trick`인 질문(매뉴얼에 없는 가상 기능)에서 Direct LLM은 그럴듯하게 지어내지만 RAG는 "문서에서 답을 찾을 수 없습니다"라고 답하는지가 환각 저감의 핵심 증거입니다.
+  - 실험 결과와 문제 해결 과정은 [`EXPERIMENTS.md`](EXPERIMENTS.md)에 기록합니다.
 
 새 조합을 실험하려면 `config.py`의 `EXPERIMENT_PRESETS`에 딕셔너리 하나만 추가하면 됩니다.
 
