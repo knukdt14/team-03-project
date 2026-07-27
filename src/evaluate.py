@@ -106,3 +106,52 @@ def run_evaluation(chain, retriever, llm, embeddings, questions_csv: str,
         msg += f" / 평균 faithfulness: {eval_df['ragas_faithfulness'].mean():.4f}"
     print(msg)
     return eval_df
+
+
+### [ 7. RAG 적용 vs 미적용(Direct LLM) 비교 ] ###
+## => 교수님 피드백 대응: CATIA 매뉴얼이 LLM 사전학습에 이미 포함됐을 가능성이 높으므로,
+##    "RAG를 걸었을 때와 안 걸었을 때 답변이 실제로 달라지는가"를 같은 질문셋으로 직접 대조한다.
+##    question_type 컬럼(general/trick 등)이 있으면 유형별로도 집계한다.
+def run_comparison(rag_chain, direct_chain, retriever, questions_csv: str,
+                    output_csv: str = "eval/results_compare.csv"):
+    eval_df = load_eval_set(questions_csv)
+
+    rag_answers, direct_answers, contexts_preview = [], [], []
+    rag_times, direct_times = [], []
+    for question in eval_df["question"]:
+        t0 = time.time()
+        rag_answers.append(rag_chain.invoke(question))
+        rag_times.append(time.time() - t0)
+
+        t0 = time.time()
+        direct_answers.append(direct_chain.invoke(question))
+        direct_times.append(time.time() - t0)
+
+        docs = retriever.invoke(question)
+        contexts_preview.append(" | ".join(d.page_content[:80] for d in docs))
+
+    eval_df["rag_answer"] = rag_answers
+    eval_df["direct_llm_answer"] = direct_answers
+    eval_df["retrieved_context"] = contexts_preview
+    eval_df["rag_response_time_sec"] = rag_times
+    eval_df["direct_response_time_sec"] = direct_times
+
+    _, _, rag_f1 = bert_score(eval_df["rag_answer"].tolist(), eval_df["reference_answer"].tolist(), lang="ko")
+    _, _, direct_f1 = bert_score(eval_df["direct_llm_answer"].tolist(), eval_df["reference_answer"].tolist(), lang="ko")
+    eval_df["rag_bertscore_f1"] = rag_f1.tolist()
+    eval_df["direct_bertscore_f1"] = direct_f1.tolist()
+    eval_df["bertscore_f1_gap"] = eval_df["rag_bertscore_f1"] - eval_df["direct_bertscore_f1"]
+
+    ## => 팀원이 직접 눈으로 보고 O/X로 채우는 정성 비교 칸 (RAG가 실제로 더 정확했는지, 환각을 막았는지)
+    eval_df["rag_hallucination_flag"] = ""
+    eval_df["direct_hallucination_flag"] = ""
+    eval_df["reviewer_note"] = ""
+
+    eval_df.to_csv(output_csv, index=False, encoding="utf-8-sig")
+
+    print(f"RAG 평균 F1: {eval_df['rag_bertscore_f1'].mean():.4f} / Direct LLM 평균 F1: {eval_df['direct_bertscore_f1'].mean():.4f}")
+    print(f"평균 F1 격차(RAG - Direct): {eval_df['bertscore_f1_gap'].mean():.4f}")
+    if "question_type" in eval_df.columns:
+        print("\n[질문 유형별 평균 F1 격차]")
+        print(eval_df.groupby("question_type")["bertscore_f1_gap"].mean())
+    return eval_df

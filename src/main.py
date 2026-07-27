@@ -8,8 +8,8 @@ from dotenv import load_dotenv
 from config import DEFAULT_CONFIG, EXPERIMENT_PRESETS
 from load_pdf import load_pdfs_from_folder, split_documents
 from build_vectorstore import get_embeddings, build_vectorstore, load_vectorstore
-from rag_chain import get_llm, build_rag_chain
-from evaluate import run_evaluation
+from rag_chain import get_llm, build_rag_chain, build_direct_llm_chain
+from evaluate import run_evaluation, run_comparison
 
 load_dotenv()
 
@@ -50,8 +50,9 @@ if __name__ == "__main__":
     parser.add_argument("--preset", default="baseline", help="config.py EXPERIMENT_PRESETS 키")
     parser.add_argument("--questions_csv", default="eval/questions_template.csv")
     parser.add_argument("--output_csv", default="eval/results.csv")
-    parser.add_argument("--mode", choices=["eval", "chat"], default="eval")
+    parser.add_argument("--mode", choices=["eval", "chat", "compare"], default="eval")
     parser.add_argument("--no_ragas", action="store_true", help="RAGAS 평가 건너뛰기 (LLM 호출 여러 번 추가되니 빠른 테스트땐 생략 가능)")
+    parser.add_argument("--compare_output_csv", default="eval/results_compare.csv")
     args = parser.parse_args()
 
     cfg = EXPERIMENT_PRESETS.get(args.preset, DEFAULT_CONFIG)
@@ -60,6 +61,10 @@ if __name__ == "__main__":
     if args.mode == "eval":
         run_evaluation(chain, retriever, llmModel, embeddings, args.questions_csv,
                         args.output_csv, use_ragas=not args.no_ragas)
+    elif args.mode == "compare":
+        ## => RAG 적용 vs 미적용(Direct LLM) 대조 — 교수님이 요청한 "RAG 유무 정성적 차이" 근거 자료
+        direct_chain = build_direct_llm_chain(llmModel)
+        run_comparison(chain, direct_chain, retriever, args.questions_csv, args.compare_output_csv)
     else:
         print("질문 입력 (종료: exit)")
         while True:
