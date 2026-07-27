@@ -1,21 +1,35 @@
+# Core LangChain & Hugging Face Frameworks
 langchain
 langchain-community
+langchain-core
 langchain-text-splitters
 langchain-huggingface
 langchain-openai
 langchain-anthropic
 langchain-chroma
+
+# Open Source Models & Embeddings (Local Execution Stack)
+torch
+transformers
 sentence-transformers
-faiss-cpu
+huggingface_hub
+
+# PDF & Multimodal Layout Extractors
+PyMuPDF
 pypdf
+PyPDF2
+
+# Vector Store
+chromadb
+faiss-cpu
+
+# Evaluation Metrics & Datasets
 bert-score
 ragas
 datasets
+
+# Web Application & Data Utilities
+streamlit
 pandas
 python-dotenv
-huggingface_hub
 tqdm
-
-# Pinecone 프리셋(pinecone_store)을 쓸 때만 필요
-# langchain-pinecone
-# pinecone
