@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # team-03-project
 
 **KDT14기 3팀**
@@ -74,20 +73,22 @@ CATIA는 차체 부품 3D 설계, AutoForm은 판재 성형(프레스) 해석에
 - **응답 시간**
 - **Hallucination 발생 사례** — 매뉴얼에 없는 질문에 지어내는 비율
 - **정성 평가** — 절차 검증 피드백의 유용성 (팀원 직접 평가)
-=======
-# CATIA 교육자료 기반 RAG 질의응답 시스템 — Module 12 미니프로젝트 스타터
+
+---
+
+# 구현 스타터 — CATIA 교육자료 기반 RAG 파이프라인 (Module 12)
 
 CATIA 교육자료(영어·한글 혼합) PDF를 근거로 질문에 답하는 RAG 파이프라인입니다. LLM·임베딩·벡터스토어·청킹 파라미터·프롬프트를
 `config.py`에서 바꿔가며 실험하도록 구성했습니다 (요구사항의 비교 실험 항목과 1:1로 대응).
 
 ## 폴더 구조
 ```
-rag_qa_starter/
+team-03-project/
 ├── README.md
 ├── requirements.txt
 ├── .env.example
 ├── data/
-│   └── (CATIA 교육자료 PDF 수십 개, 영어·한글 혼합, 직접 추가)
+│   └── (CATIA 교육자료 PDF 수십 개, 영어·한글 혼합)
 ├── src/
 │   ├── config.py          실험 프리셋
 │   ├── load_pdf.py         PDF 로드(PyPDFLoader) + 청킹
@@ -142,4 +143,3 @@ rag_qa_starter/
 - 로컬 GPU(RTX 4070)로 Hugging Face 모델을 직접 돌리려면 `llm_provider: huggingface`로 설정하세요. 7~8B급 모델은 4-bit 양자화(`bitsandbytes`)를 쓰면 VRAM에 더 여유가 있습니다.
 - `pinecone_store` 프리셋을 쓰려면 `requirements.txt` 맨 아래 주석 처리된 `langchain-pinecone`/`pinecone`을 설치하고 `.env`에 `PINECONE_API_KEY`를 넣어야 합니다.
 - LangChain은 패키지 업데이트가 잦아 설치된 버전에 따라 일부 import 경로가 조금 다를 수 있습니다. 에러 나면 해당 함수명으로 최신 문서를 검색해서 경로만 맞춰주면 됩니다.
->>>>>>> 381fda1 (프로젝트 베이스라인)
