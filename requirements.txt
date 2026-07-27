@@ -15,6 +15,7 @@ pandas
 python-dotenv
 huggingface_hub
 tqdm
+streamlit
 
 # Pinecone 프리셋(pinecone_store)을 쓸 때만 필요
 # langchain-pinecone
