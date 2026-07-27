@@ -1,5 +1,6 @@
 ### [ 1. 라이브러리 임포트 ] ###
 import os
+import re
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 
 from langchain_core.prompts import ChatPromptTemplate
@@ -54,6 +55,30 @@ def format_docs(docs):
     return "\n\n".join(d.page_content for d in docs)
 
 
+_REFUSAL = "문서에서 답을 찾을 수 없습니다."
+_FINAL_ANSWER_PATTERN = re.compile(
+    r"(?:^|\n)\s*(?:\*\*)?\s*[\[\(]?\s*(?:최종\s*답변|final\s*answer|정답|답변)\s*[\]\)]?(?:\*\*)?\s*:?\s*(.+)",
+    flags=re.IGNORECASE | re.DOTALL,
+)
+
+
+def normalize_final_answer(text: str) -> str:
+    """Keep an explicitly marked final answer and normalize safe refusals.
+
+    The model occasionally emits draft analysis before a final response. This
+    postprocessor is intentionally conservative: it only extracts an explicit
+    final-answer section or collapses an answer that begins with the fixed
+    refusal sentence.
+    """
+    cleaned = str(text).strip()
+    matches = list(_FINAL_ANSWER_PATTERN.finditer(cleaned))
+    if matches:
+        cleaned = matches[-1].group(1).strip().lstrip("* \t\r\n")
+    if cleaned.startswith(_REFUSAL):
+        return _REFUSAL
+    return cleaned
+
+
 
 def build_reranker(model_name: str):
     """Load a multilingual cross-encoder for second-stage document reranking."""
@@ -93,10 +118,53 @@ def _rrf_merge(vector_docs, bm25_docs, top_k: int, rrf_k: int = 60):
     return [documents[key] for key in sorted(scores, key=scores.get, reverse=True)[:top_k]]
 
 
+def _rrf_merge_many(ranked_lists, top_k: int, rrf_k: int = 60):
+    """Fuse any number of ranked retrieval lists while removing duplicate chunks."""
+    scores, documents = {}, {}
+    for ranked_docs in ranked_lists:
+        for rank, doc in enumerate(ranked_docs, start=1):
+            key = _document_key(doc)
+            scores[key] = scores.get(key, 0.0) + 1.0 / (rrf_k + rank)
+            documents[key] = doc
+    return [documents[key] for key in sorted(scores, key=scores.get, reverse=True)[:top_k]]
+
+
+_KO_EN_QUERY_PHRASES = {
+    "솔리드 파트": "CATIA solid part file extension CATPart",
+    "파트 파일": "CATIA part file extension CATPart",
+    "어셈블리 정보": "CATIA assembly information file extension CATProduct",
+    "어셈블리를 만드는": "CATIA assembly creation steps CATProduct Product Structure Constraints",
+    "도면": "CATIA drawing file extension CATDrawing",
+    "보라색": "CATIA sketch purple over-constrained constraint",
+    "Boolean": "CATIA Boolean operation Insert New Body additional Body",
+    "외부 형상": "CATIA import geometry IGES STEP AP203 DXF DWG",
+    "구조 해석": "CATIA Generative Part Structural Analysis limited mesh control solid geometry",
+    "Knowledge Advisor": "CATIA Knowledge Advisor parameters formulas relations",
+    "Constraints": "CATIA Assembly Design Constraints Toolbar Coincidence Contact Offset Angular Anchor Fix Together",
+    "기존 컴포넌트": "CATIA insert existing component assembly",
+    "확장자": "CATIA file extension",
+}
+
+
+def build_catia_ko_en_query(question: str):
+    """Create a low-latency English retrieval expansion for common CATIA terms.
+
+    This intentionally uses a deterministic glossary instead of an extra LLM call,
+    so the retrieval experiment isolates cross-lingual search from generation cost.
+    """
+    if not any("가" <= char <= "힣" for char in question):
+        return None
+    phrases = [english for korean, english in _KO_EN_QUERY_PHRASES.items() if korean.lower() in question.lower()]
+    if not phrases:
+        return None
+    return " ".join(dict.fromkeys(phrases))
+
+
 def build_rag_chain(vecStore, llmModel, top_k: int = 4, search_type: str = "similarity",
                     prompt_style: str = "default", score_threshold=None, fetch_k=None,
                     retrieval_mode: str = "vector", bm25_retriever=None,
-                    reranker=None, candidate_k=None):
+                    reranker=None, candidate_k=None, query_expansion_mode: str = "none",
+                    answer_postprocess: str = "none"):
     """Build vector, lexical, or RRF-hybrid retrieval before answer generation."""
     retrieval_k = candidate_k if reranker is not None and candidate_k is not None else top_k
     search_kwargs = {"k": retrieval_k}
@@ -111,6 +179,16 @@ def build_rag_chain(vecStore, llmModel, top_k: int = 4, search_type: str = "simi
                 return []
         return vector_retriever.invoke(question)
 
+    def retrieve_vector_bilingual(question):
+        original_docs = retrieve_vector(question)
+        english_query = build_catia_ko_en_query(question)
+        if not english_query:
+            return original_docs
+        english_docs = retrieve_vector(english_query)
+        return _rrf_merge_many([original_docs, english_docs], top_k)
+
+    vector_lookup = retrieve_vector_bilingual if query_expansion_mode == "catia_ko_en" else retrieve_vector
+
     if retrieval_mode == "bm25":
         if bm25_retriever is None:
             raise ValueError("BM25 retrieval requires a BM25 retriever")
@@ -119,10 +197,10 @@ def build_rag_chain(vecStore, llmModel, top_k: int = 4, search_type: str = "simi
         if bm25_retriever is None:
             raise ValueError("Hybrid retrieval requires a BM25 retriever")
         retriever = RunnableLambda(
-            lambda question: _rrf_merge(retrieve_vector(question), bm25_retriever.invoke(question), top_k)
+            lambda question: _rrf_merge(vector_lookup(question), bm25_retriever.invoke(question), top_k)
         )
     else:
-        retriever = RunnableLambda(retrieve_vector) if score_threshold is not None else vector_retriever
+        retriever = RunnableLambda(vector_lookup) if score_threshold is not None or query_expansion_mode != "none" else vector_retriever
 
     if reranker is not None:
         first_stage_retriever = retriever
@@ -131,10 +209,13 @@ def build_rag_chain(vecStore, llmModel, top_k: int = 4, search_type: str = "simi
         )
 
     prompt = build_prompt(prompt_style)
+    output_parser = StrOutputParser()
+    if answer_postprocess == "final_answer_only":
+        output_parser = output_parser | RunnableLambda(normalize_final_answer)
     chain = (
         {"context": retriever | format_docs, "question": RunnablePassthrough()}
         | prompt
         | llmModel
-        | StrOutputParser()
+        | output_parser
     )
     return chain, retriever

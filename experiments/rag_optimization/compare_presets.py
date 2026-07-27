@@ -55,6 +55,14 @@ CURATED_PRESETS = [
 EMBEDDING_PRESETS = [
     "bge_m3_chroma_mmr_500_strict",
 ]
+
+QUERY_EXPANSION_PRESETS = [
+    "bge_m3_chroma_mmr_500_bilingual",
+]
+
+POSTPROCESS_PRESETS = [
+    "bge_m3_chroma_mmr_500_normalized",
+]
 def manual_review_metrics(eval_df):
     """Return review coverage and hallucination rate from O/X manual labels."""
     if "hallucination_flag" not in eval_df.columns:
@@ -132,8 +140,10 @@ if __name__ == "__main__":
     parser.add_argument("--reranker_only", action="store_true", help="run the multilingual reranker experiment only")
     parser.add_argument("--curated_only", action="store_true", help="run the PDF-verified curated corpus experiment only")
     parser.add_argument("--embedding_only", action="store_true", help="run the stronger multilingual embedding experiment only")
+    parser.add_argument("--query_expansion_only", action="store_true", help="run the Korean-English retrieval expansion experiment only")
+    parser.add_argument("--postprocess_only", action="store_true", help="run the answer-normalization experiment only")
     args = parser.parse_args()
-    presets = EMBEDDING_PRESETS if args.embedding_only else (CURATED_PRESETS if args.curated_only else (RERANKER_PRESETS if args.reranker_only else (HYBRID_PRESETS if args.hybrid_only else (RETRIEVAL_PRESETS if args.retrieval_only else (CANDIDATE_PRESETS if args.candidate_only else (IMPROVEMENT_PRESETS if args.improvement_only else PRESETS_TO_COMPARE))))))
+    presets = POSTPROCESS_PRESETS if args.postprocess_only else (QUERY_EXPANSION_PRESETS if args.query_expansion_only else (EMBEDDING_PRESETS if args.embedding_only else (CURATED_PRESETS if args.curated_only else (RERANKER_PRESETS if args.reranker_only else (HYBRID_PRESETS if args.hybrid_only else (RETRIEVAL_PRESETS if args.retrieval_only else (CANDIDATE_PRESETS if args.candidate_only else (IMPROVEMENT_PRESETS if args.improvement_only else PRESETS_TO_COMPARE))))))))
     if args.summarize_only:
         summarize_existing_results(presets)
     else:

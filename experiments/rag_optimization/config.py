@@ -19,6 +19,8 @@ DEFAULT_CONFIG = {
     "vectorstore": "faiss",            ## => faiss | chroma | pinecone
     "search_type": "similarity",       ## => similarity | mmr
     "fetch_k": None,                   ## => candidate pool size before MMR diversification
+    "query_expansion_mode": "none",   ## => none | catia_ko_en
+    "answer_postprocess": "none",     ## => none | final_answer_only
     "retrieval_mode": "vector",         ## => vector | bm25 | hybrid_rrf
     "bm25_k": 6,                         ## => number of lexical retrieval candidates
     "reranker_model": None,               ## => CrossEncoder model for second-stage reranking
@@ -66,6 +68,8 @@ EXPERIMENT_PRESETS = {
     "chroma_mmr_500_curated": {**DEFAULT_CONFIG, "corpus_tag": "curated_v1", "vectorstore": "chroma", "chunk_size": 500, "overlap_size": 100, "top_k": 6, "search_type": "mmr", "prompt_style": "grounded_strict_cite"},
     # Stronger multilingual embedding ablation; all retrieval settings remain fixed.
     "bge_m3_chroma_mmr_500_strict": {**DEFAULT_CONFIG, "vectorstore": "chroma", "chunk_size": 500, "overlap_size": 100, "top_k": 6, "search_type": "mmr", "embed_model": "BAAI/bge-m3", "prompt_style": "grounded_strict_cite", "ragas_metrics": ["faithfulness"], "ragas_max_workers": 1},
+    "bge_m3_chroma_mmr_500_bilingual": {**DEFAULT_CONFIG, "vectorstore": "chroma", "chunk_size": 500, "overlap_size": 100, "top_k": 6, "search_type": "mmr", "embed_model": "BAAI/bge-m3", "query_expansion_mode": "catia_ko_en", "prompt_style": "grounded_strict_cite", "ragas_metrics": ["faithfulness"], "ragas_max_workers": 1},
+    "bge_m3_chroma_mmr_500_normalized": {**DEFAULT_CONFIG, "vectorstore": "chroma", "chunk_size": 500, "overlap_size": 100, "top_k": 6, "search_type": "mmr", "embed_model": "BAAI/bge-m3", "answer_postprocess": "final_answer_only", "prompt_style": "grounded_strict_cite", "ragas_metrics": ["faithfulness"], "ragas_max_workers": 1},
     "pinecone_store": {**DEFAULT_CONFIG, "vectorstore": "pinecone"},  ## => lab_07의 Pinecone 실습과 동일, PINECONE_API_KEY 필요
     "openai_llm":     {**DEFAULT_CONFIG, "llm_provider": "openai", "llm_model": "gpt-5.4-nano"},  ## => lab_06/07과 동일, OPENAI_API_KEY 필요
     "claude_llm":     {**DEFAULT_CONFIG, "llm_provider": "anthropic", "llm_model": "claude-haiku-4-5-20251001"},  ## => ANTHROPIC_API_KEY 필요

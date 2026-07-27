@@ -1,0 +1,507 @@
+﻿question,reference_answer,reference_sentence,category,answerable,predicted_answer,retrieved_context,response_time_sec,bertscore_precision,bertscore_recall,bertscore_f1,ragas_faithfulness,hallucination_flag,reviewer_note
+솔리드 파트는 어떤 확장자로 저장되나요?,확장자는 .CATPart 입니다.,Parts are stored in files with the extension .CATPart.,manual_grounded,True,문서에서 답을 찾을 수 없습니다.,"Lecture 2
+Saving Assembly Information 
+• Assembly information is stored in a fil | CommonPartsPath 
+""path to directory"" CommonPartsPath= 
+""/myaccount/jtparts/"" 
+ch | Isolated Mock-Up Solids (SolidM) means that they do not have any history, any sp | Enter the full path of the folder that will contain the list of available 
+secti | to avoid losing data.
+Incremental Warm Start Principles
+All open documents are s | be processed.  The following types are available: 
+""POI"",""CUR"",”SKI”,""SOL"",”ISO”",0.7498764991760254,0.6620190143585205,0.6976110935211182,0.6793491840362549,0.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+어셈블리 정보는 어떤 확장자로 저장되나요?,확장자는 .CATProduct 입니다.,Assembly information is stored in a file with the extension .CATProduct.,manual_grounded,True,"어셈블리 정보는 .CATProduct 확장자로 저장됩니다.  
+출처: Lecture 2","Lecture 2
+Saving Assembly Information 
+• Assembly information is stored in a fil | ●     When opening assembly documents in visualization mode, the Status Unknown  | another (for instance, from ENOVIA VPM to ENOVIA V5)
+●     Entreprise Process-li | CSIDL Values in Environment Variable Paths
+The values: 
+ C:\Documents and Settin | Each configuration is saved in a .xml file and contains all the necessary MPK di | Library
+them=WORKBENCH:time=Wed May 22 11.33.24 2002:elps=40.000000:rtim=40.0000",0.8988001346588135,0.7605338096618652,0.8459311127662659,0.8009626865386963,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+도면은 어떤 확장자로 저장되나요?,확장자는 .CATDrawing 입니다.,Drawings are stored in files with the extension .CATDrawing,manual_grounded,True,문서에서 답을 찾을 수 없습니다.,"The default location is C:\temp for Windows and /tmp for Unix.
+-p or --path 
+Con | 자동차기계공학과
+CATIA 파일 확장자
+ CATPart : Part 파일
+ CATProduct : Assembly 파일
+6
+1
+. 
+Asse | ●     Details: dimensions are turned into details. This is an halfway notion bet | The Search order list is intended to contain the directories in which your linke | according to the conversion table. In the PROJECT File path, you refer to the di | files.
+ 
+●     Associative Mode
+❍     Output Path : you can customize the Output",0.47750306129455566,0.667225182056427,0.676428496837616,0.6717953085899353,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+스케치가 보라색으로 변하면 무엇을 의미하나요?,구속조건이 과다(overconstrained)하다는 의미입니다.,If the sketch goes purple while you are constraining it is overconstrained.,manual_grounded,True,"스케치를 구속하는 중 보라색으로 변하면 over-constrained(과구속) 상태입니다.  
+출처: CATIA V5 Lectures.pdf, 20페이지.","graphic symbol is modified. | Lecture 1
+Sketching Tips
+• To edit an existing sketch ensure that you select the | # CATIA 핵심 사실 보강 문서
+
+이 문서는 제공된 CATIA 교육 PDF의 검색 실패 사례를 보강하기 위해, 원문에 직접 확인된 핵심 사실 | appropriate fields. 
+Click Close when you are done. 
+ 
+The level of detail appli | Do not mistake the active component for the selected component:
+❍     The active | 195
+Geometri oluşturulurken No Keep Mode komutu aktif yapılırsa No Show 
+bölgesi",0.6066412925720215,0.6563012599945068,0.7401205897331238,0.6956952810287476,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Boolean 연산을 사용하려면 무엇을 먼저 만들어야 하나요?,Insert -> New Body로 추가 Body를 생성해야 합니다.,Create additional Bodies by selecting the function Insert -> New Body,manual_grounded,True,"Boolean 연산을 사용하려면 먼저 새로운 Body를 추가해야 합니다.  
+출처: CATIA V5 Lectures.pdf, 32페이지.","Lecture 2
+Using Boolean Operations | 자동차기계공학과
+10
+3
+.
+ Boolean
+ Operation 
+이해
+ 및
+ 실습하기
+■ Boolean Operation 이란?
+ 지금까지  | ## 추가 Body와 Boolean 연산
+추가 Body는 Insert -> New Body 기능으로 생성합니다.
+Boolean operation | 20
+■ Add 활용하기
+: Body.2 와 Body.3를 Add한다
+Body.2를 Define In Work Object로 설정한다.
+Defi | 자동차기계공학과
+27
+■ Assemble 활용하기(Case 2)
+( Example(1) Click )
+ Example(1)을 다시 불러와서 E | If you check this option, you must set the voxel size. The value entered is the ",0.7148604393005371,0.6657799482345581,0.750815749168396,0.7057455778121948,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+CATIA가 지원하는 외부 형상 가져오기 포맷은 무엇인가요?,"IGES, STEP AP203, DXF/DWG 등입니다.","CATIA provides import translators for many standard geometry formats including IGES, STEP AP203, DXF/ DWG",manual_grounded,True,"CATIA는 IGES, STEP AP203, DXF/DWG 등을 포함한 많은 표준 형상 포맷의 가져오기 번역기를 제공합니다.  
+출처: Importing Geometry from External Systems Lecture 4","Importing Geometry from External 
+Systems
+Lecture 4
+• CATIA provides import tran | CATIA V5 Fundamentals | These declaration parameters are no longer supported in Version 5 and there is n | ■ CATIA의 정의
+CATIA 란 (Computer-graphic Aided Tree-Dimensional Interactive Applica | User Guide CATIA V5 - JT 
+ 
+© 2025 Theorem Solutions. All Rights Reserved 
+ 
+ 
+T | locate these files. 
+By default, the assemblies and their components 
+are loaded",0.7816343307495117,0.7083215713500977,0.8735331296920776,0.7822998762130737,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+어셈블리를 만드는 단계는 무엇인가요?,새 CATProduct 생성 -> Product Structure 도구로 구조 배치 -> 부품 삽입 -> Constraints로 관계 정의 순서입니다.,Steps for Creating an Assembly: Create a new CATProduct... Use the Product Structure tools... Insert Existing Component or Insert New Part... Use Constraints to capture the design relationships,manual_grounded,True,"어셈블리를 만드는 단계는 다음과 같습니다:  
+1. File -> New -> Product를 사용하여 새 CATProduct 생성  
+2. Product Structure 도구로 주요 어셈블리 구조 배치  
+3. Insert Existing Component 또는 Insert New Part를 사용하여 어셈블리 내 형상 생성  
+4. Constraints를 사용하여 어셈블리 내 부품 간 설계 관계 정의  
+출처: Lecture 2","Lecture 2
+Steps for Creating an Assembly
+1. Create a new CATProduct using File - | Getting Started
+ If in Sketcher and Part Design you generated parts, now will le | CATIA V5 Fundamentals
+STUDENT GUIDE
+Copyright DASSAULT SYSTEMES 311
+Master Proje | operation.
+Digital Mock-Up (DMU) Navigator inspection capabilities can also be u | 5. In the Name field, enter a new name for the group of components you want to c | 1. 
+Click the Symmetry icon 
+  to move LeftDoor.
+The Assembly Symmetry Wizard di",0.8509743213653564,0.6768016219139099,0.7956187129020691,0.7314162254333496,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Generative Part Structural Analysis의 한계는 무엇인가요?,메시 제어가 매우 제한적이며 솔리드 형상에만 적용 가능합니다.,"Generative Part Structural Analysis provides very limited mesh control, and can only be applied to solid geometry",manual_grounded,True,"Generative Part Structural Analysis는 매우 제한된 메시 제어를 제공하며, 솔리드 기하에만 적용할 수 있습니다. 또한 일반적으로 구조 해석에 대한 ""빠른 확인""으로 사용됩니다.  
+출처: Lecture 3","Lecture 3
+Generative Part Structural Analysis
+• Generative Part Structural Analy | ●     Define the Automatic Scale Factor, that is the scale to be used when the g | elements (such as dittos, surfaces, etc.) in V4 .model documents. 
+However, the  | After applying the Reuse Pattern command to the screw, generated instances are c | GSD features do not reconnect if, for example, you replace constrained parts. Wh | In DMU Optimizer, it is impossible to generate various alternate shapes with the",0.6386690139770508,0.7305314540863037,0.8442330360412598,0.7832775115966797,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Knowledge Advisor는 무엇을 하는 데 쓰이나요?,파라미터를 생성하고 기존 파라미터 간의 관계(Formula)를 정의하는 데 사용됩니다.,Using Knowledge advisor you can create parameters and relationships relating to parts,manual_grounded,True,"Knowledge Advisor는 파트에 대한 파라미터와 관계를 생성하는 데 사용됩니다.  
+출처: [문서] Lecture 3","Lecture 3
+Parameters and Formulas
+• CATIA V5 contains a group of applications th | Knowledgeware Toolbar
+  
+See Using Knowledgeware Capabilities
+See Using Knowledg | By default, this option is unchecked.
+ 
+Relations
+Relations (formulas) created u | Analysis Manager 
+All the objects making up an analysis document. 
+ 
+  
+Links Ma | Language
+This task explains how to specify the options you may need to check whe | Parameter 
+information If checked, the generated report will contain information",0.6828603744506836,0.7139183282852173,0.7674888372421265,0.739734947681427,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Assembly Design에서 사용되는 Constraints 종류는 무엇인가요?,"Coincidence, Contact, Offset, Angular, Anchor, Fix Together 입니다.","Constraints Toolbar: Coincidence, Contact, Offset, Angular, Anchor, Fix Together",manual_grounded,True,"Assembly Design에서 사용되는 Constraints 종류는 Coincidence와 Contact constraint입니다.  
+출처: Assembly Design.pdf, 3페이지 및 14페이지.","## Constraints
+Constraints Toolbar에는 Assembly constraints 기능이 있으며, Coincidence와  | General  
+This task will show you how to customize Assembly Design constraints s | ❍     You can paste one or several components always with the assembly constrain | 자동차기계공학과
+16
+1
+. 
+Assembly Design Workbench 
+소개
+ 및
+ 이해하기
+■ Assembly Workbench Too | Managing Constraints
+ This section describes the notions and operating modes you | CATIA V5 Fundamentals
+STUDENT GUIDE
+Copyright DASSAULT SYSTEMES 27
+Constraints s",0.6490941047668457,0.6394122838973999,0.7034283876419067,0.6698944568634033,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+What is the file extension for a solid part?,확장자는 .CATPart 입니다.,Parts are stored in files with the extension .CATPart.,manual_grounded,True,문서에서 답을 찾을 수 없습니다.,"Lecture 3
+Solid – Surface Integration
+• The Part Design Application 
+provides a  | obtain an exact Solid.
+Launching the ""As PartBody"" migration mode:
+1.  On NT, en | file should be the most stable. In this 
+case, the Stand sub-assembly is the 
+be | button, then give a name and the appropriate extension to your file.
+For more in | an assembly which affects more than one 
+component of the assembly. 
+Assembly: A | therefore advised to customize your graphic properties before you open the docum",0.5170164108276367,0.6620190143585205,0.6976110935211182,0.6793491840362549,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Which extension stores assembly information?,확장자는 .CATProduct 입니다.,Assembly information is stored in a file with the extension .CATProduct.,manual_grounded,True,"Assembly information is stored in a file with the extension .CATProduct.  
+출처: Lecture 2","Lecture 2
+Saving Assembly Information 
+• Assembly information is stored in a fil | Looking closer at the specification tree, you can notice that the nodes are not  | The window that appears displays the components. | button, then give a name and the appropriate extension to your file.
+For more in | parts included in assemblies. For more about designing parts in assembly context | The assembly hole inherits the specifications as displayed in the Part Design Ho",0.48668694496154785,0.6838980913162231,0.7582024335861206,0.7191359400749207,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Which extension is used for CATIA drawings?,확장자는 .CATDrawing 입니다.,Drawings are stored in files with the extension .CATDrawing,manual_grounded,True,"CATDrawing 확장자는 도면(Drawing)에 사용됩니다.  
+출처:  
+
+Drawing 문서는 '.CATPart' 확장자를 가집니다.  
+문서에서 답을 찾을 수 없습니다.  
+
+(※ 실제 답변: 문서 내 ""Drawing: A document which contains the geometrical information and specifications in form of 2D views. It has the extension as ‘.CATPart’.""라는 내용과 ""## 파일 확장자"" 섹션의 ""Drawing: .CATDrawing""이 상충되어 명확한 답변 불가. 따라서 ""문서에서 답을 찾을 수 없습니다.""가 정확함.)  
+
+문서에서 답을 찾을 수 없습니다.","11
+2. CATIA 프로그램 작동방법 및 확장자 이해하기
+■ CATIA V5 File 의 확장자
+▶ CATPart ………….... Part … | # CATIA 핵심 사실 보강 문서
+
+이 문서는 제공된 CATIA 교육 PDF의 검색 실패 사례를 보강하기 위해, 원문에 직접 확인된 핵심 사실 | (exact geometry and parameters) of all the 
+components in an assembly are loaded | you can add notes and annotations to it using Text 
+Toolbar. 
+You can create dim | User Guide CATIA V5 - JT 
+ 
+© 2025 Theorem Solutions. All Rights Reserved 
+ 
+Pic | - Stability issue: PRJ has to be referenced correctly, else CATIA may crash
+-  P",1.0986785888671875,0.5705122351646423,0.7619403004646301,0.6524754166603088,0.2857142857142857,O,Contradictory drawing answer includes the incorrect CATPart extension.
+What does a purple sketch indicate?,구속조건이 과다(overconstrained)하다는 의미입니다.,If the sketch goes purple while you are constraining it is overconstrained.,manual_grounded,True,"If the sketch goes purple while you are constraining it is over-constrained.  
+출처: [문서] Lecture 1 Sketching Tips","Lecture 1
+Sketching Tips
+• To edit an existing sketch ensure that you select the | . 
+ You can notice that the little wheel to the left corner of the chain icon ha | Clicking the Thread Definition tab lets you access to the options defining threa | CATIA V5 Fundamentals
+STUDENT GUIDE
+Copyright DASSAULT SYSTEMES 55
+Create the Pa | The window that appears displays the components. | Contact & Clearance Result: specifies the graphics representation for contacts a",0.615039587020874,0.5911162495613098,0.6108490824699402,0.6008207201957703,0.5,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Which command creates an additional Body before Boolean operations?,Insert -> New Body로 추가 Body를 생성해야 합니다.,Create additional Bodies by selecting the function Insert -> New Body,manual_grounded,True,"Insert -> New Body 명령어가 추가 Body를 생성합니다.  
+출처: CATIA V5 Lectures.pdf, 32페이지.","자동차기계공학과
+10
+3
+.
+ Boolean
+ Operation 
+이해
+ 및
+ 실습하기
+■ Boolean Operation 이란?
+ 지금까지  | Lecture 2
+Using Boolean Operations
+• To use the traditional Boolean operations a | 20
+■ Add 활용하기
+: Body.2 와 Body.3를 Add한다
+Body.2를 Define In Work Object로 설정한다.
+Defi | ## 추가 Body와 Boolean 연산
+추가 Body는 Insert -> New Body 기능으로 생성합니다.
+Boolean operation | Lecture 2
+Using Boolean Operations | 31
+■ Tip
+: Example 7-1과 Example 7-2의 차이점.
+Example 7-1
+ Example 7-2
+4. Boolean Op",0.7506430149078369,0.7421984672546387,0.900747537612915,0.8138228058815002,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Name standard geometry formats CATIA can import.,"IGES, STEP AP203, DXF/DWG 등입니다.","CATIA provides import translators for many standard geometry formats including IGES, STEP AP203, DXF/ DWG",manual_grounded,True,"CATIA는 IGES, STEP AP203, DXF/DWG를 포함한 많은 표준 기하학 형식을 가져올 수 있습니다.  
+출처: 문서","Importing Geometry from External 
+Systems
+Lecture 4
+• CATIA provides import tran | 5.  The ""Use system TrueType fonts in CATIA"" option enable you to use TrueType f | User Guide CATIA V5 - JT 
+ 
+© 2025 Theorem Solutions. All Rights Reserved 
+NameR | Mock-Up Solids can be converted (as Result) into CATIA V5 as CGR or as PartBody. | 5
+1. CATIA의 정의 및 프로그램 활용 | General 
+Output 
+Satellites 
+Stickers 
+Customizing For Real Time Rendering 2 
+Di",1.1586763858795166,0.7512108087539673,0.8885451555252075,0.8141268491744995,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Which tool captures relationships in an assembly?,새 CATProduct 생성 -> Product Structure 도구로 구조 배치 -> 부품 삽입 -> Constraints로 관계 정의 순서입니다.,Steps for Creating an Assembly: Create a new CATProduct... Use the Product Structure tools... Insert Existing Component or Insert New Part... Use Constraints to capture the design relationships,manual_grounded,True,"The tool that captures relationships in an assembly is the one used to define geometrical or dimensional relationships between the features of a model by fixing their positions with respect to one another.  
+출처: geometrical or dimensional relationships between the features of a model by fixing their positions with respect to one another.","an assembly which affects more than one 
+component of the assembly. 
+Assembly: A | The window that appears displays the components. | Analysis Connection Manager 
+ 
+Analysis Connections All the connections that you | geometrical or dimensional relationships 
+between the features of a model by fix | applied this tool will compute the actual (mean) 
+dimensions of the entity being | CATIA V5 Fundamentals
+STUDENT GUIDE
+Copyright DASSAULT SYSTEMES 288
+Master Proje",0.6843931674957275,0.544880747795105,0.5771300792694092,0.5605419278144836,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+What mesh-control limitation does Generative Part Structural Analysis have?,메시 제어가 매우 제한적이며 솔리드 형상에만 적용 가능합니다.,"Generative Part Structural Analysis provides very limited mesh control, and can only be applied to solid geometry",manual_grounded,True,"Generative Part Structural Analysis provides very limited mesh control, and can only be applied to solid geometry. 출처: Lecture 3","Lecture 3
+Generative Part Structural Analysis
+• Generative Part Structural Analy | After applying the Reuse Pattern command to the screw, generated instances are c | in How to use Gap Healing will help you to understand the results. 
+Curvature Im | ●     Generally speaking, all commands requiring the selection of geometry are n | please refer to Generative Shape Design User's Guide.
+ 
+Customizing Constraints | GSD features do not reconnect if, for example, you replace constrained parts. Wh",0.5449461936950684,0.631269097328186,0.6409068703651428,0.6360514760017395,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+What can Knowledge Advisor create and relate?,파라미터를 생성하고 기존 파라미터 간의 관계(Formula)를 정의하는 데 사용됩니다.,Using Knowledge advisor you can create parameters and relationships relating to parts,manual_grounded,True,"Knowledge Advisor를 사용하여 파트에 대한 파라미터와 관계를 생성할 수 있습니다.  
+출처: [문서] Lecture 3 Parameters and Formulas 섹션  
+• Using Knowledge advisor you can create parameters and relationships relating to parts","Lecture 3
+Parameters and Formulas
+• CATIA V5 contains a group of applications th | By default, this option is unchecked.
+ 
+Relations
+Relations (formulas) created u | Creating and Storing a Knowledgeware Relation
+Useful Tips
+1059
+Page 
+Infrastruct | Report Generation Tab
+ 
+This task explains how to customize the reports generate | 5.  Checking the different options available in the Elements frame.
+ You can dis | Before V5R12, Knowledge relations (formulas, rules, checks, design tables, and s",0.6584827899932861,0.6352012157440186,0.7447094321250916,0.6856100559234619,0.8,X,Grounded answer or safe refusal; no unsupported factual claim found.
+List constraints in the Assembly Design toolbar.,"Coincidence, Contact, Offset, Angular, Anchor, Fix Together 입니다.","Constraints Toolbar: Coincidence, Contact, Offset, Angular, Anchor, Fix Together",manual_grounded,True,"Constraints Toolbar에는 Assembly constraints 기능이 있으며, Coincidence와 Contact constraint를 사용할 수 있습니다.  
+출처: Assembly Design.pdf, 3페이지 및 14페이지.","## Constraints
+Constraints Toolbar에는 Assembly constraints 기능이 있으며, Coincidence와  | Constraints  
+This task will show you how to customize Assembly Design constrain | shortcut 
+  
+  
+specification tree 
+  
+standard part 
+  
+sub-assembly 
+  
+sub-to | Publication in the Assembly Design documentation.
+●     Use published geometry o | 8.  Select the Product Infrastructure sub-category.
+ Two tabs also interfere wit | The command Analyze -> Constraints. displays the status of constraints defined f",0.5882565975189209,0.6192183494567871,0.6942843198776245,0.6546063423156738,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+How is a part file saved?,확장자는 .CATPart 입니다.,Parts are stored in files with the extension .CATPart.,manual_grounded,True,"A part file is saved with a .CATPart extension to distinguish it from other CATIA documents. 출처: When a part is saved, it is saved with a .CATPart extension to distinguish it from other CATIA documents.","CATIA V5 Fundamentals
+STUDENT GUIDE
+Copyright DASSAULT SYSTEMES 24
+When creating | file, if it exists, is inserted from the cache system.
+Using a cache system cons | It is composed of these sections:
+ Bill of Material: lists all parts and sub-pro | file should be the most stable. In this 
+case, the Stand sub-assembly is the 
+be | to avoid losing data.
+Incremental Warm Start Principles
+All open documents are s | the corresponding radio button.
+Note: when saving sections in VRML 97 format, ma",1.0557796955108643,0.5777140855789185,0.6569645404815674,0.6147958636283875,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+What new file is created to start an assembly?,확장자는 .CATProduct 입니다.,Assembly information is stored in a file with the extension .CATProduct.,manual_grounded,True,"Product1은 문서에서 언급된 대로 어셈블리 생성을 위한 기본 구성 요소로 표시되지만, 질문에 대한 직접적인 답변은 문서에 없습니다.  
+문서에서 답을 찾을 수 없습니다.  
+
+출처: Creating an Assembly Document (Product1이 사양 트리에 표시된다는 언급은 있으나, 새로운 파일 생성에 대한 명시적 답변 없음)  
+
+※ 참고: 질문(""What new file is created to start an assembly?"")에 대해 문서 내 명시된 파일명(예: TowHook.CATProduct 등)은 ""Creating the Assembly"" 섹션의 7단계 이후 생성 절차에 해당하지만, 이는 특정 사례(TowHook)에 한정되며 일반적인 새 어셈블리 파일 생성 과정을 묻는 질문에는 해당되지 않습니다. 따라서 정확한 답은 문서 부재입니다.","Creating an Assembly Document
+This task will show you how to enter the Assembly  | CATIA V5 Fundamentals
+STUDENT GUIDE
+Copyright DASSAULT SYSTEMES 311
+Master Proje | file should be the most stable. In this 
+case, the Stand sub-assembly is the 
+be | CATIA V5 Fundamentals
+STUDENT GUIDE
+Copyright DASSAULT SYSTEMES 245
+Assemblies c | Replacing Components in the Assembly
+7.  Replace, for example, the BODY1 in the  | ❍     Axis_Step3.CATPart
+❍     Support.CATPart
+❍     Liner_Step3.CATPart
+Creatin",1.8579316139221191,0.5727250576019287,0.768785834312439,0.6564283967018127,0.9,X,Grounded answer or safe refusal; no unsupported factual claim found.
+What is the drawing file extension?,확장자는 .CATDrawing 입니다.,Drawings are stored in files with the extension .CATDrawing,manual_grounded,True,"Following Strict Instructions:**  
+Drawing: A document which contains the geometrical information and specifications in form of 2D views. It has the extension as ‘.CATPart’.  
+출처:","(exact geometry and parameters) of all the 
+components in an assembly are loaded | 13.  From the Window menu, access the generated .CATDrawing file. Right-click CA | (whose path is mentioned above)
+If the standard file is not valid, it cannot be  | Indicate the catalog path and name where the drawing 2D details are stored.
+ By  | ●     Style
+●     Generative view style
+●     Dress-up
+Drawing management 
+ 
+Pre | Export
+ 
+Exported Sheets
+1.  Check the required option to export either all shee",2.602940082550049,0.5918410420417786,0.6851071119308472,0.6350680589675903,0.5,O,States CATPart as the drawing extension despite CATDrawing evidence.
+What does overconstrained sketch color mean?,구속조건이 과다(overconstrained)하다는 의미입니다.,If the sketch goes purple while you are constraining it is overconstrained.,manual_grounded,True,"과구속된 스케치는 보라색으로 표시됩니다.  
+출처: CATIA V5 Lectures.pdf, 20페이지.","Two types of colors may be applied to sketched elements. These two types of colo | Lecture 1
+Sketching Tips
+• To edit an existing sketch ensure that you select the | sketches can be used only with the Thick option.
+The length of a pad or pocket c | 3주차
+■ 3주차 Sketcher
+1. Constraint Tool bar Icon 및 Constraint Colors 이해하기
+2. Const | # CATIA 핵심 사실 보강 문서
+
+이 문서는 제공된 CATIA 교육 PDF의 검색 실패 사례를 보강하기 위해, 원문에 직접 확인된 핵심 사실 | the Enhanced Scene is to overload the modified attributes. 
+●     Attributes in ",0.603306770324707,0.6146451234817505,0.6332476139068604,0.6238077282905579,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Where do you create a New Body?,Insert -> New Body로 추가 Body를 생성해야 합니다.,Create additional Bodies by selecting the function Insert -> New Body,manual_grounded,True,"New Body is created by selecting the function Insert -> New Body.  
+출처: Lecture 2 Using Boolean Operations","separate body by selecting the 
+features, and selecting Insert In 
+New.. from th | Using the Specification Tree with 
+Wireframe and Surface
+Lecture 3
+• Wireframe a | Lecture 2
+Using Boolean Operations
+• To use the traditional Boolean operations a | 2.  Select Tools->Generate CATPart from Product... menu.
+ The Generate CATPart f | 110
+Sketch ortamından çıkıldığında Sections kısmında UserSection1 ile Sweep için | Creating an Assembly Document
+This task will show you how to enter the Assembly ",0.5174238681793213,0.6843985319137573,0.7217652797698975,0.7025854587554932,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+What are IGES and STEP AP203 used for?,"IGES, STEP AP203, DXF/DWG 등입니다.","CATIA provides import translators for many standard geometry formats including IGES, STEP AP203, DXF/ DWG",manual_grounded,True,"IGES 3D and STEP AP203 are used for exporting data in specific formats. IGES 3D is used for customizing IGES settings, and STEP AP203 is a format for saving data from a CATPart or CATProduct document.  
+출처: [문서]","●     It is possible to enter a user value for Deformation,
+●     This option ma | from the STEP file is then corrected so that it remains comprised between 10E-2  | Tree Manipulation 
+Navigation 
+Performance 
+Visualization 
+Thickness & Font 
+Vis | Customizing IGES 3D Settings
+ 
+This task shows you how to customize IGES setting | 44
+3. Smoothing kısmında None seçili ise izdüşüm eğrisi üzerinde yumuşatma yapma | With the IDEAS Plug-In license, you obtain:
+●     IDEAS (indirect mode only)
+❍  ",0.790147066116333,0.6467598676681519,0.7022324800491333,0.6733556389808655,1.0,O,Claims IGES/STEP are for exporting instead of the evaluated import use.
+How are existing components inserted into an assembly?,새 CATProduct 생성 -> Product Structure 도구로 구조 배치 -> 부품 삽입 -> Constraints로 관계 정의 순서입니다.,Steps for Creating an Assembly: Create a new CATProduct... Use the Product Structure tools... Insert Existing Component or Insert New Part... Use Constraints to capture the design relationships,manual_grounded,True,기존 구성 요소를 어셈블리에 삽입하려면 사양 트리에서 Product1을 선택한 후 제품 구조 도구 툴바의 기존 구성 요소 아이콘을 클릭하고 파일 선택 대화 상자에서 Sub_Product1.CATProduct를 선택한 후 열기를 클릭합니다. 이렇게 하면 사양 트리에 새 구성 요소가 추가되고 어셈블리에 포함됩니다(출처: 문서).,"Inserting an Existing Component
+ 
+This task shows you how to insert an existing  | Inserting an Existing Component with 
+Positioning
+This task will show you how to | CATIA V5 Fundamentals
+STUDENT GUIDE
+Copyright DASSAULT SYSTEMES 247
+While workin | The window that appears displays the components. | 9. Click OK to confirm.
+10. Update the assembly: now the 
+component remains at i | assembly constraints:
+1. Fix one component in space in the assembly. 
+2. With th",0.822697639465332,0.6438751220703125,0.6974656581878662,0.6695998311042786,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Can Structural Analysis apply to surface geometry?,메시 제어가 매우 제한적이며 솔리드 형상에만 적용 가능합니다.,"Generative Part Structural Analysis provides very limited mesh control, and can only be applied to solid geometry",manual_grounded,True,"Structural Analysis can only be applied to solid geometry, as Generative Part Structural Analysis is limited to solid geometry.  
+출처: [문서] Lecture 3","Lecture 3
+Generative Part Structural Analysis
+• Generative Part Structural Analy | Structural Analysis workbench or the Advanced Meshing Tools workbench.
+Before de | and Curve Smooth.
+For the Sweep and Multi-Sections Surface commands, only the De | Lecture 3
+Creating Surface Geometry
+• Surfaces are usually created 
+using a wire | mesh elements and using OCTREE methods. 
+ 
+  Properties 
+Any specification appli | 174
+Draft analizi ile bir modelin belirtilen yönde kalıptan rahatlıkla çıkıp çık",0.5055704116821289,0.5865249633789062,0.6074002981185913,0.5967801213264465,0.5,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Which feature defines parameter relationships?,파라미터를 생성하고 기존 파라미터 간의 관계(Formula)를 정의하는 데 사용됩니다.,Using Knowledge advisor you can create parameters and relationships relating to parts,manual_grounded,True,"Formulas are equations that relate one parameter to another and ensure that the design intent is maintained. Formulas are stored under the Relations branch of the specification tree.  
+출처: [문서]","●     Relations based on parameters: These relations can be synchronous or 
+asyn | geometrical or dimensional relationships 
+between the features of a model by fix | ●     The parameter definition and links are as follows:
+❍     This case is appl | Lecture 3
+Knowledge Advisor Example
+• This relations branch shows two formulas:
+ | By default, this option is deactivated.
+Specification Tree
+Show parameters
+This  | CATIA V5 Fundamentals
+STUDENT GUIDE
+Copyright DASSAULT SYSTEMES 185
+All features",0.6208720207214355,0.6160562634468079,0.6198065280914307,0.617925763130188,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Which toolbar contains Coincidence and Contact?,"Coincidence, Contact, Offset, Angular, Anchor, Fix Together 입니다.","Constraints Toolbar: Coincidence, Contact, Offset, Angular, Anchor, Fix Together",manual_grounded,True,"Constraints Toolbar에 Coincidence와 Contact constraint가 있습니다.  
+출처: Assembly Design.pdf, 3페이지 및 14페이지.","## Constraints
+Constraints Toolbar에는 Assembly constraints 기능이 있으며, Coincidence와  | 15
+3. Operation Tool bar의 Project 3D Element 활용하기
+■ Operation Tool bar
+■ Interse | 1. Click the Clash 
+  icon.
+The Check Clash dialog box appears.
+ 
+The default in | The dialog box contains the following tabs:
+●     Start Menu: customizes the Sta | The window that appears displays the components. | 6.  Select the red circular face in the direction opposite to the published face",0.5663676261901855,0.648171067237854,0.7194725275039673,0.6819632053375244,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+What is the current CATIA V5 license price?,문서에서 답을 찾을 수 없습니다.,,out_of_scope,False,문서에서 답을 찾을 수 없습니다.,"CATIA V5 Fundamentals | 2
+CADEM DIJITAL CATIA V5 Kitabı
+CADEM DIJITAL CAD/CAM Destek Merkezi A.Ş.’nin se | CATIA V5 Fundamentals
+STUDENT GUIDE
+Copyright DASSAULT SYSTEMES 3
+CATIA V5 Funda | There is a toggle in Tools>Options that allows CATIA V5 to update automatically. | User Guide CATIA V5 - JT 
+ 
+© 2025 Theorem Solutions. All Rights Reserved 
+ 
+Pic | Copyrighted 
+Material 
+ 
+Copyrighted 
+Material 
+ 
+Copyrighted 
+Material 
+ 
+Copyr",0.6381738185882568,1.0,1.0,1.0,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Which CAD product should I buy?,문서에서 답을 찾을 수 없습니다.,,out_of_scope,False,문서에서 답을 찾을 수 없습니다.,"User Guide CATIA V5 - JT 
+ 
+© 2025 Theorem Solutions. All Rights Reserved 
+Theor | ❍     Indirect : use of CAD license (available for DELMIA product line only).
+❍  | 7
+2D (AutoCAD)
+2차원 XY 좌표계에서 모든 도형이 정의됨.
+도면을 그리기 위한 툴.
+빠른 2D작업이 가능하지만, 평면 가공만 가능함 | the following types:
+●     .CATDrawing
+●     .CATProcess
+●     .CATAnalysis
+Prio | employer. Are you ready to get certified and affirm the knowledge, skills, and e | Models with representations used for performing computer-aided engineering analy",0.4907364845275879,1.0,1.0,1.0,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+What PC specification is required to install CATIA?,문서에서 답을 찾을 수 없습니다.,,out_of_scope,False,문서에서 답을 찾을 수 없습니다.,"Lecture 1
+CATIA Overview
+• CATIA v5 is an Integrated Computer Aided 
+Engineering | CATIA V5 Fundamentals | Selecting Yes to continue will allow the installation to continue. 
+ 
+ 
+ 
+Runnin | On Windows
+1. Change to the default folder in which you installed the product. 
+ | User Interface Style
+●     CATIA - P1: sets the P1 user interface style, and is  | Conventions 
+ 
+Release of CATIA V5  
+To indicate a release of CATIA V5 the notat",0.5855636596679688,1.0,1.0,1.0,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+What is the course fee and schedule?,문서에서 답을 찾을 수 없습니다.,,out_of_scope,False,문서에서 답을 찾을 수 없습니다.,"Course Schedule
+• Lecture 1
+• Introduction
+• Software Overview
+• Part Design and | 3
+실습 2
+https://youtu.be/WT oNfDjbxMA | CATIA V5 Fundamentals
+STUDENT GUIDE
+Copyright DASSAULT SYSTEMES 3
+CATIA V5 Funda | Degree of Freedom Available None
+ Dependencies Available None
+ Mechanical Struct | 3주차 예제 1 | toolbar have already been covered.  Every lesson refers back to this tool to som",0.36807775497436523,1.0,1.0,1.0,0.5,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Who is the author of this manual?,문서에서 답을 찾을 수 없습니다.,,out_of_scope,False,문서에서 답을 찾을 수 없습니다.,"AIRBUS INDUSTRIE AM2120
+Manual
+Issue: A Date: Jan 2001 Page 1 of 23
+CATIA V5 ENV | 2
+CADEM DIJITAL CATIA V5 Kitabı
+CADEM DIJITAL CAD/CAM Destek Merkezi A.Ş.’nin se | CATIA V5 Fundamentals
+STUDENT GUIDE
+Copyright DASSAULT SYSTEMES 240
+Do It Yourse | Your everyday companion!
+Companion is an essential tool which allows you to cont | lessons.  The Specification Tree is a very powerful tool, but you must know how  | Creating and Storing a Knowledgeware Relation
+In the scenario described below, w",1.223869800567627,1.0,1.0,1.0,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+List the ten most-used CATIA shortcuts.,문서에서 답을 찾을 수 없습니다.,,out_of_scope,False,문서에서 답을 찾을 수 없습니다.,"5
+1. CATIA의 정의 및 프로그램 활용 | manner as other Windows applications. Traditional 
+menus provide access to all t | you want to be used for the quick key.  Figure 2.43 shows that the quick key for | 9번 : Command Tools Tool Bar(명령어 아이콘 툴바)
+- 현재 작업공간에 해당하는 명령어 아이콘 모음 툴바이다.
+10번 : A | Lecture 1
+CATIA User Interface
+Menu Bar
+View Toolbar
+Application 
+Tool BarFile T | CATIA V5 Fundamentals
+STUDENT GUIDE
+Copyright DASSAULT SYSTEMES 91
+Exercise Reca",0.5860283374786377,1.0,1.0,1.0,0.5,X,Grounded answer or safe refusal; no unsupported factual claim found.
+How can CATIA files be perfectly converted to SolidWorks?,문서에서 답을 찾을 수 없습니다.,,out_of_scope,False,문서에서 답을 찾을 수 없습니다.,"for the Geometry as if you had exploded all the Dittos in CATIA V4 and then migr | Isolated Mock-Up Solids (SolidM) means that they do not have any history, any sp | CATIA V5 Fundamentals | # CATIA 핵심 사실 보강 문서
+
+이 문서는 제공된 CATIA 교육 PDF의 검색 실패 사례를 보강하기 위해, 원문에 직접 확인된 핵심 사실 | ■ CATIA의 정의
+CATIA 란 (Computer-graphic Aided Tree-Dimensional Interactive Applica | Creating and Storing a Knowledgeware Relation
+In the scenario described below, w",0.5443873405456543,1.0,1.0,1.0,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+When will the next CATIA V5 release happen?,문서에서 답을 찾을 수 없습니다.,,out_of_scope,False,문서에서 답을 찾을 수 없습니다.,"CATIA V5 Fundamentals | There is a toggle in Tools>Options that allows CATIA V5 to update automatically. | Conventions 
+ 
+Release of CATIA V5  
+To indicate a release of CATIA V5 the notat | into CATIA V5. If this check-box is selected, only the visible data will be sent | V4 / V5 SPACE 
+You can customize given options when using interoperability from  | Lecture 1
+CATIA Overview
+• CATIA v5 is an Integrated Computer Aided 
+Engineering",0.870309591293335,1.0,1.0,1.0,1.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Recommend the best graphics card for CAD work.,문서에서 답을 찾을 수 없습니다.,,out_of_scope,False,문서에서 답을 찾을 수 없습니다.,"Real Time Rendering User's Guide.
+To be able to use this advanced material, you  | graphic symbol is modified. | 7
+2D (AutoCAD)
+2차원 XY 좌표계에서 모든 도형이 정의됨.
+도면을 그리기 위한 툴.
+빠른 2D작업이 가능하지만, 평면 가공만 가능함 | This is the best method for material removal simulation. 
+However, this is not s | them=WORKBENCH:time=Wed May 22 11.33.16 2002:elps=3866.000000:rtim=100.000000:cp | employer. Are you ready to get certified and affirm the knowledge, skills, and e",0.5709495544433594,1.0,1.0,1.0,0.0,X,Grounded answer or safe refusal; no unsupported factual claim found.
+Write a macro for a feature not described in this manual.,문서에서 답을 찾을 수 없습니다.,,out_of_scope,False,문서에서 답을 찾을 수 없습니다.,"created as separate features.
+Using the techniques discussed so far, create the  | Recording, Running and editing Macros in the Infrastructure User's Guide.
+ 
+Here | graphic symbol is modified. | Example of non-formatted traces:
+WORKBENCH:Wed May 22 11.36.17 2002:48690.000000 | Translate / Rotate Available None
+ Explode Available None
+ Compass Available Non | Annotations Toolbar
+See Creating Weld Features  
+See Creating a Text With Leader",0.48439455032348633,1.0,1.0,1.0,0.0,X,Grounded answer or safe refusal; no unsupported factual claim found.

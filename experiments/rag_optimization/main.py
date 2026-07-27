@@ -48,7 +48,7 @@ def run_pipeline(cfg: dict):
     reranker = build_reranker(cfg["reranker_model"]) if cfg.get("reranker_model") else None
     llmModel = get_llm(cfg["llm_provider"], cfg["llm_model"], cfg.get("max_new_tokens"))
     chain, retriever = build_rag_chain(
-        vecStore, llmModel, cfg["top_k"], cfg["search_type"], cfg["prompt_style"], cfg.get("score_threshold"), cfg.get("fetch_k"), cfg.get("retrieval_mode", "vector"), bm25_retriever, reranker, cfg.get("candidate_k")
+        vecStore, llmModel, cfg["top_k"], cfg["search_type"], cfg["prompt_style"], cfg.get("score_threshold"), cfg.get("fetch_k"), cfg.get("retrieval_mode", "vector"), bm25_retriever, reranker, cfg.get("candidate_k"), cfg.get("query_expansion_mode", "none"), cfg.get("answer_postprocess", "none")
     )
     return chain, retriever, llmModel, embeddings
 
