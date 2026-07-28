@@ -1,0 +1,13 @@
+﻿id,question,reference_answer,source,answerable
+Q01,CATIA V5에서 Specification Tree를 실시간으로 숨기거나 표시하는 기능을 수행하는 전용 토글 키는 무엇인가요?,F3,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True
+Q02,CATIA V5에서 'Part Design Workbench'를 즉시 활성화하기 위해 설정할 수 있는 기본 제공 가속기(Accelerator) 단축키는 무엇입니까?,Ctrl+W,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True
+Q03,"CATIA V5에서 'Reference Elements (Extended)' 기능을 사용해 YZ 평면에서 100mm 오프셋된 평면을 생성할 때, Type 설정에서 On Plane 선택 후 H와 V 값을 각각 몇으로 지정해야 하는가?",H와 V 값은 모두 0으로 지정해야 합니다.,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True
+Q04,CATIA V5의 Tools 툴바에서 문서의 업데이트가 필요한 엔티티가 있을 때 활성화되는 툴의 정확한 명칭은 무엇인가요?,Update All,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True
+Q05,CATIA V5에서 'Navigation Mode' 메뉴를 활성화하기 위해 반드시 클릭해야 하는 툴바 아이콘의 정확한 명칭은 무엇인가?,Snap to Point,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True
+Q06,"CATIA V5에서 모든 툴바와 도구가 화면상에서 사라진 경우, 작업 영역 빈 공간에서 오른쪽 마우스 버튼을 눌러 나타나는 팝업 창에서 어떤 체크박스를 선택해야 툴바와 도구를 다시 표시할 수 있습니까?",해당 팝업 창에서 '툴 및 툴바 표시' 옵션에 해당하는 체크박스를 선택해야 합니다. 매뉴얼에 명시된 대로 이 체크박스를 활성화하면 CATIA V5가 툴과 툴바를 화면으로 다시 토글합니다.,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True
+Q07,"CATIA V5에서 Shell 기능을 적용할 때, 특정 곡면에 대해 두께 값을 지정하지 않고 자동으로 두께를 조정하려면 어떤 대화상자 탭에서 'Multi-Pad limits' 옵션을 활성화해야 합니까?",Shell 대화상자의 'Limits' 탭에서 'Multi-Pad limits' 옵션을 활성화해야 합니다.,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True
+Q08,CATIA V5에서 'Specification Tree'를 실시간으로 숨기거나 다시 표시하는 데 사용되는 토글 단축키는 무엇인가요?,F3,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True
+Q09,CATIA V5에서 'View Mode' 도구 아이콘의 오른쪽 하단에 표시된 화살표를 클릭했을 때 나타나는 6가지 표준 뷰 옵션 중 'Back View' 기능을 활성화하는 정확한 툴바 아이콘 명칭은 무엇인가요?,Back View,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True
+Q10,CATIA V5에서 새 파트 생성 시 축 시스템(Axis System)을 즉시 생성하도록 설정하는 체크박스 옵션은 'New Part' 대화상자의 어떤 섹션에 위치하나요?,new part section,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True
+Q11,CATIA V5에서 솔리드 쉐이딩과 함께 숨겨진 에지 라인을 동시에 표시하는 기능을 제공하는 툴바 아이콘의 정확한 명칭은 무엇인가요?,Shading With Edges And Hidden Edges,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True
+Q12,"CATIA V5의 'Prompt Zone'에서 사용자가 작업 완료를 위해 필요한 정보/입력을 표시받을 때, 이 영역이 화면의 어떤 위치에 나타나는가?",화면 하단 왼쪽(bottom left of the screen),CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True

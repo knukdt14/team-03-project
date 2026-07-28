@@ -1,0 +1,48 @@
+﻿id,question,reference_answer,source,answerable,source_pages,grounded,direct_answer,rag_answer,response_time_sec,ragas_faithfulness,ragas_context_precision,ragas_context_recall
+Q01,CATIA V5에서 Specification Tree를 실시간으로 숨기거나 표시하는 기능을 수행하는 전용 토글 키는 무엇인가요?,F3,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True,1-58503-314-6-2.pdf (P.18) | 1-58503-314-6-2.pdf (P.8) | EDU_CAT_EN_V5F_FB_V5R19.pdf (P.15) | EDU_CAT_EN_V5F_FB_V5R19.pdf (P.327),True,"CATIA V5에서 Specification Tree를 실시간으로 숨기거나 표시하는 기능을 제공하기 위해 사용되는 토글 키는 다음과 같습니다:
+
+1. T: 터치 키 (T)
+2. F: 터치 키 (F)
+
+이 두 토글 키를 동시에 누르면, CATIA V5의 Specification Tree가 실시간으로 숨겨질 수 있습니다.
+
+또한",F3,0.4165691999951377,1.0,0.999999999975,1.0
+Q02,CATIA V5에서 'Part Design Workbench'를 즉시 활성화하기 위해 설정할 수 있는 기본 제공 가속기(Accelerator) 단축키는 무엇입니까?,Ctrl+W,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True,1-58503-314-6-2.pdf (P.25) | 1-58503-314-6-2.pdf (P.26),True,"CATIA V5에서 'Part Design Workbench'을 즉시 활성화하기 위해서는 기본적으로 제공하는 가속기를 사용해야 합니다. 이 가속기는 CATIA V5의 기본 환경에 따라 다르지만, 일반적으로 다음과 같은 단축키가 있습니다:
+
+1. Ctrl + Alt + F9: 이 단축키는 CATIA V5의 기본 환경으로부터 'Part Design Workbench'을 활성화합니다.",Ctrl+W,0.3450775999808684,1.0,0.49999999995,1.0
+Q03,"CATIA V5에서 'Reference Elements (Extended)' 기능을 사용해 YZ 평면에서 100mm 오프셋된 평면을 생성할 때, Type 설정에서 On Plane 선택 후 H와 V 값을 각각 몇으로 지정해야 하는가?",H와 V 값은 모두 0으로 지정해야 합니다.,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True,1-58503-314-6-2.pdf (P.27) | 10주차 (Part Design)_rev01.pdf (P.19) | Assembly Design.pdf (P.451) | basug_Knowledgeware.pdf (P.248),False,"YZ 평면에서 100mm의 오프셋된 평면을 생성하기 위해 `Reference Elements (Extended)` 기능을 사용하면 다음과 같은 방법으로 가능합니다:
+
+1. **Type 설정**: `On Plane`를 선택합니다.
+2. **H 값**: 100mm로 설정합니다.
+3. **V 값**: 100mm로 설정합니다.
+
+이렇게 하면 YZ 평면에서",The provided manual does not contain this information.,1.0473822000203654,0.0,0.9999999999,1.0
+Q04,CATIA V5의 Tools 툴바에서 문서의 업데이트가 필요한 엔티티가 있을 때 활성화되는 툴의 정확한 명칭은 무엇인가요?,Update All,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True,1-58503-314-6-2.pdf (P.31) | 1-58503-314-6-2.pdf (P.32) | 1-58503-314-6-2.pdf (P.6),True,"CATIA V5의 Tools 툴바에서 문서 업데이트를 위한 활성화된 툴의 정확한 명칭은 ""Update"" 또는 ""Update Tool""입니다.
+
+이 명칭은 다음과 같은 이유로 사용됩니다:
+
+1. ""Update""는 업데이트를 의미하며, 이 명칭은 업데이트를 포함하는 작업을 나타냅니다.
+2. ""Update Tool""은 업데이트를",Update,0.3129065000102855,0.0,0.49999999995,1.0
+Q05,CATIA V5에서 'Navigation Mode' 메뉴를 활성화하기 위해 반드시 클릭해야 하는 툴바 아이콘의 정확한 명칭은 무엇인가?,Snap to Point,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True,1-58503-314-6-2.pdf (P.29) | 1-58503-314-6-2.pdf (P.33) | 1-58503-314-6-2.pdf (P.35) | 1-58503-314-6-2.pdf (P.8),True,"""Navigation Mode"" 메뉴는 CATIA V5에서 기본적으로 활성화되어 있습니다. 이 메뉴는 자동으로 활성화되며, 사용자가 직접 활성화하지 않으면 기본적으로 활성화됩니다. 따라서 ""Navigation Mode"" 메뉴를 활성화하려면 항상 클릭해야 합니다.",Red Arrow,0.3306566000101156,0.0,0.0,0.0
+Q06,"CATIA V5에서 모든 툴바와 도구가 화면상에서 사라진 경우, 작업 영역 빈 공간에서 오른쪽 마우스 버튼을 눌러 나타나는 팝업 창에서 어떤 체크박스를 선택해야 툴바와 도구를 다시 표시할 수 있습니까?",해당 팝업 창에서 '툴 및 툴바 표시' 옵션에 해당하는 체크박스를 선택해야 합니다. 매뉴얼에 명시된 대로 이 체크박스를 활성화하면 CATIA V5가 툴과 툴바를 화면으로 다시 토글합니다.,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True,1-58503-314-6-2.pdf (P.11) | 1-58503-314-6-2.pdf (P.29) | 1-58503-314-6-2.pdf (P.39) | 1-58503-314-6-2.pdf (P.7),True,"CATIA V5에서 모든 툴바와 도구가 화면 상에서 사라지거나, 작업 영역 빈 공간에서 오른쪽 마우스 버튼을 눌러 나타나는 팝업 창에서 체크박스를 선택하면, 작업 영역이 다시 표시됩니다.
+
+이렇게 하면 툴바와 도구가 다시 표시되며, 작업 영역이 다시 보","CATIA V5에서 모든 툴바와 도구가 화면상에서 사라진 경우, 작업 영역 빈 공간에서 오른쪽 마우스 버튼을 눌러 나타나는 팝업 창에서 ""All Tools"" 체크박스를 선택해야 툴바와 도구를 다시 표시할 수 있습니다.",2.6564191000070423,0.0,0.9999999999666667,0.0
+Q07,"CATIA V5에서 Shell 기능을 적용할 때, 특정 곡면에 대해 두께 값을 지정하지 않고 자동으로 두께를 조정하려면 어떤 대화상자 탭에서 'Multi-Pad limits' 옵션을 활성화해야 합니까?",Shell 대화상자의 'Limits' 탭에서 'Multi-Pad limits' 옵션을 활성화해야 합니다.,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True,11주차 (Part Design)_rev01.pdf (P.14) | 5주차(Part Design).pdf (P.12) | EDU_CAT_EN_V5F_FB_V5R19.pdf (P.108) | basug_Knowledgeware.pdf (P.232),False,"CATIA V5에서 Shell 기능을 사용하여 특정 곡면에 두께 값을 지정하거나 자동으로 조정하는 방법은 다음과 같습니다:
+
+1. **선형 모드** (Linear Mode): 이는 직선 모드로 설정됩니다. 이 모드에서는 두께 값이 직접적으로 입력되어야 합니다.
+
+2. **선형 모드와 비슷한 라인 모드** (Line Mode with Linear Mode): 이는",The provided manual does not contain this information.,1.1072152000269853,1.0,0.0,0.0
+Q08,CATIA V5에서 'Specification Tree'를 실시간으로 숨기거나 다시 표시하는 데 사용되는 토글 단축키는 무엇인가요?,F3,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True,1-58503-314-6-2.pdf (P.18) | 1-58503-314-6-2.pdf (P.19) | 1-58503-314-6-2.pdf (P.8) | EDU_CAT_EN_V5F_FB_V5R19.pdf (P.15),True,"CATIA V5에서 'Specification Tree'를 실시간으로 숨기거나 다시 표시하는 것은 일반적으로 'Ctrl + T' 또는 'Cmd + T' 단축키를 사용할 수 있습니다.
+
+- Ctrl + T (Windows) 또는 Cmd + T (Mac): 이 단축키는 '상세 모델'을 선택하여 '상세 모델'을 보여주는 기능을 제공합니다.
+- Ctrl + Shift + T (Windows",F3,0.327492100012023,1.0,0.9999999999666667,1.0
+Q09,CATIA V5에서 'View Mode' 도구 아이콘의 오른쪽 하단에 표시된 화살표를 클릭했을 때 나타나는 6가지 표준 뷰 옵션 중 'Back View' 기능을 활성화하는 정확한 툴바 아이콘 명칭은 무엇인가요?,Back View,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True,1-58503-314-6-2.pdf (P.35) | 1-58503-314-6-2.pdf (P.7) | 1주차 (Basic).pdf (P.23),True,"CATIA V5에서 'View Mode' 도구 아이콘의 오른쪽 하단에 표시된 화살표를 클릭하면, 'Back View' 기능이 활성화됩니다. 이 기능은 원래의 시스템 위치를 반대로 보여주는 역할을 합니다.
+
+이 기능을 활성화하려면 'Back View' 버튼을 클릭하거나, 'View Mode' 도구의 'Back",View Mode: Back View,0.4498806999763474,0.75,0.99999999995,1.0
+Q10,CATIA V5에서 새 파트 생성 시 축 시스템(Axis System)을 즉시 생성하도록 설정하는 체크박스 옵션은 'New Part' 대화상자의 어떤 섹션에 위치하나요?,new part section,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True,1-58503-314-6-2.pdf (P.26) | 1-58503-314-6-2.pdf (P.27) | EDU_CAT_EN_V5F_FB_V5R19.pdf (P.24) | basug_Knowledgeware.pdf (P.410),True,CATIA V5에서 새 파트 생성 시 축 시스템(Axis System)을 즉시 생성하도록 설정하는 체크박스는 'Create Axis System' 대화 상자에 위치합니다. 이 섹션에서는 축 시스템의 생성을 선택할 수 있습니다.,2.9.5,0.3724406999535858,0.0,0.99999999995,1.0
+Q11,CATIA V5에서 솔리드 쉐이딩과 함께 숨겨진 에지 라인을 동시에 표시하는 기능을 제공하는 툴바 아이콘의 정확한 명칭은 무엇인가요?,Shading With Edges And Hidden Edges,CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True,1-58503-314-6-2.pdf (P.14) | 1-58503-314-6-2.pdf (P.33) | 1-58503-314-6-2.pdf (P.8) | 1주차 (Basic).pdf (P.13),False,"CATIA V5에서 솔리드 쉐이딩과 함께 숨겨진 에지 라인을 동시에 표시하는 기능을 제공하는 툴바 아이콘의 정확한 명칭은 ""숨겨진 에지 라인""입니다.
+
+이 아이콘은 CATIA V5에서 솔리드 쉐이딩과 함께 숨겨진 에지 라인을 표시할 수 있는 기본적인 기",The provided manual does not contain this information.,2.232422700035386,0.5,0.0,0.0
+Q12,"CATIA V5의 'Prompt Zone'에서 사용자가 작업 완료를 위해 필요한 정보/입력을 표시받을 때, 이 영역이 화면의 어떤 위치에 나타나는가?",화면 하단 왼쪽(bottom left of the screen),CATIA_Solar_Gap_2_Plus_Evaluation.ipynb,True,1-58503-314-6-2.pdf (P.37) | 1-58503-314-6-2.pdf (P.39) | 1-58503-314-6-2.pdf (P.40) | 1주차 (Basic).pdf (P.13),True,"CATIA V5의 'Prompt Zone'에서 사용자가 작업 완료를 위해 필요한 정보/입력을 표시할 때, 이 영역은 화면의 'Prompt Area' 또는 'Prompt Window'으로 나타납니다.
+
+'Prompt Area' 또는 'Prompt Window'은 사용자에게 작업을 시작하거나 작업을 중지하는 데 필요한 정보를 제공합니다. 이 영역은 화면의 상단이나 하단에 위치",Bottom left of the screen,0.370664200047031,1.0,0.8333333332916666,1.0

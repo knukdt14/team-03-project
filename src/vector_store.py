@@ -1,6 +1,7 @@
 import os
 import sys
 import ssl
+import torch
 
 # Fix Windows SSL Certificate Store error (_ssl.c:4057)
 _orig_load_default_certs = ssl.SSLContext.load_default_certs
@@ -14,7 +15,9 @@ ssl.SSLContext.load_default_certs = _safe_load_default_certs
 import shutil
 from typing import List, Optional
 from langchain_core.documents import Document
-from langchain_community.vectorstores import Chroma
+# Use the dedicated integration package.  The legacy community wrapper is
+# deprecated and can be incompatible with current Chroma HNSW persistence.
+from langchain_chroma import Chroma
 from src.config import CHROMA_DB_DIR, LOCAL_EMBEDDING_MODEL, DEFAULT_TOP_K
 from src.multimodal_loader import load_and_split_multimodal_pdf
 from src.load_pdf import load_and_split_markdown_pdf
@@ -30,12 +33,8 @@ def get_embedding_function(model_name: str = LOCAL_EMBEDDING_MODEL):
     """
     Returns Local HuggingFace Embeddings for Multilingual support (No OpenAI dependency).
     """
-    try:
-        import torch
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-    except ImportError:
-        device = "cpu"
-    print(f"[VectorStore] Initializing Local Embeddings '{model_name}' on device '{device}'...")
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"[VectorStore] Initializing Local Embeddings '{model_name}' on {device}...")
     return HuggingFaceEmbeddings(
         model_name=model_name,
         model_kwargs={'device': device},
@@ -76,11 +75,18 @@ def build_or_load_vectorstore(
         chunks = load_and_split_multimodal_pdf(pdf_path) if pdf_path else load_and_split_multimodal_pdf()
 
 
-    vectorstore = Chroma.from_documents(
-        documents=chunks,
-        embedding=embeddings,
-        persist_directory=persist_directory
+    # Adding all multimodal chunks in one upsert can corrupt the HNSW
+    # compaction step on Windows.  Persist smaller deterministic batches.
+    vectorstore = Chroma(
+        persist_directory=persist_directory,
+        embedding_function=embeddings,
     )
+    batch_size = 100
+    for start in range(0, len(chunks), batch_size):
+        batch = chunks[start:start + batch_size]
+        ids = [f"chunk-{start + offset}" for offset in range(len(batch))]
+        vectorstore.add_documents(documents=batch, ids=ids)
+        print(f"[VectorStore] Indexed {min(start + batch_size, len(chunks))}/{len(chunks)} chunks")
     print(f"[VectorStore] Vector store successfully created and persisted ({len(chunks)} chunks).")
     return vectorstore
 

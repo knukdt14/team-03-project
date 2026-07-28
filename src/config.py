@@ -57,7 +57,9 @@ EXPERIMENT_PRESETS = {
 # Global Fallback Defaults
 DEFAULT_LLM_MODEL = DEFAULT_CONFIG["llm_model"]
 LOCAL_LLM_MODEL = DEFAULT_CONFIG["llm_model"]
-LOCAL_EMBEDDING_MODEL = DEFAULT_CONFIG["embed_model"]
+# Keep each embedding model paired with its own Chroma database.  Changing an
+# embedding model while reusing the old vectors produces invalid retrieval.
+LOCAL_EMBEDDING_MODEL = os.getenv("LOCAL_EMBEDDING_MODEL", DEFAULT_CONFIG["embed_model"])
 LLM_MODE = DEFAULT_CONFIG["llm_mode"]
 CHUNK_SIZE = DEFAULT_CONFIG["chunk_size"]
 CHUNK_OVERLAP = DEFAULT_CONFIG["overlap_size"]
