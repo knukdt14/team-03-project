@@ -1,0 +1,23 @@
+langchain
+langchain-community
+langchain-text-splitters
+langchain-huggingface
+langchain-openai
+langchain-anthropic
+langchain-upstage
+langchain-chroma
+sentence-transformers
+faiss-cpu
+pypdf
+bert-score
+ragas
+datasets
+pandas
+python-dotenv
+huggingface_hub
+tqdm
+
+# Pinecone 프리셋(pinecone_store)을 쓸 때만 필요
+# langchain-pinecone
+# pinecone
+rank-bm25
