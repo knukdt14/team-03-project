@@ -1,0 +1,192 @@
+﻿Type,Question,Ground Truth,Direct LLM Answer,Direct LLM BERTScore Precision,Direct LLM BERTScore Recall,Direct LLM F1,Strict RAG Answer,Strict RAG BERTScore Precision,Strict RAG BERTScore Recall,Strict RAG F1,Adaptive Fallback Answer,Adaptive Status,Adaptive Fallback BERTScore Precision,Adaptive Fallback BERTScore Recall,Adaptive Fallback F1,Source Pages
+General QA,CATIA V5에서 Pad 기능의 주요 역할과 스케치 조건은 무엇인가요?,"Pad 기능은 2D 스케치 프로파일을 돌출시켜 3D 솔리드 바디를 생성하는 기본 기능으로, 스케치는 닫힌 루프(Closed Loop) 형태이어야 합니다.","CATIA V5에서 Pad (Point Annotation) 기능은 사용자에게 특정 위치에 도입되는 점을 표시하는 데 사용됩니다. 이 기능은 CAD 프로세스에서 중요한 정보를 제공하며, 특히 시스템의 부재 또는 장애물이 발생했을 때도 이를 활용하여 문제를 해결할 수 있습니다.
+
+Pad 기능의 주요 역할은 다음과 같습니다:
+
+1. **점의 위치 표시**: 사용자가 CAD 프로세스에서 도입된 점을 그려주는 역할을 합니다.
+2. **부재 및 장애물 확인**: PAD 기능은 시스템의 부재나 장애물을 발견할 수 있도록 도와줍니다.
+3. **시작 및 종료**: 사용자는 PAD 기능을 사용하여 작업 시작하거나 종료할 수 있게 해줍니다.
+4. **데이터 분석**: PAD 기능은 데이터를 분석하여 문제를 해결하기 위한 정보를 제공합니다.
+
+PAD 기능의 스케치 조건은 다음과 같습니다:
+
+1. **선의 위치**: PAD 기능에서는 선의 위치를 지정해야 합니다. 이는 CAD 프로세스에서 도입된 선의 위치를 나타내는 것입니다.
+2. **선의 길이**: PAD 기능에서는 선의 길이를 지정해야 합니다. 이는 CAD 프로세스에서 도입된 선의 길이를 나타내는 것입니다.
+3. **선의 색상**: PAD 기능에서는 선의 색상을 지정해야 합니다. 이는 CAD 프로세스에서 도입된 선의 색상을 나타내는 것입니다.
+
+PAD 기능은 CAD 프로세스에서 중요한 정보를 제공하며, 특히 시스템의 부재나 장애물을 발견할 수 있도록 도와줍니다.",0.5879047513008118,0.6909749507904053,0.6352864503860474,"CATIA V5에서 PAD 기능의 주요 역할은 다음과 같습니다:
+
+1. **스케치 조건**:
+   - **스케치**: PAD 기능은 스케치를 생성하고, 스케치를 저장하는 데 사용됩니다. 스케치는 CAD 프로세스에서 중요한 데이터를 저장합니다.
+
+2. **스케치 파일의 형식**:
+   - PAD 파일은 CAD 프로세스에서 생성되는 스케치 파일의 종류입니다. 일반적으로, PAD 파일은 .PAD 또는 .PDS 파일로 확장됩니다.
+
+3. **스케치 파일의 위치**:
+   - PAD 파일은 CAD 프로세스에서 생성되는 스케치 파일의 위치에 따라 다르게 저장됩니다. 일반적으로, CAD 프로세스에서 생성되는 스케치 파일은 CAD 프로젝트 내의 디렉토리에 저장됩니다.
+
+4. **스케치 파일의 이름**:
+   - PAD 파일의 이름은 CAD 프로세스에서 생성되는 스케치 파일의 이름에 따라 다르게 저장됩니다. 일반적으로, CAD 프로세스에서 생성되는 스케치 파일의 이름은 ""스케치_이름"" 형태로 저장됩니다.
+
+5. **스케치 파일의 크기**:
+   - PAD 파일의 크기는 CAD 프로세스에서 생성되는 스케치 파일의 크기를 결정합니다. 일반적으로, CAD 프로세스에서 생성되는 스케치 파일의 크기가 10MB 이상일 경우, PAD 파일의 크기를 제한합니다.
+
+6. **스케치 파일의 확장자**:
+   - PAD 파일의 확장자는 CAD 프로세스에서 생성되는 스케치 파일의 확장자를 결정합니다. 일반적으로, CAD 프로세스에서 생성되는 스케치 파일의 확장자는 "".PAD"" 또는 "".PDS"" 형태로 저장됩니다.
+
+7. **스케치 파일의 크기와 확장자**:
+   - PAD 파일의 크기는 CAD 프로세스에서 생성되는 스케치 파일의 크기를 결정합니다. 일반적으로, CAD 프로세스에서 생성되는 스케치 파일의 크기가 10MB 이상일 경우, PAD 파일의 크기를 제한합니다. 또한, PAD 파일의 확장자는 "".PAD"" 또는 "".PDS"" 형태로 저장됩니다.
+
+8. **스케치 파일의",0.5944267511367798,0.6787344217300415,0.6337892413139343,"✅ **[매뉴얼 근거 답변]**
+CATIA V5에서 PAD 기능의 주요 역할은 다음과 같습니다:
+
+1. **스케치 조건**:
+   - **스케치**: PAD 기능은 스케치를 생성하고, 스케치를 저장하는 데 사용됩니다. 스케치는 CAD 프로세스에서 중요한 데이터를 저장합니다.
+
+2. **스케치 파일의 형식**:
+   - PAD 파일은 CAD 프로세스에서 생성되는 스케치 파일의 종류입니다. 일반적으로, PAD 파일은 .PAD 또는 .PDS 파일로 확장됩니다.
+
+3. **스케치 파일의 위치**:
+   - PAD 파일은 CAD 프로세스에서 생성되는 스케치 파일의 위치에 따라 다르게 저장됩니다. 일반적으로, CAD 프로세스에서 생성되는 스케치 파일은 CAD 프로젝트 내의 디렉토리에 저장됩니다.
+
+4. **스케치 파일의 이름**:
+   - PAD 파일의 이름은 CAD 프로세스에서 생성되는 스케치 파일의 이름에 따라 다르게 저장됩니다. 일반적으로, CAD 프로세스에서 생성되는 스케치 파일의 이름은 ""스케치_이름"" 형태로 저장됩니다.
+
+5. **스케치 파일의 크기**:
+   - PAD 파일의 크기는 CAD 프로세스에서 생성되는 스케치 파일의 크기를 결정합니다. 일반적으로, CAD 프로세스에서 생성되는 스케치 파일의 크기가 10MB 이상일 경우, PAD 파일의 크기를 제한합니다.
+
+6. **스케치 파일의 확장자**:
+   - PAD 파일의 확장자는 CAD 프로세스에서 생성되는 스케치 파일의 확장자를 결정합니다. 일반적으로, CAD 프로세스에서 생성되는 스케치 파일의 확장자는 "".PAD"" 또는 "".PDS"" 형태로 저장됩니다.
+
+7. **스케치 파일의 크기와 확장자**:
+   - PAD 파일의 크기는 CAD 프로세스에서 생성되는 스케치 파일의 크기를 결정합니다. 일반적으로, CAD 프로세스에서 생성되는 스케치 파일의 크기가 10MB 이상일 경우, PAD 파일의 크기를 제한합니다. 또한, PAD 파일의 확장자는 "".PAD"" 또는 "".PDS"" 형태로 저장됩니다.
+
+8. **스케치 파일의",RAG Manual Answer (매뉴얼 근거),0.5905089378356934,0.6768361926078796,0.6307323575019836,"['1주차 (Basic).pdf (P.12)', '1주차 (Basic).pdf (P.14)', '1주차 (Basic).pdf (P.23)', '1주차 (Basic).pdf (P.7)']"
+Specific QA,Dress-Up Feature 중 Stiffener 기능의 사용 목적과 권장 구배 각도는 몇 도인가요?,"Stiffener 기능은 캐싱 부품 내부 리브(Rib) 보강재를 효율적으로 생성할 때 사용하며, 몰딩 공정 부품의 경우 보통 4도의 구배 각도가 권장됩니다.","Stiffener 기능은 CATIA V5에서 사용되는 디자인 기술로, 주로 부품이나 구조체를 강화하는 데 사용됩니다. 이 기능을 사용할 때는 다음과 같은 목적과 권장 구배각이 있습니다:
+
+1. **부품 강화**: 부품을 강화하여 안전하게 사용하기 위해 사용합니다.
+
+2. **구조체 강화**: 구조체를 강화하여 안전하게 사용하기 위해 사용합니다.
+
+3. **기계용 부품 강화**: 기계용 부품을 강화하여 안전하게 사용하기 위해 사용합니다.
+
+4. **공학적 목표**: 공학적인 목표를 달성하기 위해 사용합니다.
+
+### 권장 구배각
+
+- **10°**: 부품 또는 구조체의 부드러운 구조를 유지하기 위한 기본적인 구배각입니다.
+- **15°**: 부품 또는 구조체의 강력한 구조를 유지하기 위한 추가적인 구배각입니다.
+- **20°**: 부품 또는 구조체의 최고 강도를 유지하기 위한 추가적인 구배각입니다.
+
+이 권장 구배각들은 부품 또는 구조체의 성능을 보장하며, 부품의 안정성을 유지하는데 효과적으로 작용합니다. 그러나 이러한 권장 구배각은 실제 사용에 따라 조정될 수 있으므로, 사용자의 요구 사항에 맞게 조정해야 합니다.",0.5911591649055481,0.6917893886566162,0.6375277638435364,"Dress-up Feature 중 Stiffener 기능의 사용 목적은 모서리에 부드러운 곡면 처리를 하는 역할을 합니다. 이를 위해 모서리에 부드럽게곡면을 처리합니다. 또한, 모서리에 모따기나 모따기 생성을 위한 기능도 제공하고 있습니다.
+
+Stiffener 기능의 권장 구배 각도는 다음과 같습니다:
+
+1. 모서리에 부드럽게곡면을 처리하는 경우:
+   - 120°~180°
+
+2. 모서리에 모따기나 모따기 생성을 위한 경우:
+   - 120°~180°
+
+이 경우, 모서리에 부드럽게곡면을 처리하거나 모따기를 생성하는 경우, 120°~180°의 각도를 권장합니다. 이는 모서리에 부드럽게곡면을 처리하거나 모따기를 생성하는 데 필요한 최소한의 구배 각도를 유지해야 하므로, 이는 일반적인 권장 단위일 수 있습니다.",0.6326886415481567,0.7025701999664307,0.6658008098602295,"✅ **[매뉴얼 근거 답변]**
+Dress-up Feature 중 Stiffener 기능의 사용 목적은 모서리에 부드러운 곡면 처리를 하는 역할을 합니다. 이를 위해 모서리에 부드럽게곡면을 처리합니다. 또한, 모서리에 모따기나 모따기 생성을 위한 기능도 제공하고 있습니다.
+
+Stiffener 기능의 권장 구배 각도는 다음과 같습니다:
+
+1. 모서리에 부드럽게곡면을 처리하는 경우:
+   - 120°~180°
+
+2. 모서리에 모따기나 모따기 생성을 위한 경우:
+   - 120°~180°
+
+이 경우, 모서리에 부드럽게곡면을 처리하거나 모따기를 생성하는 경우, 120°~180°의 각도를 권장합니다. 이는 모서리에 부드럽게곡면을 처리하거나 모따기를 생성하는 데 필요한 최소한의 구배 각도를 유지해야 하므로, 이는 일반적인 권장 단위일 수 있습니다.",RAG Manual Answer (매뉴얼 근거),0.6182988882064819,0.6990525722503662,0.656200647354126,"['12주차 (Part Design)_rev01.pdf (P.5)', '4주차 (Sketcher).pdf (P.8)', '6주차(Part Design).pdf (P.4)', '9주차 (Part Design).pdf (P.3)']"
+Specific QA,Draft Angle 기능이란 무엇이며 어떨 때 사용하나요?,Draft Angle 기능은 금형(Molding) 공정에서 부품을 원활하게 빼내기 위해 측면에 꺾임각/경사각을 부여하는 Dress-Up 기능입니다.,"""Draft Angle""는 CATIA V5에서 제공하는 자동화된 방향성을 설정하는 기능입니다. 이 기능을 사용하면 원격 작업 시에 원하는 방향성으로 원소를 움직일 수 있습니다.
+
+사용 방법:
+
+1. 원소의 위치를 변경할 때, 원래 위치와 동일하게 변경해야 합니다.
+2. 원소가 다른 위치로 옮겨야 하는 경우, 원소의 현재 위치를 변경하여 원하는 방향성을 설정합니다.
+3. 원소가 특정 위치로 옮겨야 하는 경우, 원소의 현재 위치를 변경하여 원하는 방향성을 설정합니다.
+
+예를 들어, 원소가 이미지 파일을 저장하는 경우, 원소의 현재 위치를 변경하여 이미지를 원하는 방향으로 움직일 수 있습니다. 
+
+또한, ""Draft Angle""도 여러 가지 방향성을 지원하며, 각각의 방향성을 선택할 수도 있습니다. 이는 원소의 위치를 변경하거나 원하는 방향성을 설정하는 데 도움이 됩니다.",0.6170709133148193,0.6768404245376587,0.645575225353241,"Draft Angle 기능은 자동화된 방식으로 면과 면 사이에 각도를 적용하여 형태를 만들 수 있는 기능입니다. 이 기능은 일반적으로 CAD 프로그램에서 사용되며, 특히 자동화 작업이나 디자인 작업에서 사용됩니다. 
+
+Draft Angle 기능은 다음과 같은 특징을 가지고 있습니다:
+
+1. 면과 면 사이에 각도를 적용합니다.
+2. 각도는 20° 정도의 범위 내에서 작동합니다.
+3. 이 기능은 일반적으로 Solid Model에서 사용됩니다.
+4. Draft Angle 기능은 일반적으로 CAD 프로그램에서 사용되는 기능 중 하나로, 자동화 작업이나 디자인 작업에서 사용됩니다.
+
+Draft Angle 기능은 일반적으로 Solid Model에서 사용되며, 자동화 작업이나 디자인 작업에서 사용됩니다.",0.6272643804550171,0.676371157169342,0.6508928537368774,"✅ **[매뉴얼 근거 답변]**
+Draft Angle 기능은 자동화된 방식으로 면과 면 사이에 각도를 적용하여 형태를 만들 수 있는 기능입니다. 이 기능은 일반적으로 CAD 프로그램에서 사용되며, 특히 자동화 작업이나 디자인 작업에서 사용됩니다. 
+
+Draft Angle 기능은 다음과 같은 특징을 가지고 있습니다:
+
+1. 면과 면 사이에 각도를 적용합니다.
+2. 각도는 20° 정도의 범위 내에서 작동합니다.
+3. 이 기능은 일반적으로 Solid Model에서 사용됩니다.
+4. Draft Angle 기능은 일반적으로 CAD 프로그램에서 사용되는 기능 중 하나로, 자동화 작업이나 디자인 작업에서 사용됩니다.
+
+Draft Angle 기능은 일반적으로 Solid Model에서 사용되며, 자동화 작업이나 디자인 작업에서 사용됩니다.",RAG Manual Answer (매뉴얼 근거),0.6275752782821655,0.6840174198150635,0.6545819044113159,"['6주차(Part Design).pdf (P.11)', '6주차(Part Design).pdf (P.4)', '7주차 Part Design1.pdf (P.6)', '9주차 (Part Design).pdf (P.8)']"
+Trick/Unanswerable QA,CATIA V5에서 3D 퀀텀 머시닝(Quantum Machining) AI 가속 모드는 어떻게 실행하나요?,제공된 매뉴얼에 관련 내용이 명시되어 있지 않습니다.,"CATIA V5에서 Quantum Machining AI 가속 모드를 사용하면, 자동화된 속도와 방향성을 제공합니다. 이 모드에서는 원하는 방향으로 속도를 증가시키고, 주어진 기준을 충족시키는지 확인합니다.
+
+1. **원하는 방향 설정**: 먼저, 원하는 방향에 대한 정보를 입력해야 합니다. 이는 원하는 방향의 위치, 속도, 그리고 시간 등을 포함할 수 있습니다.
+
+2. **주어진 기준 확인**: 다음 단계는 주어진 기준을 충족시키는지를 확인합니다. 이는 원하는 방향과 같은 특정 조건을 만족시키는지 확인하는 것입니다.
+
+3. **속도 증가 및 방향 변경**: 만약 주어진 기준이 충족되지 않으면, 원하는 방향에 따라 속도를 증가시키며, 주어진 기준을 충족시키도록 하는 작업을 수행합니다.
+
+4. **결과 출력**: 결과를 출력하거나, 필요한 경우 다른 작업을 수행하도록 요청할 수 있습니다.
+
+이러한 방법을 통해 CATIA V5에서 Quantum Machining AI 가속 모드를 사용하여 원하는 방향에 맞게 속도와 방향성을 증가시키거나, 주어진 기준을 충족시키는지 확인할 수 있습니다.",0.5515407919883728,0.6804642677307129,0.6092568635940552,"CATIA V5에서 3D 퀀텀머시닝(AI 가속 모드)를 실행하려면 다음 단계를 따르세요:
+
+1. **3D Modeling**:
+   - 먼저 자동차 기계 공학과 관련된 3D 모델링 작업을 수행합니다.
+
+2. **3D Modeling**:
+   - 다음에는 자동차 기계 공학과 관련된 3D 모델링 작업을 수행합니다.
+
+3. **3D Modeling**:
+   - 마지막으로 자동차 기계 공학과 관련된 3D 모델링 작업을 수행합니다.
+
+4. **3D Modeling**:
+   - 이 과정을 통해 자동차 기계 공학과 관련된 3D 모델을 생성하고, 이를 통해 AI 가속 모드를 실행할 수 있습니다.
+
+AI 가속 모드는 자동차 기계 공학과 관련된 3D 모델을 가속 시스템에 적용하여 자동차 기계의 속도를 조절하는 방법입니다. 이 방법은 자동차 기계의 주요 손실을 줄이고, 자동차의 운행 효율성을 높이는 데 도움이 될 수 있습니다.",0.5373694896697998,0.6718985438346863,0.5971509218215942,"✅ **[매뉴얼 근거 답변]**
+CATIA V5에서 3D 퀀텀머시닝(AI 가속 모드)를 실행하려면 다음 단계를 따르세요:
+
+1. **3D Modeling**:
+   - 먼저 자동차 기계 공학과 관련된 3D 모델링 작업을 수행합니다.
+
+2. **3D Modeling**:
+   - 다음에는 자동차 기계 공학과 관련된 3D 모델링 작업을 수행합니다.
+
+3. **3D Modeling**:
+   - 마지막으로 자동차 기계 공학과 관련된 3D 모델링 작업을 수행합니다.
+
+4. **3D Modeling**:
+   - 이 과정을 통해 자동차 기계 공학과 관련된 3D 모델을 생성하고, 이를 통해 AI 가속 모드를 실행할 수 있습니다.
+
+AI 가속 모드는 자동차 기계 공학과 관련된 3D 모델을 가속 시스템에 적용하여 자동차 기계의 속도를 조절하는 방법입니다. 이 방법은 자동차 기계의 주요 손실을 줄이고, 자동차의 운행 효율성을 높이는 데 도움이 될 수 있습니다.",RAG Manual Answer (매뉴얼 근거),0.5368765592575073,0.6964718103408813,0.6063483953475952,"['1주차 (Basic).pdf (P.12)', '1주차 (Basic).pdf (P.13)', '6주차(Part Design).pdf (P.1)', '9주차(Assembly Design).pdf (P.1)']"
+Trick/Unanswerable QA,CATIA V5에서 자율주행 차체 3D 홀로그램 자동 설계 알고리즘 메뉴 위치는?,제공된 매뉴얼에 관련 내용이 명시되어 있지 않습니다.,"CATIA V5에서 자율주행 차체 3D 홀로그램 자동 설계 알고리즘 메뉴의 위치는 다음과 같습니다:
+
+1. **설명 메뉴**:
+   - 왼쪽 상단에 위치합니다.
+
+2. **설정 메뉴**:
+   - 오른쪽 하단에 위치합니다.
+
+3. **설치 메뉴**:
+   - 아래쪽에 위치합니다.
+
+4. **설정 및 사용자 인터페이스 설정**:
+   - 위쪽에 위치합니다.
+
+이 메뉴들은 자동으로 표시되며, 자동화된 작업을 수행할 때 사용됩니다.",0.58350670337677,0.7222078442573547,0.6454904079437256,"CATIA V5에서 자율주행 차체 3D 홀로그램 자동 설계 알고리즘 메뉴는 다음과 같습니다:
+
+1. **3D Modeling > Auto-Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Human",0.3489874303340912,0.679934024810791,0.46123719215393066,"✅ **[매뉴얼 근거 답변]**
+CATIA V5에서 자율주행 차체 3D 홀로그램 자동 설계 알고리즘 메뉴는 다음과 같습니다:
+
+1. **3D Modeling > Auto-Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Humanoid > Human",RAG Manual Answer (매뉴얼 근거),0.357207715511322,0.6775500178337097,0.4677927792072296,"['11주차(Generative_Shape_Design).pdf (P.1)', '3주차(Sketcher).pdf (P.1)', '5주차(Part Design).pdf (P.1)', '9주차(Assembly Design).pdf (P.1)']"

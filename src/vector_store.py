@@ -29,10 +29,15 @@ def get_embedding_function(model_name: str = LOCAL_EMBEDDING_MODEL):
     """
     Returns Local HuggingFace Embeddings for Multilingual support (No OpenAI dependency).
     """
-    print(f"[VectorStore] Initializing Local Embeddings '{model_name}'...")
+    try:
+        import torch
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+    except ImportError:
+        device = "cpu"
+    print(f"[VectorStore] Initializing Local Embeddings '{model_name}' on device '{device}'...")
     return HuggingFaceEmbeddings(
         model_name=model_name,
-        model_kwargs={'device': 'cpu'},
+        model_kwargs={'device': device},
         encode_kwargs={'normalize_embeddings': True}
     )
 
@@ -42,11 +47,12 @@ def build_or_load_vectorstore(
     pdf_path: Optional[str] = None,
     force_rebuild: bool = False,
     loader: str = "multimodal",  ## => "multimodal"(기존, 이미지 개수 태그) | "markdown"(pymupdf4llm, 헤더/표 구조 보존)
+    embed_model: Optional[str] = None,  ## => None이면 LOCAL_EMBEDDING_MODEL(기본, 영어 위주). 다국어로 바꾸려면 config.MULTILINGUAL_EMBEDDING_MODEL 등을 전달
 ) -> Chroma:
     """
     Builds or loads Chroma vector store for CATIA multimodal manual.
     """
-    embeddings = get_embedding_function()
+    embeddings = get_embedding_function(embed_model) if embed_model else get_embedding_function()
 
     # Check if vectorstore exists
     if not force_rebuild and os.path.exists(persist_directory) and os.listdir(persist_directory):
