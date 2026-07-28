@@ -142,7 +142,7 @@ def get_corpus_stats(_pipeline):
 
 
 def render_chunk_images(doc):
-    """Renders the CAD 도면/스크린샷 images bound to this chunk's own paragraph (bbox 근접 매칭), if any."""
+    """이 청크의 문단에 배정된 CAD 도면/스크린샷 이미지를 화면에 표시한다(bbox 근접 매칭 기준)."""
     raw_paths = doc.metadata.get("image_paths", "")
     if not raw_paths:
         return
@@ -156,7 +156,7 @@ def render_chunk_images(doc):
 
 
 def render_context_chunks(docs):
-    """Renders retrieved chunks grouped by (source_file, page) -- 문단 단위 청킹이라 같은 페이지에서
+    """검색된 청크를 (파일명, 페이지) 기준으로 묶어서 표시한다 -- 문단 단위 청킹이라 같은 페이지에서
     여러 청크가 뽑히는 경우가 흔해져서, 페이지 헤더를 중복 표시하지 않고 하나로 묶어서 보여줌."""
     groups = []
     group_index = {}

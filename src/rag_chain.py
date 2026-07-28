@@ -32,9 +32,28 @@ def clean_llm_output(text: str) -> str:
     return text
 
 
+def _sanitize_expansion(text: str) -> str:
+    """Query Expansion 출력 검증: 소형 모델이 지시를 어기고 문장/설명을 뱉으면 버리고,
+    키워드 형태면 최대 5개·키워드당 20자로 제한해서 원본 질문 신호가 희석되지 않게 한다."""
+    text = text.strip().strip(".").strip()
+    if not text:
+        return ""
+    if len(text) > 100 or text.count(".") > 1:  ## => 문장형 출력(장황함) 걸러냄
+        return ""
+    keywords = [k.strip() for k in re.split(r"[,，]", text) if k.strip()]
+    keywords = [k for k in keywords if k and len(k) <= 20][:5]
+    return ", ".join(keywords)
+
+
 # Query Expansion Prompt
+## => zero-shot 지시만으론 소형 모델(1.5B 등)이 형식을 잘 안 지켜서 few-shot 예시 2개 추가.
+##    출력은 expand_query()의 _sanitize_expansion()에서 한 번 더 검증/정제함.
 EXPAND_QUERY_PROMPT = ChatPromptTemplate.from_messages([
-    ("system", "당신은 CATIA V5 전문 검색 최적화 AI입니다. 질문의 동의어, 영문 기능명(Concentricity, Coincidence, Pad, Pocket 등), 한글 용어를 조합한 키워드만 단답형으로 출력하세요."),
+    ("system", "당신은 CATIA V5 매뉴얼 검색 최적화 AI입니다. 질문에 있는 CATIA 기능/용어의 동의어와 영문 기능명을 콤마(,)로 구분해 5개 이내로만 출력하세요. 설명, 문장, 마침표는 쓰지 마세요."),
+    ("user", "질문: 동심원의 구속 조건이 뭐야\n확장 키워드:"),
+    ("assistant", "Concentricity, 동심원, 구속조건, Constraint"),
+    ("user", "질문: Pad 기능 사용법 알려줘\n확장 키워드:"),
+    ("assistant", "Pad, 패드, 돌출, 스케치, Sketch Based Feature"),
     ("user", "질문: {question}\n확장 키워드:")
 ])
 
@@ -114,7 +133,9 @@ class RAGPipeline:
     def expand_query(self, question: str) -> str:
         try:
             raw = self.expand_chain.invoke({"question": question})
-            expanded = clean_llm_output(raw)
+            expanded = _sanitize_expansion(clean_llm_output(raw))
+            if not expanded:
+                return question
             return f"{question} {expanded}"
         except Exception:
             return question

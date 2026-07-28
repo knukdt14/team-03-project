@@ -1,0 +1,3 @@
+﻿label,bertscore_f1,elapsed_sec
+Query Expansion ON,0.7265,429.4
+Query Expansion OFF,0.7165,397.9

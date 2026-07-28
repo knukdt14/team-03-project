@@ -61,9 +61,9 @@ def split_documents(pages, chunk_size: int = CHUNK_SIZE, overlap_size: int = CHU
 
 
 def extract_images_from_page(pdf_doc, page, page_num: int, filename: str, output_dir: str = EXTRACTED_IMAGE_DIR) -> List[dict]:
-    """Extracts embedded images from a page and saves them as files, keeping their on-page position (rect).
-    Composites each image's soft mask (alpha) if present -- many icon/screenshot fragments in these
-    manuals are stored as a base image + separate SMask, and skipping the SMask renders as solid black."""
+    """페이지에 삽입된 이미지들을 파일로 추출하고, 페이지 내 위치(rect)를 함께 반환한다.
+    소프트 마스크(SMask, 알파)가 따로 있으면 합성해서 저장한다 -- 이 매뉴얼들의 아이콘/스크린샷
+    상당수가 '본체 이미지 + 별도 SMask' 형태로 저장돼 있어서, SMask를 빼먹으면 검은 사각형으로 보인다."""
     os.makedirs(output_dir, exist_ok=True)
     base_name = os.path.splitext(filename)[0]
     images = []
@@ -116,7 +116,7 @@ def _is_text_duplicate_image(img_rect, blocks: list, overlap_threshold: float = 
 
 
 def _assign_images_to_nearest_block(images: List[dict], blocks: list) -> dict:
-    """Assigns each image to the single nearest text block by vertical center distance.
+    """각 이미지를 세로 중심 거리가 가장 가까운 텍스트 블록 하나에 배정한다.
     매뉴얼이 대부분 단일 컬럼이라, 세로 위치가 가까운 문단일수록 그 이미지를 설명하는 문단일 가능성이 높음."""
     assignment = {i: [] for i in range(len(blocks))}
     for img in images:
@@ -136,8 +136,8 @@ def _assign_images_to_nearest_block(images: List[dict], blocks: list) -> dict:
 
 
 def _group_blocks_into_chunks(blocks_with_images: list, chunk_size: int) -> list:
-    """Groups consecutive text blocks (in reading order) into ~chunk_size chunks, carrying
-    forward only the images bound to the blocks that actually end up inside each chunk."""
+    """읽는 순서대로 연속된 텍스트 블록들을 chunk_size 정도 크기로 묶는다.
+    이때 이미지는 그 청크에 실제로 포함된 블록에 배정된 것만 함께 딸려간다."""
     ## => 슬라이드형 매뉴얼은 페이지 전체 글자 수가 chunk_size보다 훨씬 작아서, 글자 수 기준만으로는
     ##    한 페이지 안의 서로 다른 주제(예: Coincidence 문단 vs Concentricity 문단)가 한 청크로
     ##    합쳐져 버림 -> "새 블록이 이미 그룹에 없는 자기만의 이미지를 데려오면" 그걸 주제 전환 신호로 보고 끊음
