@@ -1,0 +1,72 @@
+﻿Type,Question,Ground Truth,Direct LLM Answer,Direct LLM BERTScore Precision,Direct LLM BERTScore Recall,Direct LLM F1,Strict RAG Answer,Strict RAG BERTScore Precision,Strict RAG BERTScore Recall,Strict RAG F1,Adaptive Fallback Answer,Adaptive Status,Adaptive Fallback BERTScore Precision,Adaptive Fallback BERTScore Recall,Adaptive Fallback F1,Source Pages
+General QA,CATIA V5에서 Pad 기능의 주요 역할과 스케치 조건은 무엇인가요?,"Pad 기능은 2D 스케치 프로파일을 돌출시켜 3D 솔리드 바디를 생성하는 기본 기능으로, 스케치는 닫힌 루프(Closed Loop) 형태이어야 합니다.","CATIA V5의 Pad 기능은 3D 모델링에서 중요한 역할을 합니다. 이 기능은 2D 스케치를 기반으로 3D 모델을 생성하는데 사용되며, 이는 제품 설계에서 매우 유용합니다. 
+
+Pad 기능의 주요 역할은 다음과 같습니다:
+
+1. **3D 모델 생성**: 2D 스케치를 기반으로 3D 모델을 생성합니다. 이는 단순히 평면을 깊이 방향으로 확장하는 것으로 이해할 수 있습니다.
+2. **단순화된 모델링**: 복잡한 모델링 과정을 단순화하여 사용자에게 더 효율적인 작업 환경을 제공합니다.
+3. **제품 설계**: 제품의 기본적인 형태를 빠르게 생성하고 수정할 수 있습니다.
+
+Pad 기능을 사용하려면 다음 스케치 조건이 필요합니다:
+
+1. **2D 스케치**: Pad 기능을 사용하기 위해서는 먼저 2D 스케치를 생성해야 합니다. 이 스케치는 평면 위에 그려집니다.
+2. **정의된 평면**: 스케치가 그려질 평면이 정의되어 있어야 합니다. 이 평면은 일반적으로 제품의 기준 평면으로 사용됩니다.
+3. **깊이 지정**: Pad의 깊이를 지정해야 합니다. 이는 생성될 3D 모델의 두께를 결정합니다.
+4. **스케치의 평면 정의**: 스케치가 평면 위에 정확하게 위치하도록 정의해야 합니다. 이는 스케치의 축과 평면의 축이 일치하도록 설정하거나, 스케치의 한 점이 평면 위에 정확히 위치하도록 설정할 수 있습니다.
+
+이러한 조건을 충족시킨 후, Pad 기능을 사용하여 2D 스케치를 3D 모델로 확장할 수 있습니다.",0.6170310974121094,0.7197892665863037,0.6644607782363892,"CATIA V5에서 Pad 기능의 주요 역할은 특정 스케치를 기반으로 3D 모델의 단면을 확장하여 부품의 특정 부분을 생성하는 것입니다. 이를 위해 Pad.1이라는 부분이 존재하며, 이 부분을 통해 Pad의 두께를 수정할 수 있습니다.
+
+스케치 조건은 다음과 같습니다:
+1. 스케치는 2차원적임으로, H(수평) 축과 V(수직) 축이 존재합니다.
+2. 스케치의 프로필을 정의하는 기하학적 요소는 스케치러버리크 워크벤치에서만 수정할 수 있습니다.
+
+따라서 Pad 기능을 사용하려면, 먼저 2D 스케치를 생성하고, 그 스케치를 기반으로 Pad 기능을 적용하여 3D 모델의 단면을 확장해야 합니다.",0.6881921887397766,0.7444302439689636,0.7152073979377747,"✅ **[매뉴얼 근거 답변]**
+CATIA V5에서 Pad 기능의 주요 역할은 특정 스케치를 기반으로 3D 모델의 단면을 확장하는 것입니다. 이를 통해 3D 모델의 특정 부분을 두께를 가진 평면으로 생성할 수 있습니다.
+
+스케치 조건은 다음과 같습니다:
+1. 스케치는 단순히 2D 공간에서 정의되므로 H(수평) 축과 V(수직) 축이 존재합니다.
+2. 스케치의 프로필을 정의하는 기하학적 요소는 스케치러버리크 워크벤치에서만 수정할 수 있습니다.
+
+따라서 Pad 기능을 사용하려면 먼저 2D 스케치를 생성하고, 이 스케치를 기반으로 Pad 기능을 적용하여 3D 모델의 단면을 확장해야 합니다.",RAG Manual Answer (매뉴얼 근거),0.682941198348999,0.7371808886528015,0.7090252637863159,"['1-58503-314-6-2.pdf (P.10)', '1-58503-314-6-2.pdf (P.23)', 'EDU_CAT_EN_V5F_FB_V5R19.pdf (P.330)', 'basug_Knowledgeware.pdf (P.232)']"
+Specific QA,Dress-Up Feature 중 Stiffener 기능의 사용 목적과 권장 구배 각도는 몇 도인가요?,"Stiffener 기능은 캐싱 부품 내부 리브(Rib) 보강재를 효율적으로 생성할 때 사용하며, 몰딩 공정 부품의 경우 보통 4도의 구배 각도가 권장됩니다.","Dress-Up Feature의 Stiffener 기능은 주로 구조의 강성을 향상시키기 위해 사용됩니다. Stiffener는 주요 부품의 강성을 높이기 위해 추가되는 강성 증대 요소입니다. 이 기능은 주로 보강재, 보강판, 또는 스티레인저와 같은 요소를 추가하여 구조의 강성을 향상시키는데 사용됩니다.
+
+Stiffener의 권장 구배 각도는 구조의 특성과 요구사항에 따라 달라질 수 있지만, 일반적으로 Stiffener는 주요 부품의 길이와 폭의 각도의 45도 또는 90도로 배치됩니다. 45도는 주로 부품의 길이와 폭이 비슷한 경우에 사용되며, 90도는 부품의 길이와 폭이 크게 다른 경우에 사용됩니다. 그러나 이러한 권장 각도는 특정 상황에 따라 조정될 수 있습니다.
+
+구체적인 설계 요구사항과 구조의 특성에 따라 Stiffener의 위치와 각도를 결정하는 것이 중요합니다. 따라서, 설계 목표와 요구사항을 고려하여 Stiffener를 적절히 배치하는 것이 좋습니다.",0.6466711163520813,0.722786545753479,0.6826134920120239,제공된 매뉴얼에 관련 내용이 명시되어 있지 않습니다.,0.6707961559295654,0.6367033123970032,0.6533052921295166,"✅ **[매뉴얼 근거 답변]**
+⚠️ [RAG 응답 생성 오류]: Client error '402 Payment Required' for url 'https://router.huggingface.co/v1/chat/completions' (Request ID: Root=1-6a680e37-7543484255947350643e031e;e38c3ca5-73cb-4ed0-90e4-4eb9cb90993a)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402
+
+You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.",RAG Manual Answer (매뉴얼 근거),0.5115953683853149,0.614854633808136,0.5584921836853027,"['10주차 (Part Design)_rev01.pdf (P.2)', '11주차 (Part Design)_rev01.pdf (P.2)', '4주차(Part Design).pdf (P.5)', '7주차 Part Design1.pdf (P.6)']"
+Specific QA,Draft Angle 기능이란 무엇이며 어떨 때 사용하나요?,Draft Angle 기능은 금형(Molding) 공정에서 부품을 원활하게 빼내기 위해 측면에 꺾임각/경사각을 부여하는 Dress-Up 기능입니다.,"⚠️ [Direct LLM 응답 오류]: Client error '402 Payment Required' for url 'https://router.huggingface.co/v1/chat/completions' (Request ID: Root=1-6a680e37-314c7b72683a90b969cfa329;da59c3c0-0b5f-4026-8a77-6fb4d2876634)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402
+
+You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.",0.5164589285850525,0.6073675155639648,0.558236300945282,"⚠️ [RAG 응답 생성 오류]: Client error '402 Payment Required' for url 'https://router.huggingface.co/v1/chat/completions' (Request ID: Root=1-6a680e38-0298af6e38fa39a140ad11a5;3b5bcbbf-3073-4bb5-86b7-84b3e3c2b886)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402
+
+You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.",0.5210260152816772,0.6031972169876099,0.5591086149215698,"✅ **[매뉴얼 근거 답변]**
+⚠️ [RAG 응답 생성 오류]: Client error '402 Payment Required' for url 'https://router.huggingface.co/v1/chat/completions' (Request ID: Root=1-6a680e38-1ddc76a044afb687680412bd;db8d5a14-6463-4dc7-966e-88552b03932d)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402
+
+You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.",RAG Manual Answer (매뉴얼 근거),0.5072413682937622,0.5919544696807861,0.5463335514068604,"['EDU_CAT_EN_V5F_FB_V5R19.pdf (P.122)', 'EDU_CAT_EN_V5F_FB_V5R19.pdf (P.329)', 'catia-v5-surface-modelling.pdf (P.174)', 'catia-v5-surface-modelling.pdf (P.78)']"
+Trick/Unanswerable QA,CATIA V5에서 3D 퀀텀 머시닝(Quantum Machining) AI 가속 모드는 어떻게 실행하나요?,제공된 매뉴얼에 관련 내용이 명시되어 있지 않습니다.,"⚠️ [Direct LLM 응답 오류]: Client error '402 Payment Required' for url 'https://router.huggingface.co/v1/chat/completions' (Request ID: Root=1-6a680e39-3bb0e4b449f1cb3c2c437813;e5de819a-75cb-4bcd-8c2e-6e51ec60e687)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402
+
+You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.",0.4682110846042633,0.6380606889724731,0.5400971174240112,"⚠️ [RAG 응답 생성 오류]: Client error '402 Payment Required' for url 'https://router.huggingface.co/v1/chat/completions' (Request ID: Root=1-6a680e39-6cf1d1cb72f650874ab27782;7ed46ea4-976e-451f-bdc8-dc89165d295a)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402
+
+You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.",0.4680904150009155,0.6272844076156616,0.5361194014549255,"✅ **[매뉴얼 근거 답변]**
+⚠️ [RAG 응답 생성 오류]: Client error '402 Payment Required' for url 'https://router.huggingface.co/v1/chat/completions' (Request ID: Root=1-6a680e3a-6fb1ef062da5fbfe5021e3cb;b127d055-4e54-47cd-b9a6-45abda34aed5)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402
+
+You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.",RAG Manual Answer (매뉴얼 근거),0.4747862219810486,0.6474741697311401,0.5478440523147583,"['1-58503-314-6-2.pdf (P.18)', '1-58503-314-6-2.pdf (P.24)', '1-58503-314-6-2.pdf (P.6)', 'EDU_CAT_EN_V5F_FB_V5R19.pdf (P.1)']"
+Trick/Unanswerable QA,CATIA V5에서 자율주행 차체 3D 홀로그램 자동 설계 알고리즘 메뉴 위치는?,제공된 매뉴얼에 관련 내용이 명시되어 있지 않습니다.,"⚠️ [Direct LLM 응답 오류]: Client error '402 Payment Required' for url 'https://router.huggingface.co/v1/chat/completions' (Request ID: Root=1-6a680e3a-491e8ec51b8befd866952bef;580c6c54-44df-42a4-97e6-de5b3816f00b)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402
+
+You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.",0.47614336013793945,0.6439481973648071,0.547476053237915,"⚠️ [RAG 응답 생성 오류]: Client error '402 Payment Required' for url 'https://router.huggingface.co/v1/chat/completions' (Request ID: Root=1-6a680e3a-2fc2bd7a0c827ad175850c15;b8d14ab2-b3da-4bd9-a315-f71b85f5fc1e)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402
+
+You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.",0.46652406454086304,0.6281863451004028,0.5354184508323669,"✅ **[매뉴얼 근거 답변]**
+⚠️ [RAG 응답 생성 오류]: Client error '402 Payment Required' for url 'https://router.huggingface.co/v1/chat/completions' (Request ID: Root=1-6a680e3b-6e9cd5120e9b0c9a25dcd22d;f0284355-f3f9-4c7a-adab-b21132adbb18)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402
+
+You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.",RAG Manual Answer (매뉴얼 근거),0.4730769991874695,0.6477545499801636,0.5468043684959412,"['1주차 (Basic).pdf (P.7)', '7주차 Part Design1.pdf (P.3)', 'CATIA V5 Lectures.pdf (P.3)', 'CATIA V5 Lectures.pdf (P.5)']"
