@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import json
 from pathlib import Path
 
 # Ensure project root is in sys.path
@@ -11,6 +12,8 @@ if str(PROJECT_ROOT) not in sys.path:
 import streamlit as st
 import pandas as pd
 from pypdf import PdfReader
+from bert_score import score as compute_bert_score
+
 from src.rag_chain import RAGPipeline
 from src.evaluation import BENCHMARK_DATASET, run_evaluation_benchmark
 from src.config import DATA_DIR
@@ -28,7 +31,7 @@ st.markdown("""
 <style>
     /* ---------- 헤더 ---------- */
     .main-header {
-        font-size: 2.3rem;
+        font-size: 2.2rem;
         font-weight: 800;
         color: #1E3A8A;
         margin-bottom: 0.3rem;
@@ -41,27 +44,20 @@ st.markdown("""
         margin-top: 0.8rem;
         margin-bottom: 1.8rem;
     }
-    .section-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1F2937;
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-    }
 
     /* ---------- 배지 ---------- */
-    .badge-rag-strict, .badge-rag-adaptive, .badge-rag-off {
+    .badge-rag-strict, .badge-rag-off, .badge-gt {
         display: inline-block;
         padding: 5px 14px;
         border-radius: 999px;
         font-weight: 700;
-        font-size: 0.82rem;
+        font-size: 0.85rem;
         letter-spacing: 0.02em;
         margin-bottom: 0.7rem;
     }
     .badge-rag-strict { background-color: #10B981; color: white; }
-    .badge-rag-adaptive { background-color: #1E3A8A; color: white; }
     .badge-rag-off { background-color: #EF4444; color: white; }
+    .badge-gt { background-color: #1E3A8A; color: white; }
 
     /* ---------- 사이드바 ---------- */
     [data-testid="stSidebar"] {
@@ -106,12 +102,16 @@ st.markdown("""
         overflow: hidden;
     }
 
-    /* ---------- 지표 카드 (3-Way 벤치마크) ---------- */
+    /* ---------- 지표 카드 고정 높이 (delta 태그 생성 시에도 완벽수평) ---------- */
     [data-testid="stMetric"] {
         background-color: #F8FAFC;
         border: 1px solid #E2E8F0;
         border-radius: 12px;
-        padding: 1rem 1.2rem;
+        padding: 0.8rem 1rem;
+        min-height: 125px !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -123,10 +123,31 @@ def load_rag_pipeline(model_name: str, mode: str):
     return RAGPipeline(model_name=model_name, mode=mode)
 
 
+@st.cache_data
+def load_auto_questions_df():
+    """Load CATIA_RAG_High_Gap_Auto_Questions.csv (38 questions) dataset."""
+    csv_paths = [
+        PROJECT_ROOT / "eval" / "CATIA_RAG_High_Gap_Auto_Questions.csv",
+        PROJECT_ROOT / "eval" / "CATIA_Solar_Gap_2_Plus_Qwen_BGE_M3_Results.csv",
+        PROJECT_ROOT / "eval" / "CATIA_Solar_Gap_2_Plus_Evaluation_Results.csv"
+    ]
+    for path in csv_paths:
+        if path.exists():
+            try:
+                df = pd.read_csv(path, encoding="utf-8-sig")
+                return df
+            except Exception:
+                try:
+                    df = pd.read_csv(path, encoding="utf-8")
+                    return df
+                except Exception:
+                    pass
+    return None
+
+
 @st.cache_resource
 def get_corpus_stats(_pipeline):
-    """PDF/페이지/청크 수를 실제 데이터에서 집계 -- 청킹 로직이 바뀔 때마다 사이드바 문구를
-    손으로 고쳐줄 필요 없도록 하드코딩 대신 동적으로 계산."""
+    """PDF/페이지/청크 수를 동적으로 계산."""
     pdf_files = [f for f in os.listdir(DATA_DIR) if f.lower().endswith('.pdf')]
     total_pages = 0
     for f in pdf_files:
@@ -141,14 +162,28 @@ def get_corpus_stats(_pipeline):
     return len(pdf_files), total_pages, chunk_count
 
 
+def calculate_single_bertscore(candidate: str, reference: str) -> dict:
+    """Calculate BERTScore (Precision, Recall, F1) for a single candidate answer against reference."""
+    if not candidate or not reference:
+        return {"precision": 0.0, "recall": 0.0, "f1": 0.0}
+    try:
+        P, R, F1 = compute_bert_score(cands=[str(candidate)], refs=[str(reference)], lang="ko", verbose=False)
+        return {
+            "precision": float(P[0]),
+            "recall": float(R[0]),
+            "f1": float(F1[0])
+        }
+    except Exception:
+        return {"precision": 0.0, "recall": 0.0, "f1": 0.0}
+
+
 def render_chunk_images(doc):
-    """이 청크의 문단에 배정된 CAD 도면/스크린샷 이미지를 화면에 표시한다(bbox 근접 매칭 기준)."""
+    """이 청크의 문단에 배정된 CAD 도면/스크린샷 이미지를 화면에 표시한다."""
     raw_paths = doc.metadata.get("image_paths", "")
     if not raw_paths:
         return
     image_paths = [p for p in raw_paths.split(";") if p and os.path.exists(p)]
     for path in image_paths:
-        ## => 리사이즈 불가능한 이미지 하나 때문에 전체 페이지가 죽지 않도록 개별 처리
         try:
             st.image(path, width=300)
         except Exception:
@@ -156,8 +191,7 @@ def render_chunk_images(doc):
 
 
 def render_context_chunks(docs):
-    """검색된 청크를 (파일명, 페이지) 기준으로 묶어서 표시한다 -- 문단 단위 청킹이라 같은 페이지에서
-    여러 청크가 뽑히는 경우가 흔해져서, 페이지 헤더를 중복 표시하지 않고 하나로 묶어서 보여줌."""
+    """검색된 청크를 (파일명, 페이지) 기준으로 묶어서 표시한다."""
     groups = []
     group_index = {}
     for doc in docs:
@@ -182,8 +216,8 @@ def render_context_chunks(docs):
 
 
 def main():
-    st.markdown('<div class="main-header">🛠️ CATIA 멀티모달 RAG & 작업 절차 정합성 검증 시스템</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">오픈소스 소형 LLM(Qwen2.5) + 멀티모달 도면 파싱 기반 CATIA 전용 도움말 챗봇</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header">🛠️ CATIA 멀티모달 RAG & 성능 비교 평가 시스템</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-header">Qwen 2.5 오픈소스 LLM (0.5B / 1.5B / 3B) + BGE-M3 멀티모달 매뉴얼 RAG & 평가 시스템</div>', unsafe_allow_html=True)
 
     # Sidebar
     st.sidebar.image("https://img.icons8.com/color/96/catia.png", width=70)
@@ -192,36 +226,37 @@ def main():
     execution_mode_label = st.sidebar.radio(
         "⚙️ 모델 구동 방식 선택:",
         [
-            "🏠 로컬 다운로드 구동 (Local HF Transformers)",
+            "🏠 로컬 다운로드 구동 (Local HF PyTorch)",
             "☁️ 클라우드 API 구동 (HuggingFace Serverless API)"
         ]
     )
     execution_mode = "local" if "로컬" in execution_mode_label else "api"
 
-    selected_model_label = st.sidebar.selectbox(
-        "🤖 오픈소스 LLM 모델 선택:",
+    # Qwen 2.5 브랜드 고정 & 파라미터별 선택 (0.5B, 1.5B, 3B)
+    selected_param_label = st.sidebar.selectbox(
+        "🤖 Qwen 2.5 모델 파라미터 선택:",
         [
-            "Qwen/Qwen2.5-3B-Instruct (권장 3B)",
-            "Qwen/Qwen2.5-1.5B-Instruct (초경량 1.5B)",
-            "Qwen/Qwen2.5-0.5B-Instruct (최경량 0.5B)",
-            "Qwen/Qwen2.5-7B-Instruct (7B)",
-            "meta-llama/Llama-3.1-8B-Instruct (8B)"
+            "Qwen 2.5 0.5B (기본 / 초경량 0.5B)",
+            "Qwen 2.5 1.5B (1.5B)",
+            "Qwen 2.5 3B (권장 3B)",
+            "Qwen 2.5 7B (7B, API 크레딧 필요)",
+            "Llama 3.1 8B (8B, API 크레딧 필요)"
         ]
     )
 
-    model_map = {
-        "Qwen/Qwen2.5-3B-Instruct (권장 3B)": "Qwen/Qwen2.5-3B-Instruct",
-        "Qwen/Qwen2.5-1.5B-Instruct (초경량 1.5B)": "Qwen/Qwen2.5-1.5B-Instruct",
-        "Qwen/Qwen2.5-0.5B-Instruct (최경량 0.5B)": "Qwen/Qwen2.5-0.5B-Instruct",
-        "Qwen/Qwen2.5-7B-Instruct (7B)": "Qwen/Qwen2.5-7B-Instruct",
-        "meta-llama/Llama-3.1-8B-Instruct (8B)": "meta-llama/Llama-3.1-8B-Instruct"
+    param_model_map = {
+        "Qwen 2.5 0.5B (기본 / 초경량 0.5B)": "Qwen/Qwen2.5-0.5B-Instruct",
+        "Qwen 2.5 1.5B (1.5B)": "Qwen/Qwen2.5-1.5B-Instruct",
+        "Qwen 2.5 3B (권장 3B)": "Qwen/Qwen2.5-3B-Instruct",
+        "Qwen 2.5 7B (7B, API 크레딧 필요)": "Qwen/Qwen2.5-7B-Instruct",
+        "Llama 3.1 8B (8B, API 크레딧 필요)": "meta-llama/Llama-3.1-8B-Instruct"
     }
-    selected_model_name = model_map[selected_model_label]
+    selected_model_name = param_model_map[selected_param_label]
     
-    top_k = st.sidebar.slider("검색 문서 수 (Top-K)", min_value=1, max_value=10, value=4)
+    top_k = st.sidebar.slider("검색 문서 수 (Top-K)", min_value=1, max_value=10, value=3)
 
     # Load Pipeline
-    with st.spinner(f"[{selected_model_label}] 멀티모달 파이프라인 및 벡터 DB 로딩 중..."):
+    with st.spinner(f"[{selected_param_label}] 파이프라인 및 벡터 DB 로딩 중..."):
         pipeline = load_rag_pipeline(selected_model_name, execution_mode)
         pipeline.retriever.search_kwargs["k"] = top_k
 
@@ -229,207 +264,248 @@ def main():
     chunk_display = f"{n_chunks:,}개" if n_chunks is not None else "알 수 없음"
     st.sidebar.info(f"""
     **KDT 14기 3팀 프로젝트**
-    - **통합 멀티모달 매뉴얼**: {n_pdfs}개 PDF 문헌 ({n_pages:,}페이지 / {chunk_display} 멀티모달 청크)
-    - **핵심 기술**: PyMuPDF 도면/캡처 태깅, Query Expansion, Open LLM (Qwen2.5), Local HF Stack
+    - **베이스라인 모델**: `{selected_model_name}`
+    - **통합 멀티모달 매뉴얼**: {n_pdfs}개 PDF ({n_pages:,}p / {chunk_display} 청크)
+    - **핵심 기술**: PyMuPDF 도면/캡처 태깅, BGE-M3 Vector Store, Open LLM (Qwen 2.5), BERTScore & Solar Evaluation
     """)
 
-    # Tabs
-    tab1, tab2, tab3 = st.tabs(["📖 멀티모달 질의응답 (QA)", "⚙️ 작업 절차 정합성 검증", "📊 3-Way 모델 비교 A/B 벤치마크"])
+    # Load Auto Questions Dataset CSV (38 questions)
+    df_auto = load_auto_questions_df()
 
-    # TAB 1: QA
+    # Tabs (Only 2 Tabs: QA & Benchmark Dataset)
+    tab1, tab2 = st.tabs(["📖 RAG vs Direct LLM 답변 & 평가 (QA)", "📊 CATIA High-Gap 벤치마크 데이터셋"])
+
+    # TAB 1: QA & Evaluation
     with tab1:
-        st.subheader("📖 CATIA 멀티모달 매뉴얼 한국어 질의응답")
+        st.subheader("📖 RAG 적용 LLM vs 순수 LLM 답변 생성 및 BERTScore/정성 평가 대조")
         st.write(f"**현재 구동 모델**: `{selected_model_name}` | **방식**: `{execution_mode_label}`")
 
-        # Preset Questions (폼 밖에 둬서 선택하자마자 바로 입력창에 반영되게 함)
-        preset_q = st.selectbox(
-            "💡 샘플 질문 선택:",
-            [
-                "직접 입력",
-                "동심원의 구속 조건",
-                "CATIA V5에서 Pad 기능의 역할과 스케치 조건은 무엇인가요?",
-                "Stiffener 기능의 사용 목적과 권장 구배 각도는 몇 도인가요?",
-                "Draft Angle 기능이란 무엇이며 어떨 때 사용하나요?",
-                "CATIA V5에서 3D 퀀텀 머시닝(Quantum Machining) AI 가속 모드는 어떻게 하나요?",
-                "CATIA V5에서 자율주행 차체 3D 홀로그램 자동 설계 알고리즘 메뉴 위치는?"
-            ]
+        # Preset Questions from CATIA_RAG_High_Gap_Auto_Questions.csv (38 items)
+        preset_options = ["직접 입력"]
+        qa_dict_by_q = {}
+        if df_auto is not None and "question" in df_auto.columns:
+            for idx, row in df_auto.iterrows():
+                q_text = str(row["question"]).strip()
+                ref_text = str(row.get("reference_answer", "")).strip()
+                qid = str(row.get("id", f"Q{idx+1:02d}"))
+                opt_label = f"[{qid}] {q_text[:50]}..." if len(q_text) > 50 else f"[{qid}] {q_text}"
+                preset_options.append(opt_label)
+                qa_dict_by_q[opt_label] = {
+                    "question": q_text,
+                    "reference_answer": ref_text,
+                    "row": row
+                }
+
+        selected_preset = st.selectbox(
+            "💡 벤치마크 고격차 평가 질문 선택 (CATIA_RAG_High_Gap_Auto_Questions.csv 전체 38개 문항):",
+            preset_options
         )
 
-        ## => st.form으로 감싸면 입력창에 타이핑만 하고 Enter를 안 눌러도, 제출 버튼 클릭 시
-        ##    한 번에 값이 커밋되어 전달됨 (타이핑 후 바로 클릭했을 때 값이 안 먹히던 문제 해결)
+        default_q_val = ""
+        default_ref_val = ""
+        if selected_preset != "직접 입력" and selected_preset in qa_dict_by_q:
+            default_q_val = qa_dict_by_q[selected_preset]["question"]
+            default_ref_val = qa_dict_by_q[selected_preset]["reference_answer"]
+
         with st.form("qa_form"):
             user_query = st.text_input(
                 "질문을 입력하세요:",
-                value="" if preset_q == "직접 입력" else preset_q,
-                placeholder="예: CATIA Pad 기능에서 First Limit 설정 방법은?"
+                value=default_q_val,
+                placeholder="예: CATIA V5에서 Specification Tree를 숨기거나 다시 표시하는 토글 단축키는?"
             )
 
-            mode = st.radio(
-                "실행 방식 선택:",
+            ref_answer = st.text_input(
+                "표준 정답 (Ground Truth / Reference Answer):",
+                value=default_ref_val,
+                placeholder="BERTScore 및 정성 평가 기준 정답 (예: F3)"
+            )
+
+            mode_option = st.radio(
+                "실행 모델 모드 선택 (2가지):",
                 [
-                    "🎯 Adaptive Fallback RAG (매뉴얼 우선 + 미포함 시 Direct LLM 폴백)",
-                    "🔒 Strict RAG (매뉴얼 엄격 전용 - 없으면 '매뉴얼에 없음' 응답)",
-                    "⚡ Direct LLM (RAG Off - 사전학습 지식만)"
+                    "⚔️ RAG 적용 LLM vs 순수 LLM 1:1 대조 및 평가 모드 (추천)",
+                    "🎯 RAG 적용 LLM 전용 (문서 검색 기반)",
+                    "⚡ 순수 LLM 전용 (Direct LLM / RAG Off)"
                 ],
                 horizontal=False
             )
 
-            submitted = st.form_submit_button("질문하기 🚀")
+            submitted = st.form_submit_button("답변 생성 및 평가 실행 🚀")
 
         if submitted:
             if not user_query.strip():
                 st.warning("질문을 입력해주세요.")
             else:
                 t0 = time.time()
-                if "Adaptive Fallback RAG" in mode:
-                    with st.spinner("멀티모달 매뉴얼 검색 및 적응형 폴백 분석 중..."):
-                        res = pipeline.answer_adaptive_fallback(user_query)
-                    st.session_state["qa_result"] = {"type": "adaptive", "query": user_query, "res": res, "elapsed": time.time() - t0}
-                elif "Strict RAG" in mode:
-                    with st.spinner("멀티모달 매뉴얼 엄격 검색 및 답변 생성 중..."):
-                        res = pipeline.answer_rag(user_query)
-                    st.session_state["qa_result"] = {"type": "strict", "query": user_query, "res": res, "elapsed": time.time() - t0}
-                else:
-                    with st.spinner("Direct LLM 답변 생성 중..."):
+                if "1:1 대조" in mode_option:
+                    with st.spinner("RAG 적용 LLM 및 순수 LLM 답변 생성 중..."):
                         ans_direct = pipeline.answer_direct(user_query)
-                    st.session_state["qa_result"] = {"type": "direct", "query": user_query, "ans": ans_direct, "elapsed": time.time() - t0}
+                        t_dir = time.time() - t0
+                        
+                        t1 = time.time()
+                        res_rag = pipeline.answer_rag(user_query)
+                        t_rag = time.time() - t1
 
-        ## => session_state에서 렌더링 -> 사이드바 Top-K 등 다른 위젯을 건드려서 스크립트가
-        ##    다시 실행돼도 방금 받은 답변이 사라지지 않고 그대로 남아있음
+                        st.session_state["qa_result"] = {
+                            "type": "compare",
+                            "query": user_query,
+                            "ref_answer": ref_answer,
+                            "ans_direct": ans_direct,
+                            "res_rag": res_rag,
+                            "t_dir": t_dir,
+                            "t_rag": t_rag
+                        }
+                elif "RAG 적용" in mode_option:
+                    with st.spinner("RAG 적용 LLM 답변 생성 중..."):
+                        res_rag = pipeline.answer_rag(user_query)
+                        t_rag = time.time() - t0
+                        st.session_state["qa_result"] = {
+                            "type": "rag_only",
+                            "query": user_query,
+                            "ref_answer": ref_answer,
+                            "res_rag": res_rag,
+                            "t_rag": t_rag
+                        }
+                else:
+                    with st.spinner("순수 LLM (Direct) 답변 생성 중..."):
+                        ans_direct = pipeline.answer_direct(user_query)
+                        t_dir = time.time() - t0
+                        st.session_state["qa_result"] = {
+                            "type": "direct_only",
+                            "query": user_query,
+                            "ref_answer": ref_answer,
+                            "ans_direct": ans_direct,
+                            "t_dir": t_dir
+                        }
+
         if "qa_result" in st.session_state:
             r = st.session_state["qa_result"]
             st.divider()
 
-            # 1. 질문 (User Question)
-            st.markdown("### ❓ 질문")
-            st.info(r["query"])
+            # 1. 질문 & 표준 정답
+            st.markdown("### ❓ 질문 및 표준 정답 (Ground Truth)")
+            st.info(f"**질문**: {r['query']}")
+            if r["ref_answer"]:
+                st.success(f"**표준 정답 (Ground Truth)**: `{r['ref_answer']}`")
 
-            # 2. 답변 (Answer)
-            st.markdown("### 🤖 답변")
-            st.caption(f"⏱️ 응답 시간: {r['elapsed']:.2f}초")
+            # 2. 답변 대조 및 지표 출력 (높이 완벽 정렬: min-height 125px 고정!)
+            st.markdown("### 🤖 모델 답변 및 평가 지표 (Evaluation Metrics)")
 
-            if r["type"] == "adaptive":
-                res = r["res"]
-                st.markdown(f'<span class="badge-rag-adaptive">Adaptive Fallback RAG ({res["status_tag"]})</span>', unsafe_allow_html=True)
-                if res["used_fallback"]:
-                    st.warning(res["answer"])
-                else:
-                    st.success(res["answer"])
+            if r["type"] == "compare":
+                m_dir = calculate_single_bertscore(r["ans_direct"], r["ref_answer"]) if r["ref_answer"] else {"precision": 0.0, "recall": 0.0, "f1": 0.0}
+                m_rag = calculate_single_bertscore(r["res_rag"]["answer"], r["ref_answer"]) if r["ref_answer"] else {"precision": 0.0, "recall": 0.0, "f1": 0.0}
 
-                st.markdown("### 📚 참고 문서 내용 (Context Chunks)")
-                st.markdown(f"**📌 참조 출처 문헌 및 페이지**: `{', '.join(res['source_pages'])}`")
-                render_context_chunks(res["retrieved_docs"])
+                col_dir, col_rag = st.columns(2)
 
-            elif r["type"] == "strict":
-                res = r["res"]
-                st.markdown(f'<span class="badge-rag-strict">Strict RAG (매뉴얼 엄격 전용)</span>', unsafe_allow_html=True)
-                st.success(res["answer"])
+                # Direct LLM Column (Left)
+                with col_dir:
+                    st.markdown('<span class="badge-rag-off">⚡ 순수 LLM (Direct LLM / RAG Off)</span>', unsafe_allow_html=True)
+                    st.caption(f"⏱️ 응답 시간: {r['t_dir']:.2f}초")
 
-                st.markdown("### 📚 참고 문서 내용 (Context Chunks)")
-                st.markdown(f"**📌 참조 출처 문헌 및 페이지**: `{', '.join(res['source_pages'])}`")
-                render_context_chunks(res["retrieved_docs"])
+                    if r["ref_answer"]:
+                        st.markdown("#### 📊 순수 LLM 평가 지표")
+                        m1, m2, m3 = st.columns(3)
+                        m1.metric("BERT F1", f"{m_dir['f1']:.4f}")
+                        m2.metric("Precision", f"{m_dir['precision']:.4f}")
+                        m3.metric("Recall", f"{m_dir['recall']:.4f}")
+
+                    st.markdown("#### 📝 생성 답변")
+                    st.info(r["ans_direct"])
+
+                # RAG LLM Column (Right)
+                with col_rag:
+                    st.markdown('<span class="badge-rag-strict">🎯 RAG 적용 LLM (문서 검색 기반)</span>', unsafe_allow_html=True)
+                    st.caption(f"⏱️ 응답 시간: {r['t_rag']:.2f}초")
+
+                    if r["ref_answer"]:
+                        delta_f1 = m_rag['f1'] - m_dir['f1']
+                        delta_p = m_rag['precision'] - m_dir['precision']
+                        delta_r = m_rag['recall'] - m_dir['recall']
+
+                        st.markdown("#### 📊 RAG 적용 LLM 평가 지표")
+                        m1, m2, m3 = st.columns(3)
+                        m1.metric("BERT F1", f"{m_rag['f1']:.4f}", delta=f"{delta_f1:+.4f}")
+                        m2.metric("Precision", f"{m_rag['precision']:.4f}", delta=f"{delta_p:+.4f}")
+                        m3.metric("Recall", f"{m_rag['recall']:.4f}", delta=f"{delta_r:+.4f}")
+
+                    st.markdown("#### 📝 생성 답변")
+                    st.success(r["res_rag"]["answer"])
+
+                st.markdown("### 📚 RAG 참조 출처 및 검색 문맥 (Context Chunks)")
+                st.markdown(f"**📌 출처 페이지**: `{', '.join(r['res_rag']['source_pages'])}`")
+                render_context_chunks(r["res_rag"]["retrieved_docs"])
+
+            elif r["type"] == "rag_only":
+                st.markdown('<span class="badge-rag-strict">🎯 RAG 적용 LLM (문서 검색 기반)</span>', unsafe_allow_html=True)
+                st.caption(f"⏱️ 응답 시간: {r['t_rag']:.2f}초")
+
+                if r["ref_answer"]:
+                    m_rag = calculate_single_bertscore(r["res_rag"]["answer"], r["ref_answer"])
+                    st.markdown("#### 📊 RAG 적용 LLM 평가 지표")
+                    m1, m2, m3 = st.columns(3)
+                    m1.metric("BERT F1", f"{m_rag['f1']:.4f}")
+                    m2.metric("Precision", f"{m_rag['precision']:.4f}")
+                    m3.metric("Recall", f"{m_rag['recall']:.4f}")
+
+                st.markdown("#### 📝 생성 답변")
+                st.success(r["res_rag"]["answer"])
+
+                st.markdown("### 📚 RAG 참조 출처 및 검색 문맥 (Context Chunks)")
+                st.markdown(f"**📌 출처 페이지**: `{', '.join(r['res_rag']['source_pages'])}`")
+                render_context_chunks(r["res_rag"]["retrieved_docs"])
 
             else:
-                st.markdown(f'<span class="badge-rag-off">Direct LLM (RAG Off)</span>', unsafe_allow_html=True)
-                st.info(r["ans"])
+                st.markdown('<span class="badge-rag-off">⚡ 순수 LLM (Direct LLM / RAG Off)</span>', unsafe_allow_html=True)
+                st.caption(f"⏱️ 응답 시간: {r['t_dir']:.2f}초")
 
-                st.markdown("### 📚 참고 문서 내용")
-                st.caption("⚡ Direct LLM 모드는 RAG를 사용하지 않으므로 참조 문서가 없습니다.")
+                if r["ref_answer"]:
+                    m_dir = calculate_single_bertscore(r["ans_direct"], r["ref_answer"])
+                    st.markdown("#### 📊 순수 LLM 평가 지표")
+                    m1, m2, m3 = st.columns(3)
+                    m1.metric("BERT F1", f"{m_dir['f1']:.4f}")
+                    m2.metric("Precision", f"{m_dir['precision']:.4f}")
+                    m3.metric("Recall", f"{m_dir['recall']:.4f}")
 
-    # TAB 2: Procedure Verification
+                st.markdown("#### 📝 생성 답변")
+                st.info(r["ans_direct"])
+
+    # TAB 2: CATIA High-Gap 벤치마크 데이터셋 (CATIA_RAG_High_Gap_Auto_Questions.csv 전체 38개 문항)
     with tab2:
-        st.subheader("⚙️ 작업 절차 정합성 검증 (Procedure Verification)")
-        st.write("사용자가 수행하려는 작업 절차를 입력하면 매뉴얼 표준과 1:1 비교하여 정합성 및 오류/누락을 피드백합니다.")
+        st.subheader("📊 CATIA High-Gap 전체 벤치마크 데이터셋 & 종합 평가 지표")
+        
+        if df_auto is not None:
+            st.write(f"**전체 평가 데이터셋 (CATIA_RAG_High_Gap_Auto_Questions.csv)**: 총 `{len(df_auto)}개 문항`")
+            
+            # Overall Dataset Metrics Calculation
+            solar_dir_mean = df_auto["solar_direct_score"].mean() if "solar_direct_score" in df_auto.columns else 0.0
+            solar_rag_mean = df_auto["solar_rag_score"].mean() if "solar_rag_score" in df_auto.columns else 0.0
+            solar_gap_mean = df_auto["solar_score_gap"].mean() if "solar_score_gap" in df_auto.columns else (solar_rag_mean - solar_dir_mean)
 
-        preset_proc = st.selectbox(
-            "💡 샘플 작업 절차 선택:",
-            [
-                "직접 입력",
-                "1. 스케치 작성 -> 2. Pad 돌출 생성 -> 3. Casing 내부에 Stiffener 리브 생성 -> 4. 4도 Draft 경사각 적용",
-                "1. Pad 생성 -> 2. 스케치 작성 -> 3. 바로 해석 실행 (스케치 및 재질 설정 없이)",
-                "1. 2D 프로파일 생성 -> 2. Pocket 홈 파기 -> 3. Fillet 라운딩 처리"
-            ]
-        )
+            bert_dir_mean = df_auto["direct_f1"].mean() if "direct_f1" in df_auto.columns else 0.0
+            bert_rag_mean = df_auto["rag_f1"].mean() if "rag_f1" in df_auto.columns else 0.0
+            bert_gap_mean = df_auto["bert_f1_gap"].mean() if "bert_f1_gap" in df_auto.columns else (bert_rag_mean - bert_dir_mean)
 
-        with st.form("proc_form"):
-            user_proc_text = st.text_area(
-                "검증할 작업 절차를 입력하세요:",
-                value="" if preset_proc == "직접 입력" else preset_proc,
-                height=120,
-                placeholder="1. 2D 스케치 작성\n2. Pad 기능으로 3D 솔리드 생성\n3. Stiffener로 내부에 리브 생성"
-            )
-            proc_submitted = st.form_submit_button("정합성 검증 실행 🔍")
+            st.markdown("#### 📈 전체 데이터셋 (38문항) 종합 평가지표 요약")
+            
+            # Row 1: Upstage Solar LLM-as-a-Judge (1~5점)
+            st.markdown("##### ⭐ Upstage Solar Pro (1~5점 정성 평가)")
+            s1, s2, s3 = st.columns(3)
+            s1.metric("Direct LLM Solar 평균", f"{solar_dir_mean:.2f} / 5.0")
+            s2.metric("RAG LLM Solar 평균", f"{solar_rag_mean:.2f} / 5.0", delta=f"+{solar_gap_mean:.2f}점")
+            s3.metric("Solar Score Improvement", f"+{solar_gap_mean:.2f}점")
 
-        if proc_submitted:
-            if not user_proc_text.strip():
-                st.warning("작업 절차를 입력해주세요.")
-            else:
-                t0 = time.time()
-                with st.spinner("매뉴얼 표준과 정합성 비교 분석 중..."):
-                    proc_res = pipeline.verify_procedure(user_proc_text)
-                st.session_state["proc_result"] = {"query": user_proc_text, "res": proc_res, "elapsed": time.time() - t0}
+            # Row 2: BERTScore F1
+            st.markdown("##### 📊 BERTScore F1 (문장 의미 유사도)")
+            b1, b2, b3 = st.columns(3)
+            b1.metric("Direct LLM BERT F1", f"{bert_dir_mean:.4f}")
+            b2.metric("RAG LLM BERT F1", f"{bert_rag_mean:.4f}", delta=f"+{bert_gap_mean:.4f}")
+            b3.metric("BERT F1 Improvement", f"+{bert_gap_mean:.4f}")
 
-        if "proc_result" in st.session_state:
-            r = st.session_state["proc_result"]
-            proc_res = r["res"]
             st.divider()
-            st.markdown("### ❓ 검증 대상 작업 절차")
-            st.info(r["query"])
-
-            st.markdown("### 🤖 검증 리포트 및 피드백")
-            st.caption(f"⏱️ 응답 시간: {r['elapsed']:.2f}초")
-            st.markdown(proc_res["feedback"])
-
-            st.markdown("### 📚 참고 문서 내용 (Context Chunks)")
-            st.markdown(f"**📌 참조 출처 문헌 및 페이지**: `{', '.join(proc_res['source_pages'])}`")
-            render_context_chunks(proc_res["retrieved_docs"])
-
-    # TAB 3: A/B Testing Benchmark
-    with tab3:
-        st.subheader("📊 3-Way 모델 비교 A/B 테스트 (Direct LLM vs Strict RAG vs Adaptive Fallback RAG)")
-        csv_file_path = os.path.join(PROJECT_ROOT, "data", "evaluation_results.csv")
-        
-        btn_eval = st.button("3-Way 벤치마크 평가 다시 실행 🧪", key="btn_eval")
-        
-        df_eval = None
-        if btn_eval:
-            with st.spinner("벤치마크 데이터셋 5개 항목에 대해 3개 모델 대조 평가 측정 중..."):
-                df_eval = run_evaluation_benchmark(pipeline, BENCHMARK_DATASET)
-                st.success("벤치마크 평가 완료!")
-        elif os.path.exists(csv_file_path):
-            try:
-                df_eval = pd.read_csv(csv_file_path)
-            except Exception:
-                df_eval = None
-
-        if df_eval is not None:
-            cols = list(df_eval.columns)
-            direct_col = "Direct LLM F1" if "Direct LLM F1" in cols else ("RAG Off BERTScore F1" if "RAG Off BERTScore F1" in cols else cols[4])
-            strict_col = "Strict RAG F1" if "Strict RAG F1" in cols else ("RAG On BERTScore F1" if "RAG On BERTScore F1" in cols else cols[6])
-            adaptive_col = "Adaptive Fallback F1" if "Adaptive Fallback F1" in cols else ("Adaptive Status F1" if "Adaptive Status F1" in cols else strict_col)
-
-            direct_f1 = df_eval[direct_col].mean()
-            strict_f1 = df_eval[strict_col].mean()
-            adaptive_f1 = df_eval[adaptive_col].mean() if adaptive_col in cols else strict_f1
-            
-            col1, col2, col3 = st.columns(3)
-            col1.metric("1. Direct LLM F1", f"{direct_f1:.4f}")
-            col2.metric("2. Strict RAG F1", f"{strict_f1:.4f}", delta=f"+{(strict_f1 - direct_f1):.4f}")
-            col3.metric("3. Adaptive Fallback F1", f"{adaptive_f1:.4f}", delta=f"+{(adaptive_f1 - direct_f1):.4f}")
-            
-            st.markdown("### 📋 상세 3개 모델 대조 결과 표")
-            raw_display_cols = [c for c in [
-                "Type", "Question",
-                "Direct LLM Answer", direct_col,
-                "Strict RAG Answer", strict_col,
-                "Adaptive Fallback Answer", "Adaptive Status", adaptive_col,
-                "Source Pages"
-            ] if c in df_eval.columns]
-            
-            display_cols = list(dict.fromkeys(raw_display_cols))
-            st.dataframe(df_eval[display_cols])
+            st.markdown("#### 📋 벤치마크 전체 38개 문항 데이터셋 표")
+            st.dataframe(df_auto)
         else:
-            st.info("버튼을 눌러 3-Way 벤치마크 평가를 실행하세요.")
+            st.info("CATIA_RAG_High_Gap_Auto_Questions.csv 데이터셋 파일이 존재하지 않습니다.")
 
 
 if __name__ == "__main__":
