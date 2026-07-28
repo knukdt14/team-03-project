@@ -170,6 +170,41 @@ def _group_blocks_into_chunks(blocks_with_images: list, chunk_size: int) -> list
     return groups
 
 
+MIN_CHUNK_TEXT_LEN = 40  ## => 이보다 텍스트가 짧으면 "제목/캡션만 있고 실제 정의는 이미지 안에만 있는" 얇은 청크로 간주
+
+
+def _merge_thin_groups(groups: list, min_text_len: int = MIN_CHUNK_TEXT_LEN) -> list:
+    """제목/캡션 한 줄만 있고 본문이 거의 없는 얇은 청크(예: "3) Concentricity"만 있고 실제 정의는
+    스크린샷 이미지 안에만 있는 경우)가 정보량 없이 검색 상위에 노이즈로 뜨는 문제(GitHub 이슈 #16) 완화.
+    이미지 자체의 텍스트(OCR)까지 뽑는 건 아니지만, 최소한 텍스트 없는 청크가 혼자 매칭되는 건 막는다.
+    다음 그룹과 합쳐서 문맥을 붙이고, 문서 마지막 그룹이 얇으면 바로 이전 그룹에 흡수시킨다."""
+    if not groups:
+        return groups
+
+    merged = []
+    pending_texts, pending_images = [], []
+    for texts, images in groups:
+        combined_texts = pending_texts + texts
+        combined_images = pending_images + [p for p in images if p not in pending_images]
+        text_len = sum(len(t) for t in combined_texts)
+        if text_len < min_text_len:
+            pending_texts, pending_images = combined_texts, combined_images
+            continue
+        merged.append((combined_texts, combined_images))
+        pending_texts, pending_images = [], []
+
+    if pending_texts:
+        if merged:
+            last_texts, last_images = merged[-1]
+            merged[-1] = (
+                last_texts + pending_texts,
+                last_images + [p for p in pending_images if p not in last_images],
+            )
+        else:
+            merged.append((pending_texts, pending_images))
+    return merged
+
+
 def extract_multimodal_text_from_pdf(pdf_path: str, chunk_size: int = CHUNK_SIZE) -> List[Document]:
     """
     Extracts text and embedded images from a PDF using PyMuPDF (fitz), binding each image to
@@ -205,7 +240,8 @@ def extract_multimodal_text_from_pdf(pdf_path: str, chunk_size: int = CHUNK_SIZE
             if not blocks_with_images:
                 continue
 
-            for texts, image_paths in _group_blocks_into_chunks(blocks_with_images, chunk_size):
+            page_groups = _merge_thin_groups(_group_blocks_into_chunks(blocks_with_images, chunk_size))
+            for texts, image_paths in page_groups:
                 chunk_text = "\n\n".join(texts)
                 if image_paths:
                     chunk_text = f"🖼️ [이 문단 근처 CAD 도면/스크린샷 {len(image_paths)}개 포함]\n\n{chunk_text}"

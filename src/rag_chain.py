@@ -1,15 +1,15 @@
 import os
 import sys
 import re
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 # Ensure project root is in sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from src.config import LOCAL_LLM_MODEL, LLM_MODE
-from src.vector_store import build_or_load_vectorstore, get_retriever
+from src.config import LOCAL_LLM_MODEL, LLM_MODE, RETRIEVAL_DISTANCE_THRESHOLD
+from src.vector_store import build_or_load_vectorstore, get_retriever, get_hybrid_retriever
 from src.models.llm_factory import LLMFactory
 
 
@@ -100,12 +100,19 @@ def extract_source_citations(docs) -> List[str]:
 
 
 class RAGPipeline:
-    def __init__(self, model_name: str = LOCAL_LLM_MODEL, mode: str = LLM_MODE, vectorstore=None, top_k: int = 4):
+    def __init__(self, model_name: str = LOCAL_LLM_MODEL, mode: str = LLM_MODE, vectorstore=None, top_k: int = 4,
+                 use_hybrid_search: bool = False, hybrid_vector_weight: float = 0.5):
+        ## => use_hybrid_search=True: 벡터 검색 + BM25 키워드 검색 결합 (GitHub 이슈 #16의
+        ##    "청킹/임베딩 튜닝만으로 안 풀리는 근본적 검색 실패 케이스" 대응, vector_store.get_hybrid_retriever 참고)
         self.model_name = model_name
         self.mode = mode
         self.llm = LLMFactory.get_llm(model_name=model_name, mode=mode)
         self.vectorstore = vectorstore if vectorstore else build_or_load_vectorstore()
-        self.retriever = get_retriever(self.vectorstore, top_k=top_k)
+        self.use_hybrid_search = use_hybrid_search
+        if use_hybrid_search:
+            self.retriever = get_hybrid_retriever(self.vectorstore, top_k=top_k, vector_weight=hybrid_vector_weight)
+        else:
+            self.retriever = get_retriever(self.vectorstore, top_k=top_k)
         
         self.expand_chain = EXPAND_QUERY_PROMPT | self.llm | StrOutputParser()
         self.direct_chain = DIRECT_LLM_PROMPT | self.llm | StrOutputParser()
@@ -147,19 +154,32 @@ class RAGPipeline:
         except Exception as e:
             return f"⚠️ [Direct LLM 응답 오류]: {e}"
 
+    def _top_retrieval_distance(self, query: str) -> Optional[float]:
+        """검색된 문서가 실제로 질문과 관련 있는지 확인하기 위한 최상위 거리 점수.
+        Chroma의 similarity_search_with_score()는 (Document, distance) 튜플을 반환하며,
+        정규화 임베딩 기준 값이 낮을수록 유사함. 벡터스토어가 이 API를 지원하지 않으면 None."""
+        try:
+            results = self.vectorstore.similarity_search_with_score(query, k=1)
+            if not results:
+                return None
+            return results[0][1]
+        except Exception:
+            return None
+
     def answer_rag(self, question: str) -> Dict[str, Any]:
         expanded_q = self.expand_query(question)
         docs = self.retriever.invoke(expanded_q)
         context_str = format_docs_with_pages(docs)
-        
+        top_distance = self._top_retrieval_distance(expanded_q)
+
         try:
             raw_answer = self.rag_chain.invoke({"question": question, "expanded_query": expanded_q})
             answer = clean_llm_output(raw_answer)
         except Exception as e:
             answer = f"⚠️ [RAG 응답 생성 오류]: {e}"
-            
+
         citations = extract_source_citations(docs)
-        
+
         return {
             "question": question,
             "expanded_query": expanded_q,
@@ -167,6 +187,7 @@ class RAGPipeline:
             "retrieved_docs": docs,
             "context": context_str,
             "source_pages": citations,
+            "top_retrieval_distance": top_distance,
             "model_name": self.model_name
         }
 
@@ -181,11 +202,19 @@ class RAGPipeline:
             "명시되어 있지 않습니다"
         ]
         
-        is_missing = any(kw in rag_ans for kw in unanswerable_keywords)
-        
+        keyword_missing = any(kw in rag_ans for kw in unanswerable_keywords)
+
+        ## => 이슈 #16 대응: 소형 모델(0.5B 등)은 관련 없는 문서를 "찾긴 찾아서" 위 키워드를
+        ##    안 쓰고 근거 없는 답을 만들어내는 경우가 있음. 검색 자체의 신뢰도(거리 점수)도 같이 확인해서,
+        ##    거리가 임계값보다 멀면(=사실상 무관한 문서) 모델이 뭐라고 답했든 폴백시킴.
+        top_distance = rag_res.get("top_retrieval_distance")
+        weak_retrieval = top_distance is not None and top_distance > RETRIEVAL_DISTANCE_THRESHOLD
+        is_missing = keyword_missing or weak_retrieval
+
         if is_missing:
             direct_ans = self.answer_direct(question)
-            fallback_ans = f"⚠️ **[매뉴얼 미포함 - Direct LLM 사전학습 지식 폴백 답변]**\n매뉴얼에 직접적인 근거가 없어 일반 LLM 사전학습 지식을 바탕으로 답변합니다:\n\n{direct_ans}"
+            reason = "매뉴얼에 직접적인 근거가 없어" if keyword_missing else "검색된 문서가 질문과 관련성이 낮아(유사도 신뢰도 미달)"
+            fallback_ans = f"⚠️ **[매뉴얼 미포함 - Direct LLM 사전학습 지식 폴백 답변]**\n{reason} 일반 LLM 사전학습 지식을 바탕으로 답변합니다:\n\n{direct_ans}"
             return {
                 "question": question,
                 "answer": fallback_ans,
@@ -193,6 +222,8 @@ class RAGPipeline:
                 "context": rag_res["context"],
                 "source_pages": rag_res["source_pages"],
                 "used_fallback": True,
+                "weak_retrieval": weak_retrieval,
+                "top_retrieval_distance": top_distance,
                 "status_tag": "Direct LLM Fallback (매뉴얼 미포함)",
                 "model_name": self.model_name
             }
@@ -204,6 +235,8 @@ class RAGPipeline:
                 "context": rag_res["context"],
                 "source_pages": rag_res["source_pages"],
                 "used_fallback": False,
+                "weak_retrieval": False,
+                "top_retrieval_distance": top_distance,
                 "status_tag": "RAG Manual Answer (매뉴얼 근거)",
                 "model_name": self.model_name
             }

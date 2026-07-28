@@ -95,6 +95,39 @@ def get_retriever(vectorstore: Chroma, top_k: int = DEFAULT_TOP_K, search_type: 
     )
 
 
+def _get_all_documents_from_chroma(vectorstore: Chroma) -> List[Document]:
+    """Chroma 컬렉션에 저장된 모든 청크를 Document 리스트로 복원 (BM25 인덱싱용, PDF 재파싱 불필요)."""
+    raw = vectorstore.get(include=["documents", "metadatas"])
+    return [Document(page_content=t, metadata=m or {}) for t, m in zip(raw["documents"], raw["metadatas"])]
+
+
+def get_hybrid_retriever(vectorstore: Chroma, top_k: int = DEFAULT_TOP_K, vector_weight: float = 0.5):
+    """
+    벡터 검색(의미 유사도) + BM25(키워드 매칭)를 결합한 하이브리드 리트리버.
+
+    청킹/임베딩 튜닝만으로는 안 풀리는 근본적 검색 실패 케이스(GitHub 이슈 #16) 대응:
+    ".CATPart 확장자는?" 같은 질문은 정답 청크에 ".CATPart"라는 정확한 문자열이 있는데도
+    다국어 임베딩 벡터 검색으로는 top-k에 안 들어오는 경우가 있었음. BM25는 임베딩 없이
+    정확한 단어/문자열 매칭으로 찾기 때문에, 이런 "정확한 키워드는 일치하는데 의미 벡터로는
+    안 잡히는" 케이스를 보완할 수 있음.
+
+    vector_weight: 0~1 사이. 1이면 벡터 검색만, 0이면 BM25만. 기본 0.5(동일 비중).
+    """
+    from langchain_community.retrievers import BM25Retriever
+    from langchain_classic.retrievers.ensemble import EnsembleRetriever
+
+    documents = _get_all_documents_from_chroma(vectorstore)
+    bm25_retriever = BM25Retriever.from_documents(documents)
+    bm25_retriever.k = top_k
+
+    vector_retriever = vectorstore.as_retriever(search_kwargs={"k": top_k})
+
+    return EnsembleRetriever(
+        retrievers=[bm25_retriever, vector_retriever],
+        weights=[1 - vector_weight, vector_weight],
+    )
+
+
 if __name__ == "__main__":
     vs = build_or_load_vectorstore()
     retriever = get_retriever(vs, top_k=2)

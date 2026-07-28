@@ -62,3 +62,10 @@ LLM_MODE = DEFAULT_CONFIG["llm_mode"]
 CHUNK_SIZE = DEFAULT_CONFIG["chunk_size"]
 CHUNK_OVERLAP = DEFAULT_CONFIG["overlap_size"]
 DEFAULT_TOP_K = DEFAULT_CONFIG["top_k"]
+
+## => (실험 결과 비활성화됨) Adaptive Fallback RAG가 "문서를 찾긴 찾았지만 실제로는 무관한" 상황에서
+##    근거 없는 답을 만들어내는 문제(GitHub 이슈 #16) 대응으로 검색 거리 기반 신뢰도 체크를 시도했으나,
+##    실측 결과 이 임베딩 모델은 트릭 질문(거리 0.43~0.64)이 오히려 정상 질문(거리 0.74~0.95)보다
+##    가깝게 나와 판별 기준으로 못 씀 (역효과 확인). rag_chain.py에서 거리 값 자체는 진단용으로
+##    계속 기록하되, float('inf')로 자동 폴백 트리거는 사실상 비활성화. 다른 방식(키워드 중첩 등) 필요.
+RETRIEVAL_DISTANCE_THRESHOLD = float('inf')
