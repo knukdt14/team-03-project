@@ -79,8 +79,17 @@ PROCEDURE_PROMPT = ChatPromptTemplate.from_messages([
 ])
 
 
+## => 원래 프롬프트가 영어로만 답하게 강제해서, 한국어 질문에 영어로 답하는 바람에 BERTScore가
+##    한국어 정답 대비 불리하게 채점되는 문제 발견 (언어 불일치로 Recall이 크게 떨어짐).
+##    질문과 같은 언어로 답하도록 지시 추가. 단, 거절 문구(UNSUPPORTED_ANSWER)는
+##    is_answer_grounded()/answer_adaptive_fallback()의 정확 문자열 매칭 로직 때문에 영어 그대로 유지.
 STRICT_RAG_PROMPT = ChatPromptTemplate.from_messages([
-    ("system", "You are a CATIA manual answer extractor. Answer only from the supplied manual context. First identify the exact tool, feature, toolbar, or command name that is written in the context; copy that name exactly and do not replace it with a similar term. Then give its directly stated purpose in one short sentence. Do not use outside knowledge, infer missing steps, add examples, or add a list. If the context does not explicitly support the answer, reply exactly: 'The provided manual does not contain this information.' Your entire answer must be at most 30 words."),
+    ("system", "You are a CATIA manual answer extractor. Answer only from the supplied manual context. "
+     "Answer in the SAME LANGUAGE as the question (Korean question -> Korean answer, English question -> English answer). "
+     "First identify the exact tool, feature, toolbar, or command name that is written in the context; copy that name exactly and do not translate or replace it with a similar term. "
+     "Then give its directly stated purpose in one short sentence. Do not use outside knowledge, infer missing steps, add examples, or add a list. "
+     "If the context does not explicitly support the answer, reply exactly (always in English, even for a Korean question): 'The provided manual does not contain this information.' "
+     "Otherwise, your entire answer must be at most 30 words."),
     ("user", "[Manual context]\n{context}\n\n[Question]\n{question}\n\n[Answer]")
 ])
 
