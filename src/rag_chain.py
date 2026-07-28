@@ -60,6 +60,19 @@ PROCEDURE_PROMPT = ChatPromptTemplate.from_messages([
 ])
 
 
+STRICT_RAG_PROMPT = ChatPromptTemplate.from_messages([
+    ("system", "You are a CATIA manual answer extractor. Answer only from the supplied manual context. First identify the exact tool, feature, toolbar, or command name that is written in the context; copy that name exactly and do not replace it with a similar term. Then give its directly stated purpose in one short sentence. Do not use outside knowledge, infer missing steps, add examples, or add a list. If the context does not explicitly support the answer, reply exactly: 'The provided manual does not contain this information.' Your entire answer must be at most 30 words."),
+    ("user", "[Manual context]\n{context}\n\n[Question]\n{question}\n\n[Answer]")
+])
+
+GROUNDING_CHECK_PROMPT = ChatPromptTemplate.from_messages([
+    ("system", "You are a strict CATIA manual fact checker. The proposed answer is valid only when its exact tool or feature name and stated purpose are explicitly supported by the manual context. Similar tools do not count. Reply with exactly one word: SUPPORTED or UNSUPPORTED."),
+    ("user", "[Manual context]\n{context}\n\n[Question]\n{question}\n\n[Proposed answer]\n{answer}\n\n[Verdict]")
+])
+
+UNSUPPORTED_ANSWER = "The provided manual does not contain this information."
+
+
 def format_docs_with_pages(docs) -> str:
     """Formats retrieved documents with page numbers and source filenames."""
     formatted = []
@@ -81,22 +94,27 @@ def extract_source_citations(docs) -> List[str]:
 
 
 class RAGPipeline:
-    def __init__(self, model_name: str = LOCAL_LLM_MODEL, mode: str = LLM_MODE, vectorstore=None, top_k: int = 4):
+    def __init__(self, model_name: str = LOCAL_LLM_MODEL, mode: str = LLM_MODE,
+                 vectorstore=None, top_k: int = 4, use_query_expansion: bool = False,
+                 enable_grounding_check: bool = True):
         self.model_name = model_name
         self.mode = mode
         self.llm = LLMFactory.get_llm(model_name=model_name, mode=mode)
         self.vectorstore = vectorstore if vectorstore else build_or_load_vectorstore()
         self.retriever = get_retriever(self.vectorstore, top_k=top_k)
+        self.use_query_expansion = use_query_expansion
+        self.enable_grounding_check = enable_grounding_check
         
         self.expand_chain = EXPAND_QUERY_PROMPT | self.llm | StrOutputParser()
         self.direct_chain = DIRECT_LLM_PROMPT | self.llm | StrOutputParser()
+        self.grounding_chain = GROUNDING_CHECK_PROMPT | self.llm | StrOutputParser()
         
         self.rag_chain = (
             {
                 "context": lambda x: format_docs_with_pages(self.retriever.invoke(x["expanded_query"])),
                 "question": lambda x: x["question"]
             }
-            | RAG_PROMPT
+            | STRICT_RAG_PROMPT
             | self.llm
             | StrOutputParser()
         )
@@ -126,8 +144,20 @@ class RAGPipeline:
         except Exception as e:
             return f"⚠️ [Direct LLM 응답 오류]: {e}"
 
+    def is_answer_grounded(self, question: str, answer: str, context: str) -> bool:
+        """Accept only answers explicitly supported by the retrieved manual."""
+        if not answer or answer.strip() == UNSUPPORTED_ANSWER:
+            return False
+        try:
+            verdict = clean_llm_output(self.grounding_chain.invoke({
+                "question": question, "answer": answer, "context": context
+            })).strip().upper()
+            return verdict == "SUPPORTED"
+        except Exception:
+            return False
+
     def answer_rag(self, question: str) -> Dict[str, Any]:
-        expanded_q = self.expand_query(question)
+        expanded_q = self.expand_query(question) if self.use_query_expansion else question
         docs = self.retriever.invoke(expanded_q)
         context_str = format_docs_with_pages(docs)
         
@@ -137,6 +167,12 @@ class RAGPipeline:
         except Exception as e:
             answer = f"⚠️ [RAG 응답 생성 오류]: {e}"
             
+        grounded = True
+        if self.enable_grounding_check:
+            grounded = self.is_answer_grounded(question, answer, context_str)
+            if not grounded:
+                answer = UNSUPPORTED_ANSWER
+
         citations = extract_source_citations(docs)
         
         return {
@@ -146,6 +182,7 @@ class RAGPipeline:
             "retrieved_docs": docs,
             "context": context_str,
             "source_pages": citations,
+            "grounded": grounded,
             "model_name": self.model_name
         }
 
@@ -188,7 +225,7 @@ class RAGPipeline:
             }
 
     def verify_procedure(self, user_procedure: str) -> Dict[str, Any]:
-        expanded_proc = self.expand_query(user_procedure)
+        expanded_proc = self.expand_query(user_procedure) if self.use_query_expansion else user_procedure
         docs = self.retriever.invoke(expanded_proc)
         context_str = format_docs_with_pages(docs)
         

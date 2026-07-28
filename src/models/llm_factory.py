@@ -62,8 +62,10 @@ class LLMFactory:
                     "text-generation",
                     model=model,
                     tokenizer=tokenizer,
-                    max_new_tokens=512,
-                    temperature=0.01,
+                    # A compact answer budget reduces Qwen-0.5B's tendency to
+                    # continue with unsupported procedural explanations.
+                    max_new_tokens=96,
+                    temperature=0.0,
                     do_sample=False
                 )
                 
@@ -79,8 +81,8 @@ class LLMFactory:
                 endpoint = HuggingFaceEndpoint(
                     repo_id=model_name,
                     task="text-generation",
-                    max_new_tokens=512,
-                    temperature=0.01,
+                    max_new_tokens=96,
+                    temperature=0.0,
                     huggingfacehub_api_token=hf_token
                 )
                 return ChatHuggingFace(llm=endpoint)
