@@ -123,10 +123,13 @@ def extract_source_citations(docs) -> List[str]:
 
 class RAGPipeline:
     def __init__(self, model_name: str = LOCAL_LLM_MODEL, mode: str = LLM_MODE, vectorstore=None, top_k: int = DEFAULT_TOP_K,
-                 use_hybrid_search: bool = False, hybrid_vector_weight: float = 0.5,
+                 use_hybrid_search: bool = True, hybrid_vector_weight: float = 0.7,
                  use_query_expansion: bool = False, enable_grounding_check: bool = True):
         ## => use_hybrid_search=True: 벡터 검색 + BM25 키워드 검색 결합 (GitHub 이슈 #16의
         ##    "청킹/임베딩 튜닝만으로 안 풀리는 근본적 검색 실패 케이스" 대응, vector_store.get_hybrid_retriever 참고)
+        ## => top_k=4, hybrid_vector_weight=0.7이 기본값인 이유: experiments/tune_retrieval_params.py로
+        ##    61문항 벤치마크에서 top_k(2/4/6/8) x hybrid 가중치(0.3/0.5/0.7) 스윕 실측, hybrid_w=0.7이
+        ##    최고 F1(0.7700, 순수 벡터검색 top_k=4 대비 +0.0083) — retrieval_tuning_results.json 참고
         ## => enable_grounding_check=True: 답변 생성 후 GROUNDING_CHECK_PROMPT로 실제 근거 여부를
         ##    한 번 더 LLM에게 확인시킴 (이슈 #16의 "소형 모델 환각/폴백 미작동" 대응 - 거리 점수 기반
         ##    방식은 실측 결과 역효과라 폐기, 이 방식으로 대체)
