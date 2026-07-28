@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>경량 LLM × RAG : CATIA V5 전문 질의응답 시스템</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #070a12;
+            color: #f1f5f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .presentation-container {
+            width: 100%;
+            max-width: 1140px;
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header-bar {
+            background: linear-gradient(90deg, #1e1b4b, #311b92, #4c1d95);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+        }
+
+        .header-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #c4b5fd;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .time-badge {
+            background: rgba(167, 139, 250, 0.2);
+            color: #ddd6fe;
+            border: 1px solid #8b5cf6;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .slides-wrapper {
+            padding: 36px 44px;
+            min-height: 570px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .slide-content {
+            display: none;
+            animation: fadeIn 0.35s ease-in-out;
+        }
+
+        .slide-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 표지 스타일 */
+        .cover-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 450px;
+            background: radial-gradient(circle at center, rgba(99, 102, 241, 0.18) 0%, rgba(15, 23, 42, 0) 70%);
+        }
+
+        .cover-tag {
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 800;
+            padding: 6px 20px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+        }
+
+        .cover-main-title {
+            font-size: 42px;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 16px;
+            line-height: 1.25;
+            letter-spacing: -0.5px;
+        }
+
+        .cover-main-title span {
+            background: linear-gradient(90deg, #818cf8, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover-subtitle {
+            font-size: 18px;
+            color: #cbd5e1;
+            font-weight: 500;
+            margin-bottom: 32px;
+            max-width: 800px;
+            line-height: 1.5;
+        }
+
+        .tech-badges {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+
+        .tech-badge {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #475569;
+            color: #c084fc;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .cover-footer {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            color: #94a3b8;
+            background: rgba(30, 41, 59, 0.6);
+            padding: 12px 28px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+
+        .cover-footer strong {
+            color: #e2e8f0;
+        }
+
+        .slide-num {
+            color: #818cf8;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+        }
+
+        .slide-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .slide-title span {
+            background: linear-gradient(90deg, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 14px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 18px 20px;
+            transition: all 0.2s ease;
+        }
+
+        .card-purple {
+            background: rgba(76, 29, 149, 0.18);
+            border-color: #7c3aed;
+        }
+
+        .card-red {
+            background: rgba(153, 27, 27, 0.18);
+            border-color: #b91c1c;
+        }
+
+        .card-blue {
+            background: rgba(30, 58, 138, 0.18);
+            border-color: #2563eb;
+        }
+
+        .card-green {
+            background: rgba(22, 101, 52, 0.18);
+            border-color: #16a34a;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-body {
+            font-size: 13.5px;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .card-body ul {
+            padding-left: 16px;
+        }
+
+        .card-body li {
+            margin-bottom: 6px;
+        }
+
+        .pipeline-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px 18px;
+            margin-bottom: 14px;
+        }
+
+        .step-node {
+            background: #1e293b;
+            border: 1px solid #475569;
+            padding: 8px 14px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .step-node strong {
+            display: block;
+            font-size: 13px;
+            color: #a78bfa;
+            margin-bottom: 2px;
+        }
+
+        .arrow-next {
+            color: #64748b;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .qa-compare-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .qa-direct {
+            background: #2a1215;
+            border: 1px solid #7f1d1d;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 12.5px;
+            line-height: 1.5;
+        }
+
+        .qa-rag {
+            background: #0c2a1d;
+            border: 1px solid #14532d;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 12.5px;
+            line-height: 1.5;
+        }
+
+        .badge-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .metric-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 16px 12px;
+            text-align: center;
+        }
+
+        .metric-val {
+            font-size: 30px;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+
+        .val-red { color: #f87171; }
+        .val-green { color: #4ade80; }
+        .val-purple { color: #c084fc; }
+        .val-blue { color: #60a5fa; }
+
+        .metric-lbl {
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 700;
+        }
+
+        .table-custom {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+            margin-top: 10px;
+        }
+
+        .table-custom th {
+            background: #1e293b;
+            color: #94a3b8;
+            padding: 9px;
+            border: 1px solid #334155;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .table-custom td {
+            padding: 9px;
+            border: 1px solid #334155;
+            text-align: center;
+            color: #e2e8f0;
+        }
+
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #1e293b;
+        }
+
+        .btn {
+            background: #334155;
+            color: #ffffff;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #475569;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+
+        .slide-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #334155;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .dot.active {
+            background: #818cf8;
+            width: 26px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="presentation-container">
+    <div class="header-bar">
+        <div class="header-title">🚀 Team-03 CATIA V5 RAG 프로젝트 (1번 발표자: 개요 및 베이스라인 구축)</div>
+        <div class="time-badge">⏱️ 발표 시간: 5분 (Slide 1 ~ 6)</div>
+    </div>
+
+    <div class="slides-wrapper">
+
+        <!-- SLIDE 1: 표지 -->
+        <div class="slide-content active" id="slide-1">
+            <div class="cover-wrapper">
+                <div class="cover-tag">Team-03 Project Baseline & Evaluation</div>
+                <h1 class="cover-main-title">
+                    경량 LLM × RAG : <br>
+                    <span>CATIA V5 전문 질의응답 시스템</span>
+                </h1>
+                <p class="cover-subtitle">
+                    사전학습 지식 제어를 통한 Qwen 2.5 0.5B 모델 선정 및 <br>
+                    Upstage Solar Pro 정성 평가 기반 RAG 벤치마크 파이프라인 구축
+                </p>
+                <div class="tech-badges">
+                    <span class="tech-badge">ChromaDB Vector Store</span>
+                    <span class="tech-badge">Qwen 2.5 0.5B PyTorch</span>
+                    <span class="tech-badge">Upstage Solar Pro API</span>
+                    <span class="tech-badge">BERTScore & Solar Score</span>
+                </div>
+                <div class="cover-footer">
+                    <div>발표자: <strong>1번 발표자 ([이름])</strong></div>
+                    <div>|</div>
+                    <div>역할: <strong>프로젝트 개요, 모델 선정 및 RAG 베이스라인 평가 체계 구축</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: 프로젝트 개요 & 주제 선정 이유 -->
+        <div class="slide-content" id="slide-2">
+            <div class="slide-num">SLIDE 02 / 06 | 프로젝트 개요 및 배경</div>
+            <h2 class="slide-title">프로젝트 주제 선정 이유 & <span>핵심 기획 목표</span></h2>
+            
+            <div class="grid-2">
+                <div class="card card-purple">
+                    <div class="card-title" style="color: #c084fc;">💡 주제 선정 이유 (Why CATIA V5?)</div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>다음 주 CATIA V5 전문 교육 대비</strong>: 당장 다음 주부터 시작되는 실무 CAD 교육과정의 학습 효율성을 극대화하기 위함.</li>
+                            <li><strong>자동차 부품 산업 취업 대비</strong>: <b>아진산업</b>을 비롯한 현대/기아 1차 협력사 및 자동차 제조업계에서 널리 쓰이는 표준 CAD 툴의 습득 필수성.</li>
+                            <li><strong>학습 장벽 극대화</strong>: 복잡한 UI, 수백 개의 툴바 아이콘 및 단축키로 인해 초심자의 초기 학습 난이도가 매우 높음.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card card-green">
+                    <div class="card-title" style="color: #4ade80;">🎯 프로젝트 개발 목표 (Goal)</div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>24/7 AI 학습 도우미 챗봇 구축</strong>: 수천 페이지 매뉴얼을 일일이 찾지 않고 질문 즉시 3D 조작법과 단축키를 알려주는 RAG 챗봇 구현.</li>
+                            <li><strong>실무 적응력 강화</strong>: 실제 부품 설계 시 발생하는 UI 옵션 및 구속조건 문의에 명확한 매뉴얼 근거 답변 제공.</li>
+                            <li><strong>검증 가능한 AI 시스템</strong>: 거짓 답변(환각)을 제거하고 100% 매뉴얼 원문에 근거한 답변을 보장하는 튜터 시스템 구축.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px 18px; font-size: 13px; color: #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
+                <div>📚 <b>32개 CATIA PDF 매뉴얼 (2,416p)</b> ➔ 챗봇 탑재 완료</div>
+                <div style="font-weight: bold; color: #818cf8;">➔</div>
+                <div>🚗 <b>아진산업 / 자동차 부품 제조업 실무 적응력 극대화</b> ➔ AI Tutor 시스템 완성</div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: 연구 문제 정의 및 피드백 -->
+        <div class="slide-content" id="slide-3">
+            <div class="slide-num">SLIDE 03 / 06 | 연구 문제 정의 및 피드백</div>
+            <h2 class="slide-title">상용 대형 LLM의 한계와 <span>연구 방향 재설정</span></h2>
+            
+            <div class="grid-3">
+                <div class="card card-red">
+                    <div class="card-title" style="color: #f87171;">⚠️ 대형 LLM의 지식 오염</div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>사전학습 지식 과다</strong>: GPT-4, Llama 3B 등 상용 LLM은 인터넷의 CATIA 기초 지식을 이미 학습함.</li>
+                            <li><strong>개념 질문의 한계</strong>: "Part란 무엇인가?" 같은 일반 질문은 RAG 없이도 정답을 맞춰 <strong>RAG도입 차별성 입증 불가</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card card-purple">
+                    <div class="card-title" style="color: #c084fc;">🎯 지도교수님 핵심 피드백</div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>피드백 방향성</strong>: <i>"사전학습 지식이 덜 찬 가벼운 모델을 활용하여, RAG를 적용했을 때 비약적으로 나은 답변이 나오는 것을 증명하라."</i></li>
+                            <li><strong>사전학습 제어 필요성</strong>: RAG 전/후의 답변 품질 차이를 객관적 정량 지표로 입증하기 위한 전략 채택.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card card-blue">
+                    <div class="card-title" style="color: #60a5fa;">💡 프로젝트 전체 방향성 수정</div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>사전학습 지식 제어 연구로 전환</strong>: 사전학습 지식이 제어된 초경량 모델(Qwen 0.5B)을 선정하여 RAG 순수 검색 효용성 입증.</li>
+                            <li><strong>RAG 고격차 평가체계 수립</strong>: UI/단축키/조작법 중심 퀴즈 설계 및 Upstage Solar LLM-as-a-Judge 정성 평가 수치화 체계 구축.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px 18px; font-size: 13px; color: #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
+                <div>❌ <b>일반 개념 질문</b> (RAG 차별성 미흡): <i>"CATIA는 어떤 프로그램인가요?"</i> ➔ Direct LLM도 잘 맞춤</div>
+                <div style="font-weight: bold; color: #818cf8;">VS</div>
+                <div>⭕ <b>매뉴얼 UI/단축키 퀴즈</b> (RAG 차별성 입증): <i>"Specification Tree 토글 단축키는?"</i> ➔ RAG 참조 필수!</div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: 모델 선정 및 평가 지표 한계 극복 -->
+        <div class="slide-content" id="slide-4">
+            <div class="slide-num">SLIDE 04 / 06 | 모델 탐색 & 정성 평가 체계 연동</div>
+            <h2 class="slide-title">학습량별 모델 비교 & <span>Upstage Solar 정성 평가 수치화</span></h2>
+
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>비교 모델</th>
+                        <th>파라미터 크기</th>
+                        <th>CATIA 사전학습 지식</th>
+                        <th>Direct LLM (RAG Off)</th>
+                        <th>RAG LLM (RAG On)</th>
+                        <th>Solar Score Gap</th>
+                        <th>최종 평가</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>Llama 3.1 8B / 3B</b></td>
+                        <td>8B / 3B</td>
+                        <td>높음 (과다 지식)</td>
+                        <td>기초 단축키/개념 이미 맞춤</td>
+                        <td>정답 도출 (4.50점)</td>
+                        <td>+1.20점 (격차 적음)</td>
+                        <td><span style="color:#ef4444;">미채택</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>Qwen 2.5 1.5B</b></td>
+                        <td>1.5B</td>
+                        <td>보통</td>
+                        <td>일부 오답/환각 발생 (2.40점)</td>
+                        <td>정답 도출 (4.60점)</td>
+                        <td>+2.20점</td>
+                        <td><span style="color:#ef4444;">미채택</span></td>
+                    </tr>
+                    <tr style="background: rgba(22, 101, 52, 0.25); font-weight: bold;">
+                        <td><b>Qwen 2.5 0.5B</b></td>
+                        <td>0.5B (초경량)</td>
+                        <td>매우 적음 (제어됨)</td>
+                        <td><b>다수 오답/환각 발생 (1.33점)</b></td>
+                        <td><b>정확한 정답 도출 (4.75점)</b></td>
+                        <td><b>+3.42점 (폭발적 상승)</b></td>
+                        <td><span style="color:#22c55e;">⭐ 최종 선정</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="margin-top: 14px; background: rgba(124, 58, 237, 0.12); border: 1px solid #7c3aed; border-radius: 10px; padding: 14px 18px; font-size: 13px; color: #e2e8f0;">
+                <div style="font-weight: 800; color: #c084fc; font-size: 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                    💡 <b>BERTScore 한계 극복 ➔ Upstage Solar API 정성 평가(1~5점) 수치화 연동</b>
+                </div>
+                <div style="line-height: 1.6; color: #cbd5e1;">
+                    • <b>BERTScore 지표의 한계</b>: 그럴듯하게 지어낸 환각 오답 문장도 단어 임베딩 유사도가 높아 Direct와 RAG 간 점수 차이를 구별하기 어려움 (환각 오답임에도 F1 0.7~0.8 기록).<br>
+                    • <b>Upstage Solar LLM-as-a-Judge 채점</b>: Upstage API(<code>solar-pro</code>)를 평가관으로 연동하여 답변의 정확성을 <b>1점(환각/오답)부터 5점(정확한 정답)까지 정성적으로 정밀 수치화</b>.<br>
+                    • <b>고격차 질문 추출</b>: RAG 적용 전/후의 Solar 점수 격차(<code>solar_score_gap = RAG점수 - Direct점수</code>)가 크게 나타나는 퀴즈 질문을 자동으로 선별하여 추려냄.
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: 매뉴얼 DB 및 1:1 대조 -->
+        <div class="slide-content" id="slide-5">
+            <div class="slide-num">SLIDE 05 / 06 | 매뉴얼 데이터 파이프라인 & 질문 설계</div>
+            <h2 class="slide-title">32개 매뉴얼 DB 인덱싱 & <span>실제 답변 대조 사례</span></h2>
+
+            <div class="pipeline-flow">
+                <div class="step-node">
+                    <strong>1. PDF 원문 로드</strong>
+                    32개 PDF (2,416p)
+                </div>
+                <div class="arrow-next">➔</div>
+                <div class="step-node">
+                    <strong>2. Text Chunking</strong>
+                    5,278개 텍스트 청크
+                </div>
+                <div class="arrow-next">➔</div>
+                <div class="step-node">
+                    <strong>3. Vector Indexing</strong>
+                    10,556개 ChromaDB 벡터
+                </div>
+                <div class="arrow-next">➔</div>
+                <div class="step-node">
+                    <strong>4. Similarity Search</strong>
+                    all-MiniLM-L6-v2 (k=3)
+                </div>
+            </div>
+
+            <div class="qa-compare-box">
+                <div class="qa-direct">
+                    <span class="badge-tag" style="background:#ef4444; color:#fff;">Direct LLM (RAG Off) ❌ [Solar 1점]</span><br>
+                    <strong>Q: Specification Tree를 숨기거나 켜는 단축키와 나침반 명칭은?</strong><br>
+                    <span style="color: #fca5a5; font-size: 12px;">
+                        "1. S - 숨기기, 2. R - 다시 시작, 3. F - 열기 (단축키 S/R/F)"<br>
+                        ⚠️ <b>오답/환각 (실제 존재하지 않는 단축키를 지어냄)</b>
+                    </span>
+                </div>
+                <div class="qa-rag">
+                    <span class="badge-tag" style="background:#22c55e; color:#fff;">RAG LLM (RAG On) ⭕ [Solar 5점]</span><br>
+                    <strong>Q: Specification Tree를 숨기거나 켜는 단축키와 나침반 명칭은?</strong><br>
+                    <span style="color: #86efac; font-size: 12px;">
+                        "Specification Tree 토글 키는 <b>F3</b> 이며, 3D 조작 도구는 <b>Compass</b> 입니다."<br>
+                        📍 <b>매뉴얼 참조 정답 도출 (Solar Gap: +4점)</b>
+                    </span>
+                </div>
+            </div>
+
+            <div class="qa-compare-box" style="margin-top: 8px;">
+                <div class="qa-direct">
+                    <span class="badge-tag" style="background:#ef4444; color:#fff;">Direct LLM (RAG Off) ❌ [Solar 1점]</span><br>
+                    <strong>Q: Part Design Workbench를 활성화하는 기본 가속기 단축키는?</strong><br>
+                    <span style="color: #fca5a5; font-size: 12px;">
+                        "기본 가속기 단축키는 Ctrl+Shift+P 입니다."<br>
+                        ⚠️ <b>오답/환각 (존재하지 않는 가속기 키 언급)</b>
+                    </span>
+                </div>
+                <div class="qa-rag">
+                    <span class="badge-tag" style="background:#22c55e; color:#fff;">RAG LLM (RAG On) ⭕ [Solar 5점]</span><br>
+                    <strong>Q: Part Design Workbench를 활성화하는 기본 가속기 단축키는?</strong><br>
+                    <span style="color: #86efac; font-size: 12px;">
+                        "Part Design Workbench 가속기는 사용자 설정 메뉴에서 Accelerator 키로 지정합니다."<br>
+                        📍 <b>매뉴얼 구체적 절차 추출 (Solar Gap: +4점)</b>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: 정성 평가 수치화 -->
+        <div class="slide-content" id="slide-6">
+            <div class="slide-num">SLIDE 06 / 06 | 정성 평가 수치화 & 벤치마크 검증</div>
+            <h2 class="slide-title">Upstage Solar LLM-as-a-Judge <span>실제 검증 결과</span></h2>
+
+            <div class="grid-2">
+                <div class="card card-red">
+                    <div class="card-title" style="color: #f87171;">❌ BERTScore 오진 한계</div>
+                    <div class="card-body">
+                        단순 텍스트 유사도(BERTScore)는 그럴듯하게 지어낸 가짜 단축키 오답문장도 문자 유사도가 높아 오답을 잘 가려내지 못함.
+                    </div>
+                </div>
+                <div class="card card-green">
+                    <div class="card-title" style="color: #4ade80;">⭐ Upstage Solar API (1~5점 정밀 채점)</div>
+                    <div class="card-body">
+                        <strong>Upstage Solar Pro API (`solar-pro`)</strong>를 평가관으로 연동하여 1점(환각)부터 5점(정답)까지 정성 평가 수치화 체계 완성.
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-val val-red">1.33점</div>
+                    <div class="metric-lbl">Direct Solar 평균 (1~5점)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val val-green">4.75점</div>
+                    <div class="metric-lbl">RAG Solar 평균 (1~5점)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val val-purple">+3.42점</div>
+                    <div class="metric-lbl">Solar Score Gap (257%↑)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val val-blue">+0.1284</div>
+                    <div class="metric-lbl">BERTScore F1 상승폭</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 14px; font-size: 12.5px; color: #cbd5e1; background: #1e293b; padding: 12px 16px; border-radius: 10px; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
+                <div>📁 <b>최우수 고격차 질문셋 추출 완료</b>: 38개 자동 질문 중 <code>solar_score_gap >= 2</code> 조건을 만족하는 <b>12개 최우수 문항</b> 추출 완료.</div>
+                <div style="font-weight: bold; color: #4ade80;">💾 CSV / TXT 데이터셋 확보 완료</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="nav-controls" style="padding: 16px 48px 24px 48px;">
+        <button class="btn" id="prev-btn" onclick="moveSlide(-1)">◀ 이전 슬라이드</button>
+        <div class="slide-dots">
+            <div class="dot active" onclick="goToSlide(0)"></div>
+            <div class="dot" onclick="goToSlide(1)"></div>
+            <div class="dot" onclick="goToSlide(2)"></div>
+            <div class="dot" onclick="goToSlide(3)"></div>
+            <div class="dot" onclick="goToSlide(4)"></div>
+            <div class="dot" onclick="goToSlide(5)"></div>
+        </div>
+        <button class="btn btn-primary" id="next-btn" onclick="moveSlide(1)">다음 슬라이드 ▶</button>
+    </div>
+</div>
+
+<script>
+    let currentSlide = 0;
+
+    function updateSlides() {
+        const slides = document.querySelectorAll('.slide-content');
+        const dots = document.querySelectorAll('.dot');
+        slides.forEach((s, idx) => {
+            s.classList.toggle('active', idx === currentSlide);
+        });
+        dots.forEach((d, idx) => {
+            d.classList.toggle('active', idx === currentSlide);
+        });
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        if (prevBtn) prevBtn.style.visibility = currentSlide === 0 ? 'hidden' : 'visible';
+        if (nextBtn) nextBtn.innerText = currentSlide === slides.length - 1 ? '발표 완료 🎉' : '다음 슬라이드 ▶';
+    }
+
+    function moveSlide(dir) {
+        const slides = document.querySelectorAll('.slide-content');
+        currentSlide += dir;
+        if (currentSlide < 0) currentSlide = 0;
+        if (currentSlide >= slides.length) currentSlide = slides.length - 1;
+        updateSlides();
+    }
+
+    function goToSlide(idx) {
+        currentSlide = idx;
+        updateSlides();
+    }
+
+    // Keyboard Navigation (Arrow Keys & Space)
+    window.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'Space' || e.key === 'PageDown') {
+            moveSlide(1);
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+            moveSlide(-1);
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', updateSlides);
+</script>
+
+</body>
+</html>
