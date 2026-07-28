@@ -9,7 +9,11 @@ langchain-anthropic
 langchain-chroma
 
 # Open Source Models & Embeddings (Local Execution Stack)
-torch
+# 팀 전원 GPU(CUDA) 사용 -> torch/torchvision을 CUDA 12.8(cu128, RTX 50시리즈 Blackwell 지원) 빌드로 고정
+--extra-index-url https://download.pytorch.org/whl/cu128
+torch==2.11.0+cu128
+torchvision==0.26.0+cu128
+accelerate
 transformers
 sentence-transformers
 huggingface_hub

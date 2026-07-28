@@ -12,6 +12,7 @@ def _safe_load_default_certs(self, purpose=ssl.Purpose.SERVER_AUTH):
         pass
 ssl.SSLContext.load_default_certs = _safe_load_default_certs
 
+import shutil
 from typing import List, Optional
 from langchain_core.documents import Document
 # Use the dedicated integration package.  The legacy community wrapper is
@@ -58,6 +59,11 @@ def build_or_load_vectorstore(
             embedding_function=embeddings
         )
         return vectorstore
+
+    if force_rebuild and os.path.exists(persist_directory):
+        ## => Chroma.from_documents는 기존 persist_directory에 append하므로, force_rebuild 시 먼저 비워야 중복 저장을 막을 수 있음
+        print(f"[VectorStore] force_rebuild=True -> 기존 컬렉션 삭제: {persist_directory}")
+        shutil.rmtree(persist_directory)
 
     print(f"[VectorStore] Building new Multimodal Chroma database at: {persist_directory}")
     chunks = load_and_split_multimodal_pdf(pdf_path) if pdf_path else load_and_split_multimodal_pdf()
