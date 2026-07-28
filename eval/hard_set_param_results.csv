@@ -1,0 +1,5 @@
+﻿label,top_k,query_expansion,bertscore_f1,elapsed_sec
+"top_k=2, QE off",2,False,0.6798,73.5
+"top_k=4, QE off",4,False,0.6788,72.8
+"top_k=6, QE off",6,False,0.6863,84.0
+"top_k=4, QE on",4,True,0.701,102.9

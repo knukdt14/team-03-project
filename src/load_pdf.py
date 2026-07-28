@@ -1,11 +1,12 @@
 import os
 import re
 import glob
+import numpy as np
 from typing import List, Optional
 from langchain_core.documents import Document
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter, MarkdownHeaderTextSplitter
-from src.config import DATA_DIR, CHUNK_SIZE, CHUNK_OVERLAP
+from src.config import DATA_DIR, VECT_DIR, CHUNK_SIZE, CHUNK_OVERLAP
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 
@@ -22,6 +23,8 @@ try:
     HAS_PYMUPDF4LLM = True
 except ImportError:
     HAS_PYMUPDF4LLM = False
+
+EXTRACTED_IMAGE_DIR = os.path.join(VECT_DIR, "extracted_images")
 
 
 def detect_lang(text: str) -> str:
@@ -64,43 +67,158 @@ def split_documents(pages, chunk_size: int = CHUNK_SIZE, overlap_size: int = CHU
     return chunks
 
 
-def extract_multimodal_text_from_pdf(pdf_path: str) -> List[Document]:
+def extract_images_from_page(pdf_doc, page, page_num: int, filename: str, output_dir: str = EXTRACTED_IMAGE_DIR) -> List[dict]:
+    """페이지에 삽입된 이미지들을 파일로 추출하고, 페이지 내 위치(rect)를 함께 반환한다.
+    소프트 마스크(SMask, 알파)가 따로 있으면 합성해서 저장한다 -- 이 매뉴얼들의 아이콘/스크린샷
+    상당수가 '본체 이미지 + 별도 SMask' 형태로 저장돼 있어서, SMask를 빼먹으면 검은 사각형으로 보인다."""
+    os.makedirs(output_dir, exist_ok=True)
+    base_name = os.path.splitext(filename)[0]
+    images = []
+    for img_idx, img in enumerate(page.get_images(full=True)):
+        xref, smask_xref = img[0], img[1]
+        try:
+            pix = fitz.Pixmap(pdf_doc, xref)
+            if pix.colorspace and pix.colorspace.n >= 4:  ## => CMYK -> RGB 변환 (PNG는 CMYK 저장 불가)
+                pix = fitz.Pixmap(fitz.csRGB, pix)
+            if smask_xref:
+                if pix.alpha:  ## => Pixmap(base, mask) 합성은 base에 알파 채널이 없어야 함
+                    pix = fitz.Pixmap(pix, 0)
+                mask = fitz.Pixmap(pdf_doc, smask_xref)
+                pix = fitz.Pixmap(pix, mask)
+            ## => 얇은 구분선/장식용 이미지(가로선 등)는 리사이즈 시 "height/width must be > 0" 에러를 유발 -> 제외
+            if pix.width <= 8 or pix.height <= 8:
+                continue
+            if pix.alpha:
+                ## => 페이지 하단 워터마크/배경 장식은 알파(불투명도)가 거의 0으로 설정되어 사실상 안 보이게
+                ##    디자인된 것 -> 평균 알파가 매우 낮으면(10% 미만) 눈에 안 보이는 장식으로 보고 제외
+                arr = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width, pix.n)
+                mean_alpha = arr[:, :, -1].mean() / 255.0
+                if mean_alpha < 0.1:
+                    continue
+            out_path = os.path.join(output_dir, f"{base_name}_p{page_num + 1}_{img_idx}.png")
+            pix.save(out_path)
+            rects = page.get_image_rects(xref)
+            images.append({"path": out_path, "rect": rects[0] if rects else None})
+        except Exception:
+            continue
+    return images
+
+
+def _is_text_duplicate_image(img_rect, blocks: list, overlap_threshold: float = 0.1) -> bool:
+    """일부 PDF는 제목/키워드 같은 텍스트를 실제 텍스트가 아니라 이미지로 별도 렌더링해서 겹쳐놓는 경우가 있음
+    (예: "Coincidence" 캡션 옆에 똑같은 "Coincidence" 글자를 이미지로도 박아놓음).
+    이런 이미지는 진짜 텍스트 블록과 대부분 겹치는 반면, 실제 CAD 스크린샷/도면은 빈 공간에 배치되어
+    텍스트 블록과 거의 겹치지 않음 -> 겹침 비율로 구분."""
+    img_area = max(img_rect.width * img_rect.height, 1)
+    for block in blocks:
+        bx0, by0, bx1, by1 = block[:4]
+        ix0, iy0 = max(img_rect.x0, bx0), max(img_rect.y0, by0)
+        ix1, iy1 = min(img_rect.x1, bx1), min(img_rect.y1, by1)
+        if ix1 <= ix0 or iy1 <= iy0:
+            continue
+        inter_area = (ix1 - ix0) * (iy1 - iy0)
+        if inter_area / img_area >= overlap_threshold:
+            return True
+    return False
+
+
+def _assign_images_to_nearest_block(images: List[dict], blocks: list) -> dict:
+    """각 이미지를 세로 중심 거리가 가장 가까운 텍스트 블록 하나에 배정한다.
+    매뉴얼이 대부분 단일 컬럼이라, 세로 위치가 가까운 문단일수록 그 이미지를 설명하는 문단일 가능성이 높음."""
+    assignment = {i: [] for i in range(len(blocks))}
+    for img in images:
+        rect = img.get("rect")
+        if rect is None:
+            continue
+        img_center_y = (rect.y0 + rect.y1) / 2
+        best_idx, best_dist = None, None
+        for i, block in enumerate(blocks):
+            block_center_y = (block[1] + block[3]) / 2
+            dist = abs(img_center_y - block_center_y)
+            if best_dist is None or dist < best_dist:
+                best_dist, best_idx = dist, i
+        if best_idx is not None:
+            assignment[best_idx].append(img["path"])
+    return assignment
+
+
+def _group_blocks_into_chunks(blocks_with_images: list, chunk_size: int) -> list:
+    """읽는 순서대로 연속된 텍스트 블록들을 chunk_size 정도 크기로 묶는다.
+    이때 이미지는 그 청크에 실제로 포함된 블록에 배정된 것만 함께 딸려간다."""
+    ## => 슬라이드형 매뉴얼은 페이지 전체 글자 수가 chunk_size보다 훨씬 작아서, 글자 수 기준만으로는
+    ##    한 페이지 안의 서로 다른 주제(예: Coincidence 문단 vs Concentricity 문단)가 한 청크로
+    ##    합쳐져 버림 -> "새 블록이 이미 그룹에 없는 자기만의 이미지를 데려오면" 그걸 주제 전환 신호로 보고 끊음
+    groups = []
+    cur_texts, cur_images, cur_len = [], [], 0
+    cur_has_own_image = False
+    for text, image_paths in blocks_with_images:
+        exceeds_size = cur_texts and cur_len + len(text) > chunk_size
+        starts_new_topic = cur_has_own_image and any(p not in cur_images for p in image_paths)
+        if cur_texts and (exceeds_size or starts_new_topic):
+            groups.append((cur_texts, cur_images))
+            cur_texts, cur_images, cur_len = [], [], 0
+            cur_has_own_image = False
+        cur_texts.append(text)
+        if image_paths:
+            cur_has_own_image = True
+            for p in image_paths:
+                if p not in cur_images:
+                    cur_images.append(p)
+        cur_len += len(text)
+    if cur_texts:
+        groups.append((cur_texts, cur_images))
+    return groups
+
+
+def extract_multimodal_text_from_pdf(pdf_path: str, chunk_size: int = CHUNK_SIZE) -> List[Document]:
     """
-    Extracts text, table layouts, and image/drawing tags from a PDF file using PyMuPDF (fitz).
+    Extracts text and embedded images from a PDF using PyMuPDF (fitz), binding each image to
+    its nearest text block (paragraph) by on-page position -- so retrieval only surfaces images
+    that are actually near the retrieved text, not every image that happens to share the page.
     Falls back to PyPDFLoader if PyMuPDF is not installed.
     """
     filename = os.path.basename(pdf_path)
-    
+
     if not HAS_PYMUPDF:
         return load_pdf(pdf_path)
-        
+
     docs = []
     try:
         pdf_doc = fitz.open(pdf_path)
         for page_num in range(len(pdf_doc)):
             page = pdf_doc[page_num]
-            text = page.get_text("text")
-            image_list = page.get_images(full=True)
-            img_count = len(image_list)
-            
-            page_content_parts = []
-            if img_count > 0:
-                page_content_parts.append(f"🖼️ [매뉴얼 도면/스크린샷 포함: {img_count}개의 CAD 도면 및 설정 창 캡처 그림이 포함된 페이지입니다.]")
-                
-            if text.strip():
-                page_content_parts.append(text.strip())
-                
-            full_page_text = "\n\n".join(page_content_parts)
-            
-            if full_page_text.strip():
+
+            raw_blocks = [b for b in page.get_text("blocks") if b[6] == 0 and b[4].strip()]
+            raw_blocks.sort(key=lambda b: (round(b[1]), b[0]))  ## => 읽는 순서: 위->아래, 같은 줄이면 왼쪽->오른쪽
+
+            page_images = extract_images_from_page(pdf_doc, page, page_num, filename)
+            page_images = [
+                img for img in page_images
+                if img["rect"] is None or not _is_text_duplicate_image(img["rect"], raw_blocks)
+            ]
+            image_assignment = _assign_images_to_nearest_block(page_images, raw_blocks)
+
+            blocks_with_images = [
+                (block[4].strip(), image_assignment.get(i, []))
+                for i, block in enumerate(raw_blocks)
+            ]
+            if not blocks_with_images:
+                continue
+
+            for texts, image_paths in _group_blocks_into_chunks(blocks_with_images, chunk_size):
+                chunk_text = "\n\n".join(texts)
+                if image_paths:
+                    chunk_text = f"🖼️ [이 문단 근처 CAD 도면/스크린샷 {len(image_paths)}개 포함]\n\n{chunk_text}"
+
                 doc = Document(
-                    page_content=full_page_text,
+                    page_content=chunk_text,
                     metadata={
                         "source_file": filename,
                         "page": page_num,
-                        "has_images": img_count > 0,
-                        "image_count": img_count,
-                        "lang": detect_lang(full_page_text)
+                        "has_images": len(image_paths) > 0,
+                        "image_count": len(image_paths),
+                        "image_paths": ";".join(image_paths),  ## => Chroma 메타데이터는 스칼라만 허용 -> 세미콜론 구분 문자열
+                        "lang": detect_lang(chunk_text)
                     }
                 )
                 docs.append(doc)
@@ -108,23 +226,23 @@ def extract_multimodal_text_from_pdf(pdf_path: str) -> List[Document]:
     except Exception as e:
         print(f"[MultimodalLoader Warning] Could not process {filename} via fitz, falling back: {e}")
         return load_pdf(pdf_path)
-        
+
     return docs
 
 
-def load_all_multimodal_pdfs(data_dir: str = DATA_DIR) -> List[Document]:
+def load_all_multimodal_pdfs(data_dir: str = DATA_DIR, chunk_size: int = CHUNK_SIZE) -> List[Document]:
     """
     Scans data/ folder and loads all PDF manuals with multimodal image/layout tags.
     """
     if not os.path.exists(data_dir):
         raise FileNotFoundError(f"Data directory not found at: {data_dir}")
-        
+
     pdf_files = [os.path.join(data_dir, f) for f in os.listdir(data_dir) if f.lower().endswith('.pdf')]
     print(f"[MultimodalLoader] Found {len(pdf_files)} PDF manual files in '{data_dir}'. Extracting multimodal text & diagrams...")
-    
+
     all_raw_docs = []
     for pdf_path in pdf_files:
-        raw_docs = extract_multimodal_text_from_pdf(pdf_path)
+        raw_docs = extract_multimodal_text_from_pdf(pdf_path, chunk_size=chunk_size)
         all_raw_docs.extend(raw_docs)
         
     print(f"[MultimodalLoader] Total {len(all_raw_docs)} pages extracted across {len(pdf_files)} PDF files.")
@@ -140,12 +258,14 @@ def load_and_split_multimodal_pdf(
     target = target_path_or_dir if target_path_or_dir else DATA_DIR
     
     if os.path.isdir(target):
-        raw_docs = load_all_multimodal_pdfs(target)
+        raw_docs = load_all_multimodal_pdfs(target, chunk_size=chunk_size)
     elif os.path.isfile(target):
-        raw_docs = extract_multimodal_text_from_pdf(target)
+        raw_docs = extract_multimodal_text_from_pdf(target, chunk_size=chunk_size)
     else:
         raise FileNotFoundError(f"Target path not found: {target}")
-        
+
+    ## => raw_docs는 이미 문단(블록) 단위로 chunk_size에 맞춰 그룹핑되어 있음 -> 대부분 그대로 통과,
+    ##    드물게 한 문단 자체가 chunk_size보다 크면 여기서 추가로 쪼개짐 (그 경우 이미지도 그대로 상속)
     chunks = split_documents(raw_docs, chunk_size=chunk_size, overlap_size=chunk_overlap)
     return chunks
 
@@ -153,7 +273,7 @@ def load_and_split_multimodal_pdf(
 ### [ 5. Markdown 변환 로더 (실험: PDF 구조(제목/표/리스트) 보존 후 청킹) ] ###
 ## => PyPDFLoader/PyMuPDF의 순수 텍스트 추출은 헤더·표 구조가 사라져서,
 ##    RecursiveCharacterTextSplitter가 서로 다른 주제를 한 청크에 섞어버리는 문제가 있었음
-##    (EXPERIMENTS.md 참고: chunk_size를 줄여도 특정 사실이 top-k 밖으로 밀리는 현상 확인).
+##    (report/EMBEDDING_TUNING_REPORT.md 참고: chunk_size를 줄여도 특정 사실이 top-k 밖으로 밀리는 현상 확인).
 ##    pymupdf4llm으로 헤더(#, ##, ###)를 보존한 Markdown으로 뽑고,
 ##    MarkdownHeaderTextSplitter로 헤더 경계부터 먼저 나눈 뒤 chunk_size로 재분할하면
 ##    한 청크 안에 여러 주제가 섞이는 걸 줄일 수 있음.
