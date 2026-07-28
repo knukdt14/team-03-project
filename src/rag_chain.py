@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from src.config import LOCAL_LLM_MODEL, LLM_MODE, RETRIEVAL_DISTANCE_THRESHOLD
+from src.config import LOCAL_LLM_MODEL, LLM_MODE, RETRIEVAL_DISTANCE_THRESHOLD, DEFAULT_TOP_K
 from src.vector_store import build_or_load_vectorstore, get_retriever, get_hybrid_retriever
 from src.models.llm_factory import LLMFactory
 
@@ -122,7 +122,7 @@ def extract_source_citations(docs) -> List[str]:
 
 
 class RAGPipeline:
-    def __init__(self, model_name: str = LOCAL_LLM_MODEL, mode: str = LLM_MODE, vectorstore=None, top_k: int = 4,
+    def __init__(self, model_name: str = LOCAL_LLM_MODEL, mode: str = LLM_MODE, vectorstore=None, top_k: int = DEFAULT_TOP_K,
                  use_hybrid_search: bool = False, hybrid_vector_weight: float = 0.5,
                  use_query_expansion: bool = False, enable_grounding_check: bool = True):
         ## => use_hybrid_search=True: 벡터 검색 + BM25 키워드 검색 결합 (GitHub 이슈 #16의

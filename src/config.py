@@ -27,19 +27,24 @@ MULTILINGUAL_EMBEDDING_MODEL = "sentence-transformers/paraphrase-multilingual-Mi
 # Legacy alias compatibility
 DOCS_DIR = DATA_DIR
 
-# Teammate Git Baseline Configuration
+## => 2026-07-28: 기본값이 실측으로 이미 폐기된 영어 전용 임베딩(all-MiniLM-L6-v2)을 계속 가리키고
+##    있던 문제 수정. 지금까지 보고서/PPT의 좋은 결과(F1 0.76+)는 전부 LOCAL_EMBEDDING_MODEL 환경
+##    변수를 터미널에서 수동으로 BAAI/bge-m3로 오버라이드했을 때만 나온 것 -- .env.example/README
+##    어디에도 이 설정이 문서화돼 있지 않아서, 새로 clone해서 그대로 실행하면 검증된 성능이 전부
+##    사라지고(심하면 기존 BGE-M3 벡터스토어와 차원이 안 맞아 즉시 크래시) 재현이 안 됐음.
+##    실제로 검증된 조합(wooryeol-branch 40문항 실험, F1 0.7460->0.7637)을 기본값으로 반영.
 DEFAULT_CONFIG = {
     "pdf_path": "data",  # PDF raw files in data/
     "vectorstore_path": "vect",  # VectorDB index in vect/
-    "chunk_size": 600,
+    "chunk_size": 500,
     "overlap_size": 100,
-    "top_k": 4,
+    "top_k": 6,
     "embed_provider": "huggingface",
-    "embed_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "embed_model": "BAAI/bge-m3",
     "vectorstore": "chroma",
-    "search_type": "similarity",
+    "search_type": "mmr",
     "llm_provider": "huggingface",
-    "llm_model": "Qwen/Qwen2.5-3B-Instruct",
+    "llm_model": "Qwen/Qwen2.5-0.5B-Instruct",
     "llm_mode": "local",  # options: "local" (PyTorch GPU download), "api" (HF Serverless)
     "prompt_style": "default",
 }
@@ -64,6 +69,7 @@ LLM_MODE = DEFAULT_CONFIG["llm_mode"]
 CHUNK_SIZE = DEFAULT_CONFIG["chunk_size"]
 CHUNK_OVERLAP = DEFAULT_CONFIG["overlap_size"]
 DEFAULT_TOP_K = DEFAULT_CONFIG["top_k"]
+DEFAULT_SEARCH_TYPE = DEFAULT_CONFIG["search_type"]
 
 ## => (실험 결과 비활성화됨) Adaptive Fallback RAG가 "문서를 찾긴 찾았지만 실제로는 무관한" 상황에서
 ##    근거 없는 답을 만들어내는 문제(GitHub 이슈 #16) 대응으로 검색 거리 기반 신뢰도 체크를 시도했으나,

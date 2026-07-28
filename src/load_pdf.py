@@ -1,6 +1,7 @@
 import os
 import re
 import glob
+import json
 import numpy as np
 from typing import List, Optional
 from langchain_core.documents import Document
@@ -25,6 +26,37 @@ except ImportError:
     HAS_PYMUPDF4LLM = False
 
 EXTRACTED_IMAGE_DIR = os.path.join(VECT_DIR, "extracted_images")
+OCR_CACHE_PATH = os.path.join(VECT_DIR, "ocr_texts.json")
+
+## => OCR 캐시: build_ocr_cache.py가 만든 {이미지파일명: 이미지 속 텍스트} 매핑.
+##    영문 실습 매뉴얼은 대화상자 탭명/옵션명 같은 핵심 정보가 스크린샷 안에만 있어서,
+##    이 텍스트를 청크에 합쳐줘야 검색이 가능해진다. 캐시가 없으면 기존 동작 그대로.
+_ocr_cache = None
+
+
+def _load_ocr_cache() -> dict:
+    global _ocr_cache
+    if _ocr_cache is None:
+        if os.path.exists(OCR_CACHE_PATH):
+            with open(OCR_CACHE_PATH, encoding="utf-8") as f:
+                _ocr_cache = json.load(f)
+        else:
+            _ocr_cache = {}
+    return _ocr_cache
+
+
+def _ocr_text_for(image_path: str) -> str:
+    return _load_ocr_cache().get(os.path.basename(image_path), "")
+
+
+_WORD_RE = re.compile(r"[A-Za-z가-힣0-9]{3,}")
+
+
+def _keyword_overlap(text_a: str, text_b: str) -> int:
+    """두 텍스트가 공유하는 단어(3자 이상, 대소문자 무시) 수."""
+    words_a = {w.lower() for w in _WORD_RE.findall(text_a)}
+    words_b = {w.lower() for w in _WORD_RE.findall(text_b)}
+    return len(words_a & words_b)
 
 
 def detect_lang(text: str) -> str:
@@ -123,22 +155,31 @@ def _is_text_duplicate_image(img_rect, blocks: list, overlap_threshold: float = 
 
 
 def _assign_images_to_nearest_block(images: List[dict], blocks: list) -> dict:
-    """각 이미지를 세로 중심 거리가 가장 가까운 텍스트 블록 하나에 배정한다.
-    매뉴얼이 대부분 단일 컬럼이라, 세로 위치가 가까운 문단일수록 그 이미지를 설명하는 문단일 가능성이 높음."""
+    """각 이미지를 설명하는 텍스트 블록 하나에 배정한다.
+
+    1차 기준: OCR 키워드 겹침 -- 이미지 속 텍스트(예: 대화상자의 "Hole Definition")와
+    같은 단어를 가장 많이 공유하는 블록. 거리만으로는 헷갈리는 배치도 내용으로 정확히 붙는다.
+    2차 기준(글자 없는 이미지 또는 겹침 0): 기존 방식대로 세로 중심 거리가 가장 가까운 블록.
+    매뉴얼이 대부분 단일 컬럼이라, 세로 위치가 가까운 문단일수록 그 이미지를 설명할 가능성이 높음."""
     assignment = {i: [] for i in range(len(blocks))}
     for img in images:
         rect = img.get("rect")
-        if rect is None:
+        if rect is None or not blocks:
             continue
         img_center_y = (rect.y0 + rect.y1) / 2
-        best_idx, best_dist = None, None
-        for i, block in enumerate(blocks):
-            block_center_y = (block[1] + block[3]) / 2
-            dist = abs(img_center_y - block_center_y)
-            if best_dist is None or dist < best_dist:
-                best_dist, best_idx = dist, i
-        if best_idx is not None:
-            assignment[best_idx].append(img["path"])
+        dists = [abs(img_center_y - (b[1] + b[3]) / 2) for b in blocks]
+        best_idx = min(range(len(blocks)), key=lambda i: dists[i])
+
+        ocr_text = _ocr_text_for(img["path"])
+        if ocr_text:
+            overlaps = [_keyword_overlap(ocr_text, b[4]) for b in blocks]
+            max_overlap = max(overlaps)
+            if max_overlap >= 1:
+                ## => 겹침이 같으면 그중 거리가 가까운 블록을 선택
+                candidates = [i for i, o in enumerate(overlaps) if o == max_overlap]
+                best_idx = min(candidates, key=lambda i: dists[i])
+
+        assignment[best_idx].append(img["path"])
     return assignment
 
 
@@ -245,6 +286,11 @@ def extract_multimodal_text_from_pdf(pdf_path: str, chunk_size: int = CHUNK_SIZE
                 chunk_text = "\n\n".join(texts)
                 if image_paths:
                     chunk_text = f"🖼️ [이 문단 근처 CAD 도면/스크린샷 {len(image_paths)}개 포함]\n\n{chunk_text}"
+                    ## => 스크린샷 속 대화상자 탭명/옵션명/수치는 텍스트 레이어에 없음 ->
+                    ##    OCR로 뽑은 텍스트를 청크 본문에 합쳐 검색 대상으로 만든다 (과도한 청크 비대 방지 위해 500자 제한)
+                    ocr_snippets = [t for t in (_ocr_text_for(p) for p in image_paths) if t]
+                    if ocr_snippets:
+                        chunk_text += f"\n\n[이미지 속 텍스트(OCR): {' / '.join(ocr_snippets)[:500]}]"
 
                 doc = Document(
                     page_content=chunk_text,

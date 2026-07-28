@@ -18,7 +18,7 @@ from langchain_core.documents import Document
 # Use the dedicated integration package.  The legacy community wrapper is
 # deprecated and can be incompatible with current Chroma HNSW persistence.
 from langchain_chroma import Chroma
-from src.config import CHROMA_DB_DIR, LOCAL_EMBEDDING_MODEL, DEFAULT_TOP_K
+from src.config import CHROMA_DB_DIR, LOCAL_EMBEDDING_MODEL, DEFAULT_TOP_K, DEFAULT_SEARCH_TYPE
 from src.multimodal_loader import load_and_split_multimodal_pdf
 from src.load_pdf import load_and_split_markdown_pdf
 
@@ -90,7 +90,7 @@ def build_or_load_vectorstore(
     return vectorstore
 
 
-def get_retriever(vectorstore: Chroma, top_k: int = DEFAULT_TOP_K, search_type: str = "similarity"):
+def get_retriever(vectorstore: Chroma, top_k: int = DEFAULT_TOP_K, search_type: str = DEFAULT_SEARCH_TYPE):
     """
     Returns retriever from vectorstore.
     """

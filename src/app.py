@@ -491,15 +491,15 @@ def main():
             st.markdown("##### ⭐ Upstage Solar Pro (1~5점 정성 평가)")
             s1, s2, s3 = st.columns(3)
             s1.metric("Direct LLM Solar 평균", f"{solar_dir_mean:.2f} / 5.0")
-            s2.metric("RAG LLM Solar 평균", f"{solar_rag_mean:.2f} / 5.0", delta=f"+{solar_gap_mean:.2f}점")
-            s3.metric("Solar Score Improvement", f"+{solar_gap_mean:.2f}점")
+            s2.metric("RAG LLM Solar 평균", f"{solar_rag_mean:.2f} / 5.0", delta=f"{solar_gap_mean:+.2f}점")
+            s3.metric("Solar Score Improvement", f"{solar_gap_mean:+.2f}점")
 
             # Row 2: BERTScore F1
             st.markdown("##### 📊 BERTScore F1 (문장 의미 유사도)")
             b1, b2, b3 = st.columns(3)
             b1.metric("Direct LLM BERT F1", f"{bert_dir_mean:.4f}")
-            b2.metric("RAG LLM BERT F1", f"{bert_rag_mean:.4f}", delta=f"+{bert_gap_mean:.4f}")
-            b3.metric("BERT F1 Improvement", f"+{bert_gap_mean:.4f}")
+            b2.metric("RAG LLM BERT F1", f"{bert_rag_mean:.4f}", delta=f"{bert_gap_mean:+.4f}")
+            b3.metric("BERT F1 Improvement", f"{bert_gap_mean:+.4f}")
 
             st.divider()
             st.markdown("#### 📋 벤치마크 전체 38개 문항 데이터셋 표")
