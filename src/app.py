@@ -203,6 +203,7 @@ def main():
         [
             "Qwen/Qwen2.5-3B-Instruct (권장 3B)",
             "Qwen/Qwen2.5-1.5B-Instruct (초경량 1.5B)",
+            "Qwen/Qwen2.5-0.5B-Instruct (최경량 0.5B)",
             "Qwen/Qwen2.5-7B-Instruct (7B)",
             "meta-llama/Llama-3.1-8B-Instruct (8B)"
         ]
@@ -211,6 +212,7 @@ def main():
     model_map = {
         "Qwen/Qwen2.5-3B-Instruct (권장 3B)": "Qwen/Qwen2.5-3B-Instruct",
         "Qwen/Qwen2.5-1.5B-Instruct (초경량 1.5B)": "Qwen/Qwen2.5-1.5B-Instruct",
+        "Qwen/Qwen2.5-0.5B-Instruct (최경량 0.5B)": "Qwen/Qwen2.5-0.5B-Instruct",
         "Qwen/Qwen2.5-7B-Instruct (7B)": "Qwen/Qwen2.5-7B-Instruct",
         "meta-llama/Llama-3.1-8B-Instruct (8B)": "meta-llama/Llama-3.1-8B-Instruct"
     }
