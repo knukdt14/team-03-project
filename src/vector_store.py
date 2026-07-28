@@ -74,7 +74,6 @@ def build_or_load_vectorstore(
     else:
         chunks = load_and_split_multimodal_pdf(pdf_path) if pdf_path else load_and_split_multimodal_pdf()
 
-
     # Adding all multimodal chunks in one upsert can corrupt the HNSW
     # compaction step on Windows.  Persist smaller deterministic batches.
     vectorstore = Chroma(
