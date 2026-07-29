@@ -26,95 +26,376 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for aesthetic design -- 밝은 화이트 톤 + 네이비블루 포인트
+# Custom CSS for modern dark navy theme & high contrast readability
 st.markdown("""
 <style>
-    /* ---------- 헤더 ---------- */
-    .main-header {
-        font-size: 2.2rem;
-        font-weight: 800;
-        color: #1E3A8A;
-        margin-bottom: 0.3rem;
-        padding-bottom: 0.7rem;
-        border-bottom: 3px solid #1E3A8A;
-    }
-    .sub-header {
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+    html, body, .stMarkdown, p, label, button, input, select, textarea {
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
         font-size: 1.05rem;
-        color: #6B7280;
-        margin-top: 0.8rem;
-        margin-bottom: 1.8rem;
+        color: #E2E8F0;
     }
 
-    /* ---------- 배지 ---------- */
-    .badge-rag-strict, .badge-rag-off, .badge-gt {
-        display: inline-block;
-        padding: 5px 14px;
-        border-radius: 999px;
-        font-weight: 700;
-        font-size: 0.85rem;
-        letter-spacing: 0.02em;
-        margin-bottom: 0.7rem;
+    /* Preserve Streamlit Material Icons / Symbols font family */
+    span[data-testid="stIcon"], 
+    [class*="material-symbols"], 
+    [class*="Material"],
+    [data-testid="collapsedControl"] *,
+    header[data-testid="stHeader"] span,
+    button[data-testid="baseButton-headerNoPadding"] * {
+        font-family: 'Material Symbols Rounded', 'Material Icons', sans-serif !important;
     }
-    .badge-rag-strict { background-color: #10B981; color: white; }
-    .badge-rag-off { background-color: #EF4444; color: white; }
-    .badge-gt { background-color: #1E3A8A; color: white; }
 
-    /* ---------- 사이드바 ---------- */
+    /* Overall App Background - Deep Dark Navy */
+    .stApp {
+        background-color: #090D16 !important;
+    }
+
+    /* Fixed Top Header Bar Override */
+    header[data-testid="stHeader"], [data-testid="stHeader"] {
+        background-color: #090D16 !important;
+        border-bottom: 1px solid #1E293B !important;
+    }
+    header[data-testid="stHeader"] *, [data-testid="stHeader"] * {
+        color: #E2E8F0 !important;
+    }
+
+    /* Hero Header Banner */
+    .hero-container {
+        background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 50%, #1D4ED8 100%);
+        padding: 2.3rem 2.6rem;
+        border-radius: 18px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(37, 99, 235, 0.18);
+        margin-bottom: 2rem;
+        border: 1px solid #2563EB;
+    }
+    .hero-title {
+        font-size: 2.3rem !important;
+        font-weight: 800 !important;
+        color: #FFFFFF !important;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+    }
+    .hero-subtitle {
+        font-size: 1.15rem !important;
+        color: #93C5FD !important;
+        font-weight: 500;
+        margin-top: 0.3rem;
+    }
+
+    /* Sidebar Customization */
     [data-testid="stSidebar"] {
-        background-color: #F8FAFC;
-        border-right: 1px solid #E2E8F0;
+        background-color: #0F172A !important;
+        border-right: 1px solid #1E293B !important;
     }
-    [data-testid="stSidebar"] h1 {
-        color: #1E3A8A;
-        font-size: 1.3rem;
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+        color: #F8FAFC !important;
+    }
+    [data-testid="stSidebar"] .stMarkdown p, [data-testid="stSidebar"] label, [data-testid="stSidebar"] span {
+        font-size: 1.05rem !important;
+        font-weight: 600;
+        color: #CBD5E1 !important;
+    }
+    .sidebar-info-card {
+        background: #1E293B;
+        border-left: 4px solid #3B82F6;
+        border-radius: 12px;
+        padding: 1.1rem;
+        margin-top: 1rem;
+        font-size: 0.98rem;
+        line-height: 1.65;
+        color: #CBD5E1 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    .sidebar-info-card strong {
+        color: #60A5FA !important;
     }
 
-    /* ---------- 버튼 ---------- */
+    /* Form Container Styling */
+    [data-testid="stForm"] {
+        background: #0F172A !important;
+        border: 1px solid #1E293B !important;
+        border-radius: 18px !important;
+        padding: 2rem !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Input & Selectbox & Radio Labels */
+    .stTextInput label, .stSelectbox label, .stRadio label, .stSlider label {
+        font-size: 1.1rem !important;
+        font-weight: 700 !important;
+        color: #F1F5F9 !important;
+        margin-bottom: 0.4rem !important;
+    }
+
+    /* Selectbox - Page-Matched Theme Colors */
+    [data-testid="stSelectbox"] > div,
+    div[data-baseweb="select"] {
+        background-color: #0F172A !important;
+        border: 1px solid #334155 !important;
+        border-radius: 14px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Inner nested elements - no border, transparent bg */
+    div[data-baseweb="select"] > div,
+    div[data-baseweb="select"] > div > div,
+    div[role="combobox"] {
+        background-color: transparent !important;
+        border: none !important;
+    }
+
+    /* Selected text - bright white for readability on dark bg */
+    [data-testid="stSelectbox"] span,
+    [data-testid="stSelectbox"] p,
+    div[data-baseweb="select"] span,
+    div[data-baseweb="select"] p,
+    div[data-baseweb="select"] input {
+        color: #FFFFFF !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+        font-size: 1.05rem !important;
+    }
+
+    /* Dropdown chevron arrow - subtle slate color */
+    div[data-baseweb="select"] svg,
+    [data-testid="stSelectbox"] svg {
+        color: #94A3B8 !important;
+        fill: #94A3B8 !important;
+        width: 1.2rem !important;
+        height: 1.2rem !important;
+    }
+
+    /* Text Input - Dark Background, White Text */
+    div[data-baseweb="input"],
+    div[data-baseweb="base-input"],
+    div[data-baseweb="textarea"],
+    .stTextInput > div > div,
+    .stTextArea > div > div {
+        background-color: #0F172A !important;
+        border: 1px solid #334155 !important;
+        border-radius: 12px !important;
+    }
+    div[data-baseweb="input"] input,
+    div[data-baseweb="base-input"] input,
+    .stTextInput input,
+    div[data-baseweb="textarea"] textarea,
+    .stTextArea textarea {
+        background-color: #0F172A !important;
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+        font-size: 1.05rem !important;
+    }
+
+    /* Selectbox Options Dropdown Menu & Popovers */
+    div[data-baseweb="popover"], 
+    div[data-baseweb="popover"] *,
+    div[data-baseweb="menu"], 
+    div[data-baseweb="menu"] *,
+    ul[data-baseweb="menu"], 
+    ul[data-baseweb="menu"] *,
+    div[role="listbox"],
+    div[role="listbox"] * {
+        background-color: #1E293B !important;
+        color: #FFFFFF !important;
+    }
+
+    li[data-baseweb="option"], div[role="option"] {
+        background-color: #1E293B !important;
+        color: #CBD5E1 !important;
+        font-size: 1.05rem !important;
+    }
+
+    li[data-baseweb="option"]:hover, 
+    li[aria-selected="true"], 
+    div[role="option"]:hover,
+    div[role="option"][aria-selected="true"] {
+        background-color: #2563EB !important;
+        color: #FFFFFF !important;
+    }
+
+    /* Radio Group Styling */
+    div[data-aria-label="radio"], div[role="radiogroup"] {
+        background-color: #1E293B !important;
+        padding: 0.8rem 1.2rem !important;
+        border-radius: 12px !important;
+        border: 1px solid #334155 !important;
+    }
+    div[role="radiogroup"] label, div[role="radiogroup"] label * {
+        color: #F1F5F9 !important;
+        font-size: 1.05rem !important;
+    }
+
+    /* Alert Boxes (st.info, st.success, st.warning) */
+    div[data-testid="stAlert"] {
+        background-color: #1E293B !important;
+        border: 1px solid #334155 !important;
+        border-radius: 14px !important;
+        padding: 1.2rem 1.4rem !important;
+        font-size: 1.08rem !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+    }
+    div[data-testid="stAlert"] * {
+        color: #F8FAFC !important;
+        font-size: 1.08rem !important;
+    }
+    /* Info Alert Accent */
+    div[data-testid="stAlert"][kind="info"] {
+        border-left: 5px solid #3B82F6 !important;
+        background-color: #1E293B !important;
+    }
+    /* Success Alert Accent */
+    div[data-testid="stAlert"][kind="success"] {
+        border-left: 5px solid #10B981 !important;
+        background-color: #064E3B !important;
+    }
+
+    /* Button Styling */
     .stButton > button, .stFormSubmitButton > button {
-        background-color: #1E3A8A;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        padding: 0.55rem 1.6rem;
-        transition: background-color 0.15s ease;
+        background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%) !important;
+        color: #FFFFFF !important;
+        border: 1px solid #60A5FA !important;
+        border-radius: 10px !important;
+        font-size: 1.15rem !important;
+        font-weight: 700 !important;
+        padding: 0.75rem 2rem !important;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4) !important;
+        transition: all 0.2s ease-in-out !important;
+        width: 100%;
+        margin-top: 0.5rem;
     }
     .stButton > button:hover, .stFormSubmitButton > button:hover {
-        background-color: #2748A8;
-        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 22px rgba(59, 130, 246, 0.6) !important;
+        background: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%) !important;
     }
 
-    /* ---------- 탭 ---------- */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 6px;
-    }
-    .stTabs [data-baseweb="tab"] {
-        border-radius: 8px 8px 0 0;
-        font-weight: 600;
-        padding: 0.5rem 1rem;
-    }
-
-    /* ---------- 참고 문서 expander ---------- */
-    [data-testid="stExpander"] {
-        border: 1px solid #E2E8F0;
-        border-radius: 10px;
-        margin-bottom: 0.6rem;
-        overflow: hidden;
-    }
-
-    /* ---------- 지표 카드 고정 높이 (delta 태그 생성 시에도 완벽수평) ---------- */
+    /* Metrics Styling */
     [data-testid="stMetric"] {
-        background-color: #F8FAFC;
-        border: 1px solid #E2E8F0;
-        border-radius: 12px;
-        padding: 0.8rem 1rem;
-        min-height: 125px !important;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
+        background: #0F172A !important;
+        border: 1px solid #1E293B !important;
+        border-radius: 14px !important;
+        padding: 1.1rem 1.3rem !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+        min-height: 135px !important;
     }
+    [data-testid="stMetricLabel"] p {
+        font-size: 1.05rem !important;
+        font-weight: 600 !important;
+        color: #94A3B8 !important;
+    }
+    [data-testid="stMetricValue"] div {
+        font-size: 2.0rem !important;
+        font-weight: 800 !important;
+        color: #38BDF8 !important;
+    }
+    [data-testid="stMetricDelta"] {
+        font-size: 1.05rem !important;
+        font-weight: 700 !important;
+    }
+
+    /* Tabs Styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 12px !important;
+        border-bottom: 2px solid #1E293B !important;
+        padding-bottom: 0px;
+        margin-bottom: 1.8rem;
+    }
+    .stTabs [data-baseweb="tab-list"] button, .stTabs [data-baseweb="tab"] {
+        border-top-left-radius: 16px !important;
+        border-top-right-radius: 16px !important;
+        border-bottom-left-radius: 0px !important;
+        border-bottom-right-radius: 0px !important;
+        font-size: 1.15rem !important;
+        font-weight: 700 !important;
+        padding: 0.8rem 1.7rem !important;
+        color: #94A3B8 !important;
+        background-color: #0F172A !important;
+        border: 1px solid #1E293B !important;
+        border-bottom: none !important;
+    }
+    .stTabs [aria-selected="true"] {
+        border-top-left-radius: 16px !important;
+        border-top-right-radius: 16px !important;
+        border-bottom-left-radius: 0px !important;
+        border-bottom-right-radius: 0px !important;
+        color: #FFFFFF !important;
+        background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%) !important;
+        border: 1px solid #3B82F6 !important;
+        border-bottom: none !important;
+        box-shadow: 0 -4px 14px rgba(37, 99, 235, 0.25) !important;
+    }
+
+    /* Expander Styling */
+    [data-testid="stExpander"] {
+        background: #0F172A !important;
+        border: 1px solid #1E293B !important;
+        border-radius: 12px !important;
+        margin-bottom: 0.9rem !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+    }
+    [data-testid="stExpander"] summary {
+        background-color: #1E293B !important;
+        border-radius: 10px !important;
+        color: #FFFFFF !important;
+    }
+    [data-testid="stExpander"] * {
+        color: #E2E8F0 !important;
+    }
+
+    /* Badges */
+    .badge-rag-strict {
+        background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+        color: #FFFFFF !important;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        display: inline-block;
+        box-shadow: 0 3px 10px rgba(16, 185, 129, 0.4);
+        margin-bottom: 0.7rem;
+    }
+    .badge-rag-off {
+        background: linear-gradient(135deg, #DC2626 0%, #EF4444 100%);
+        color: #FFFFFF !important;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        display: inline-block;
+        box-shadow: 0 3px 10px rgba(239, 68, 68, 0.4);
+        margin-bottom: 0.7rem;
+    }
+
+    /* Dataframe in Tab 2 */
+    [data-testid="stDataFrame"] {
+        background-color: #0F172A !important;
+        border: 1px solid #1E293B !important;
+        border-radius: 12px !important;
+    }
+    [data-testid="stDataFrame"] * {
+        color: #E2E8F0 !important;
+    }
+
+    /* Code Blocks */
+    pre, code, div[data-testid="stText"] {
+        background-color: #1E293B !important;
+        color: #F8FAFC !important;
+        border: 1px solid #334155 !important;
+        border-radius: 8px !important;
+    }
+
+    /* Headings font sizes & colors */
+    h1 { font-size: 2.2rem !important; font-weight: 800 !important; color: #FFFFFF !important; }
+    h2 { font-size: 1.75rem !important; font-weight: 750 !important; color: #F8FAFC !important; }
+    h3 { font-size: 1.45rem !important; font-weight: 700 !important; color: #F1F5F9 !important; margin-top: 1rem !important; }
+    h4 { font-size: 1.25rem !important; font-weight: 650 !important; color: #E2E8F0 !important; }
+    h5 { font-size: 1.15rem !important; font-weight: 650 !important; color: #CBD5E1 !important; }
 </style>
 """, unsafe_allow_html=True)
+
 
 
 @st.cache_resource
@@ -216,12 +497,15 @@ def render_context_chunks(docs):
 
 
 def main():
-    st.markdown('<div class="main-header">🛠️ CATIA 멀티모달 RAG & 성능 비교 평가 시스템</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">Qwen 2.5 오픈소스 LLM (0.5B / 1.5B / 3B) + BGE-M3 멀티모달 매뉴얼 RAG & 평가 시스템</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="hero-container">
+        <div class="hero-title">🛠️ CATIA 멀티모달 RAG & 성능 비교 평가 시스템</div>
+        <div class="hero-subtitle">Qwen 2.5 오픈소스 LLM (0.5B / 1.5B / 3B) + BGE-M3 멀티모달 매뉴얼 RAG & 정량/정성 비교 평가</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # Sidebar
-    st.sidebar.image("https://img.icons8.com/color/96/catia.png", width=70)
-    st.sidebar.title("📌 프로젝트 정보")
+    # Sidebar Header
+    st.sidebar.markdown('<h2 style="color: #FFFFFF; font-size: 1.5rem; font-weight: 800; margin-bottom: 1.2rem;">🛠️ 프로젝트 설정</h2>', unsafe_allow_html=True)
 
     execution_mode_label = st.sidebar.radio(
         "⚙️ 모델 구동 방식 선택:",
@@ -262,12 +546,14 @@ def main():
 
     n_pdfs, n_pages, n_chunks = get_corpus_stats(pipeline)
     chunk_display = f"{n_chunks:,}개" if n_chunks is not None else "알 수 없음"
-    st.sidebar.info(f"""
-    **KDT 14기 3팀 프로젝트**
-    - **베이스라인 모델**: `{selected_model_name}`
-    - **통합 멀티모달 매뉴얼**: {n_pdfs}개 PDF ({n_pages:,}p / {chunk_display} 청크)
-    - **핵심 기술**: PyMuPDF 도면/캡처 태깅, BGE-M3 Vector Store, Open LLM (Qwen 2.5), BERTScore & Solar Evaluation
-    """)
+    st.sidebar.markdown(f"""
+    <div class="sidebar-info-card">
+        <strong style="font-size: 1.05rem; color: #1E3A8A;">KDT 14기 3팀 프로젝트</strong><br>
+        • <strong>베이스라인 모델</strong>: <code>{selected_model_name}</code><br>
+        • <strong>통합 멀티모달 매뉴얼</strong>: {n_pdfs}개 PDF ({n_pages:,}p / {chunk_display} 청크)<br>
+        • <strong>핵심 기술</strong>: PyMuPDF 도면/캡처 태깅, BGE-M3 Vector Store, Open LLM (Qwen 2.5), BERTScore & Solar Evaluation
+    </div>
+    """, unsafe_allow_html=True)
 
     # Load Auto Questions Dataset CSV (38 questions)
     df_auto = load_auto_questions_df()
