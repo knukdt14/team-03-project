@@ -16,7 +16,7 @@ from bert_score import score as compute_bert_score
 
 from src.rag_chain import RAGPipeline
 from src.evaluation import BENCHMARK_DATASET, run_evaluation_benchmark
-from src.config import DATA_DIR
+from src.config import DATA_DIR, DEFAULT_TOP_K
 
 # Page Configuration
 st.set_page_config(
@@ -253,7 +253,7 @@ def main():
     }
     selected_model_name = param_model_map[selected_param_label]
     
-    top_k = st.sidebar.slider("검색 문서 수 (Top-K)", min_value=1, max_value=10, value=3)
+    top_k = st.sidebar.slider("검색 문서 수 (Top-K)", min_value=1, max_value=10, value=DEFAULT_TOP_K)
 
     # Load Pipeline
     with st.spinner(f"[{selected_param_label}] 파이프라인 및 벡터 DB 로딩 중..."):
