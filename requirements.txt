@@ -13,7 +13,7 @@ langchain-chroma
 --extra-index-url https://download.pytorch.org/whl/cu128
 torch==2.11.0+cu128
 torchvision==0.26.0+cu128
-accelerate
+accelerate  # device_map="auto"로 로컬 GPU 모델 로딩 시 필수 (없으면 조용히 API 모드로 폴백됨)
 transformers
 sentence-transformers
 huggingface_hub
@@ -22,6 +22,7 @@ huggingface_hub
 PyMuPDF
 pypdf
 PyPDF2
+pymupdf4llm  # PDF -> Markdown 구조(제목/표) 보존 변환
 
 # Vector Store
 chromadb

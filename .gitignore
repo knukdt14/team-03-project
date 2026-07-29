@@ -150,6 +150,7 @@ activemq-data/
 # Environments
 .env
 .envrc
+.kdtenv/
 .venv
 env/
 venv/
@@ -226,3 +227,6 @@ vecstore_cache/
 # 평가 실행 결과물 (재실행 시마다 바뀜 - 원본 질문셋인 eval/questions_template.csv는 유지)
 data/evaluation_results.csv
 eval/results*.csv
+eval/comparison_summary.csv
+eval/*.log
+eval/*.err.log
