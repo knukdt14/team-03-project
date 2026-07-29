@@ -6,41 +6,46 @@
 
 | 역할 | 이름 | 담당 |
 |---|---|---|
-| 팀장 | 조현우 | 프로젝트 총괄(기획·관리·결과 도출), 발표자료 제작 |
-| 팀원 | 김병욱 | 여러 LLM 검토, Evaluation(BERTScore·환각) 작성 |
-| 팀원 | 정재영 | 매뉴얼 로드·분할·저장 전략으로 성능 향상 |
-| 팀원 | 정우렬 | 벡터DB·유사도 검색으로 성능 향상, 절차 검증 로직 |
+| 팀장 | 조현우 | 프로젝트 총괄(기획·관리·결과 도출), 임베딩 개선(BGE-M3) |
+| 팀원 | 김병욱 | 이미지 검색 품질 개선(OCR), 응답 안정성 개선, 버그 확인 및 수정 |
+| 팀원 | 정재영 | 매뉴얼 로드·분할·저장 전략, High-Gap 평가셋 구축, 대시보드 구축 |
+| 팀원 | 정우렬 | 벡터DB·검색(BGE-M3/MMR/하이브리드) 최적화, 환각 방지(Grounding Check) 로직 |
 
 ---
 
 ## 주제
 
-### CATIA 매뉴얼 기반 RAG 질의응답 및 작업 절차 정합성 검증 시스템
+### CATIA V5 매뉴얼 기반 RAG 질의응답 시스템
 
-CATIA 매뉴얼을 기반으로 **(1)** 툴 사용법에 답하고, **(2)** 사용자가 입력한 작업 절차를 매뉴얼의 표준과 비교해 정합성을 피드백하는 RAG 시스템을 구현한다. 다양한 LLM·임베딩·벡터스토어·프롬프트 조합의 성능을 정량 비교하고, 문서에 근거 없는 답변의 환각 발생을 측정·저감한다.
+CATIA V5 매뉴얼(공식 문서 + 실습 교재 + 강의 자료 32종, 2,400여 페이지)을 기반으로 툴 사용법·단축키·작업 절차를 질의응답하는 RAG 챗봇을 구현한다. 소형 오픈소스 LLM(Qwen2.5, 0.5B/1.5B/3B)을 대상으로 RAG 적용 전/후 성능 격차를 정량 비교하여, **자원이 제약된 소형 모델일수록 RAG의 가치가 크다**는 것을 실증한다.
 
-> **부제** — 사용자가 입력한 CATIA 작업 절차가 매뉴얼의 표준(정석)과 얼마나 일치하는지 검색·비교해 피드백하는 RAG 시스템
+> 프로젝트 초기에는 대형 LLM(Llama 3.1 8B 등)으로 RAG 효과를 검증하려 했으나, 대형 모델은 이미 CATIA 관련 사전지식이 많아 RAG 적용 전/후 차이가 잘 드러나지 않는 문제를 발견 → 소형 모델(Qwen2.5-0.5B)로 방향을 재설정.
 
 ---
 
-## 디렉토리 및 시스템 구조
+## 디렉토리 구조
 
 ```
 team-03-project/
-├── .env                  # API KEY 설정 (OPENAI_API_KEY, HF_TOKEN 등)
-├── docs/
-│   └── EDU_CAT_EN_V5F_FB_V5R19.pdf  # CATIA V5 338페이지 공식 영문 매뉴얼
-├── data/
-│   ├── chroma_db/        # 영문 매뉴얼 421개 분할 청크 임베딩 영구 저장소
-│   └── evaluation_results.csv  # A/B 테스트 벤치마크 평가 결과 CSV
+├── .env / .env.example       # API KEY 설정 (HF_TOKEN, OPENAI_API_KEY 등)
+├── data/                     # CATIA 매뉴얼 PDF 원본 32종
+├── vect/                     # (git 미추적) Chroma 벡터DB, 추출 이미지, OCR 캐시 - 최초 실행 시 자동 생성
+├── eval/                     # 평가 데이터셋 및 결과 CSV, 상세 실험 리포트(README.md)
+├── report/                   # 실험 경과 보고서, 이슈 대응 문서
+├── experiments/              # 파라미터 튜닝·임베딩 비교 실험 스크립트
+│   └── rag_optimization/     # BGE-M3 등 임베딩/검색 조합 실험
 ├── src/
-│   ├── config.py         # 환경 설정 및 모델/임베딩 파라미터 정의
-│   ├── document_loader.py # PyPDFLoader & RecursiveCharacterTextSplitter
-│   ├── vector_store.py   # Chroma Vector DB 구축 및 리트리버 인터페이스
-│   ├── rag_chain.py      # Direct LLM / Cross-Lingual RAG / 절차 검증 체인
-│   └── evaluation.py     # BERTScore 및 환각률 A/B 테스트 벤치마크 평가 모듈
-├── app.py                # Streamlit 데모 웹 애플리케이션 UI
-└── run_evaluation.py     # CLI 벤치마크 실행 및 평가 결과 출력 스크립트
+│   ├── config.py             # 기본 설정: BGE-M3 임베딩, chunk 500/overlap 100, MMR, top_k 6, Qwen2.5-0.5B
+│   ├── load_pdf.py           # PyMuPDF 기반 멀티모달 텍스트+이미지 추출, OCR 텍스트 통합, Markdown 로더
+│   ├── build_ocr_cache.py    # 추출 이미지 전체에 OCR을 돌려 텍스트 캐시 생성
+│   ├── vector_store.py       # Chroma 벡터DB 구축/로드, 벡터 검색 + BM25 하이브리드 검색
+│   ├── rag_chain.py          # RAGPipeline: Direct LLM / Strict RAG / Adaptive Fallback / Grounding Check
+│   ├── models/llm_factory.py # Qwen2.5(0.5B/1.5B/3B) 등 로컬(HF)·API 모델 로더
+│   ├── evaluation.py         # BERTScore + RAGAS(로컬 judge, API 키 불필요) 평가
+│   ├── evaluate_multimodal.py# 터미널 기반 배치 평가 스크립트
+│   └── app.py                # Streamlit 데모/평가 웹 애플리케이션
+├── CHANGELOG.md
+└── requirements.txt
 ```
 
 ---
@@ -50,41 +55,67 @@ team-03-project/
 ### 1. 환경 준비 및 의존성 설치
 ```bash
 pip install -r requirements.txt
-# 주요 패키지: langchain, langchain-openai, langchain-chroma, chromadb, bert-score, streamlit, pypdf
 ```
 
-### 2. A/B 테스트 벤치마크 및 BERTScore 평가 실행
+### 2. Streamlit 웹 애플리케이션 실행
 ```bash
-python run_evaluation.py
+streamlit run src/app.py
+```
+최초 실행 시 `data/`의 PDF를 파싱하여 `vect/`에 벡터DB를 자동 생성합니다(약 10~15분 소요). 이후 실행부터는 저장된 벡터DB를 그대로 불러옵니다.
+
+### 3. (선택) 이미지 OCR 캐시 생성
+스크린샷 이미지 속 텍스트(대화상자 옵션명, 단축키 등)까지 검색 대상에 포함하려면, 벡터DB 생성 전에 한 번 실행합니다.
+```bash
+python src/build_ocr_cache.py
 ```
 
-### 3. Streamlit 웹 애플리케이션 데모 실행
+### 4. 배치 평가 실행
 ```bash
-streamlit run app.py
+python src/evaluate_multimodal.py --model Qwen/Qwen2.5-0.5B-Instruct --top_k 6
 ```
 
 ---
 
-## 📊 정량적 평가 결과 (3-Way Model A/B Testing)
+## 핵심 기술
 
-3가지 모델 패러다임에 대해 **BERTScore F1** 및 **폴백(Fallback) 수용도**를 비교 정량 측정한 결과입니다.
-
-| 질문 유형 | 질문 (Question) | Direct LLM (RAG Off) F1 | Strict RAG (매뉴얼 엄격) F1 | Adaptive Fallback RAG F1 | Adaptive RAG 작동 특징 |
-|---|---|:---:|:---:|:---:|---|
-| **General QA** | CATIA V5 Pad 기능 역할 및 스케치 조건 | 0.7120 | **0.7495** | 0.7325 | ✅ RAG 매뉴얼 근거 답변 (P.53, 55) |
-| **Specific QA** | Draft Angle 기능 개념 및 사용 목적 | 0.6571 | **0.7197** | 0.7045 | ✅ RAG 매뉴얼 근거 답변 (P.56, 195) |
-| **Trick QA** | CATIA V5 3D 퀀텀 머시닝 AI 가속 모드는? | 0.6137 | **0.8914** | 0.6176 | ⚠️ 매뉴얼 미포함 태그 후 LLM 폴백 |
-| **Trick QA** | CATIA V5 자율주행 차체 3D 홀로그램 자동 설계는? | 0.6378 | **0.9008** | 0.6339 | ⚠️ 매뉴얼 미포함 태그 후 LLM 폴백 |
-| **평균 (AVG)** | **전체 벤치마크 평균 지표** | **0.6663** | **0.7784** | **0.6757** | **Strict RAG F1 +0.1121 최우수** |
+- **멀티모달 문서 파싱**: PyMuPDF로 텍스트·이미지를 문단 단위로 추출, 이미지-문단 매칭에 OCR 키워드 겹침 활용
+- **검색**: BGE-M3(다국어 임베딩) + Chroma + MMR 검색 — 기존 영어 전용 임베딩 대비 한국어 질의 검색 성능 개선
+- **환각 방지**: 답변 생성 후 Grounding Check로 매뉴얼 근거 여부를 재검증, 근거 없는 답변은 거부
+- **평가**: BERTScore(F1/Precision/Recall) + RAGAS(로컬 모델 기반, API 키 불필요) + LLM-as-judge 정성 평가
 
 ---
 
-## 💡 주요 차별화 성과
+## 📊 정량적 평가 결과
 
-1. **Cross-Lingual RAG 성공**: 338페이지의 영문 공식 매뉴얼(`EDU_CAT_EN_V5F_FB_V5R19.pdf`)을 다국어 공간에 임베딩하여, 한국어 질의에 대해 **정확한 한국어 답변 및 참조 페이지(Page Citation)**를 제시함.
-2. **3가지 모델 패러다임 비교 구축**:
-   - `Direct LLM`: 사전학습 일반 지식만 응답
-   - `Strict RAG`: 매뉴얼 엄격 전용 (근거 없을 시 "매뉴얼에 없음" 응답 -> 환각률 0%)
-   - `Adaptive Fallback RAG`: 매뉴얼에 정보가 있으면 RAG로 답하고, 없을 경우 `⚠️ [매뉴얼 미포함 - Direct LLM 사전학습 지식 폴백 답변]` 태그를 달아 사전학습 지식으로 답변 전환
-3. **현장 작업 절차 정합성 피드백**: 사용자가 작성한 CATIA 작업 절차를 입력받아 표준 매뉴얼과 1:1 디테일 비교하여 **점수(0~100점), 누락 단계, 순서 오류, 개선안**을 생성하는 기능 완성.
+### 모델 크기별 RAG On/Off 비교 (Solar LLM-as-judge, 1~5점)
 
+| 비교 모델 | 파라미터 크기 | CATIA 사전학습 지식 | Direct LLM (RAG Off) | RAG LLM (RAG On) | Solar Score Gap | 최종 평가 |
+|---|:---:|---|---|---|:---:|:---:|
+| Llama 3.1 8B / 3B | 8B / 3B | 높음(과다 지식) | 정답 도출 | 정답 도출 | +1.20점(격차 적음) | 미채택 |
+| Qwen 2.5 1.5B | 1.5B | 보통 | 일부 오답/환각 | 정답 도출 | +2.20점 | 미채택 |
+| **Qwen 2.5 0.5B** | 0.5B(초경량) | 적음(제어 가능) | 다수 오답/환각 | 정답 도출 | **+3.42점(폭발적 상승)** | **최종 선정** |
+
+→ 모델이 작을수록 사전학습 지식이 부족해 RAG 적용 전/후 격차가 뚜렷하게 드러남. **자원이 제약된 환경일수록 RAG의 가치가 크다**는 것을 확인하여 Qwen2.5-0.5B를 최종 모델로 선정.
+
+### 임베딩 모델 비교 (40문항 벤치마크, BERTScore F1 / Faithfulness)
+
+| 설정 | F1 | Faithfulness | 평균 응답시간 |
+|---|:---:|:---:|:---:|
+| MiniLM(영어 전용) + MMR | 0.7460 | 0.6893 | 0.78초 |
+| BGE-M3(다국어) + MMR | 0.7597 | 0.7737 | 0.88초 |
+| **BGE-M3 + MMR + 답변 정규화** | **0.7637** | **0.8371** | 0.76초 |
+
+→ 기존 임베딩(all-MiniLM-L6-v2)은 한국어 질의에 대한 검색 성능이 낮아(한↔영 교차언어 유사도 실측 0.069) BGE-M3로 교체.
+
+### High-Gap(고난도) 38문항 평가
+
+| 지표 | Direct LLM | RAG 적용 | 격차 |
+|---|:---:|:---:|:---:|
+| BERTScore F1 | 0.6163 | 0.6517 | +0.035 |
+| Solar 정성 평가(5점) | 1.58 | 3.05 | **+1.47** |
+
+→ 정답이 짧고 구체적인(단축키, 대화상자 옵션명 등) 고난도 질문에서는 표면적 토큰 유사도(BERTScore)보다 **LLM 정성 평가 격차가 훨씬 크게 나타나**, RAG의 실질적 효과가 더 뚜렷이 드러남.
+
+## 상세 실험 결과
+
+모델 크기별 비교, 임베딩/검색 파라미터 튜닝, Query Expansion 실험, 발견된 버그와 한계 등 전체 실험 기록은 **[`eval/README.md`](eval/README.md)** 를 참고하세요.
